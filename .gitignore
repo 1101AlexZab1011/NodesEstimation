@@ -1,2 +1,4 @@
 Pipeline/
 Source/*/
+Source/*.fif
+Source/*.fiff
