@@ -1,0 +1,11 @@
+This directory is needed for all files containing input data.
+All of input files must have extension ".fif"
+Raw file name must end with "...raw.fif"
+Source space file must contain either "src" or "source...space" in its name
+Bem file must contain "bem" in its name
+Inverse solution file must contain either "inv" or "inverse" in its name
+Source estimate file must contain "stc" in its name
+Forward solution file must contain either "fwd" or "forward" in its name
+Trans file must contain "trans" in its name
+File with epoched data must contain "epo" in its file
+File with evoked data must contain "ave" in its name
