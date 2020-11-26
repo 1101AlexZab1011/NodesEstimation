@@ -1,4 +1,4 @@
-from .parcellation import freesurf_dict
+from parcellation import freesurf_dict
 import numpy as np
 import mne
 
