@@ -9,3 +9,4 @@ Forward solution file must contain either "fwd" or "forward" in its name
 Trans file must contain "trans" in its name
 File with epoched data must contain "epo" in its file
 File with evoked data must contain "ave" in its name
+Subject directoriers with all the subjects files must be contained in "Source/Subjects/" directory
