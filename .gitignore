@@ -2,3 +2,5 @@ Pipeline/
 Source/*/
 Source/*.fif
 Source/*.fiff
+!Source/Subjects
+Source/Subjects/*
