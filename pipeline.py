@@ -460,15 +460,6 @@ Drs = roc_auc_score(label_ind, n_strength)
 
 # to show nodes in label pos coordinates
 
-arr = []
-
-for label in labels:
-    arr.append(label.pos.mean(axis=0)*1000)
-
-coordinates = np.array(arr)
-nplt.plot_markers(n_strength, coordinates, node_cmap='black_red_r')
-nplt.show()
-
 
 if os.path.isfile(res_nodes_file):
     print('Reading nodes...')
