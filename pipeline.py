@@ -204,7 +204,7 @@ def first_processing(raw):
     raw_cropped = raw.crop(tmax=crop_time)
     raw_filtered = notchfir(raw_cropped, lfreq, nfreq, hfreq)
     # raw_reconstructed = artifacts_clean(raw_filtered)
-    raw_out = raw_filtered.pick_types(meg="grad", eeg=False)
+    raw_out = raw_filtered.pick_types(meg=True, eeg=False)
 
     del raw, raw_filtered
 
