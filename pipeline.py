@@ -100,8 +100,7 @@ res_inv_file = os.path.join(res_inv_folder, 'raw_inv.fif')
 res_sLORETA_file = os.path.join(res_sLORETA_folder, 'sLORETA_raw_ave_inv.fif')
 res_sLORETA_file_lh = os.path.join(res_sLORETA_folder, 'sLORETA_raw_ave_inv.fif-lh.stc')
 res_sLORETA_file_rh = os.path.join(res_sLORETA_folder, 'sLORETA_raw_ave_inv.fif-rh.stc')
-res_nodes_strength_file = os.path.join(res_nodes_folder, 'nodes_strength_auc.dat')
-res_nodes_file = os.path.join(res_nodes_folder, 'nodes.pkl')
+res_nodes_strength_file = os.path.join(res_nodes_folder, 'nodes_strength.dat')
 
 subject_dir = subject_dirs[0]
 subject = subjects[0]
@@ -223,11 +222,6 @@ def nodes_strength(label_tc):
     return n_strength
 
 
-def Drs_norm(Drs, Drs_max, Drs_min):
-
-    return (Drs -Drs_min)/(Drs_max - Drs_min)
-
-
 if not os.path.exists('./Pipeline'):
     mkdir('./Pipeline')
 
@@ -328,7 +322,7 @@ if os.path.isfile(res_epochs_file):
 else:
     print('PIPELINE: Epochs not found, creating a new one...')
     epochs = mne.Epochs(raw, events, tmin=epochs_tmin, tmax=epochs_tmax,
-                        preload=True)#.resample(200, npad='auto')
+                        preload=True).resample(200, npad='auto')
     path = res_epochs_folder
 
     mkdir(path)
@@ -396,11 +390,6 @@ else:
     stc.save(res_sLORETA_file)
 
 
-# kwargs = dict(initial_time=0.08, hemi='both', subjects_dir=subject_dir,
-#               size=(600, 600), subject=subject)
-# brain = stc.plot(figure=1, **kwargs)
-
-
 labels = mne.read_labels_from_annot(subject, parc='aparc', subjects_dir=subjects_dir)
 
 label_tc = stc.extract_label_time_course(labels, src=inv['src'], mode='mean_flip')
@@ -418,72 +407,6 @@ else:
     mkdir(path)
 
     n_strength.tofile(res_nodes_strength_file)
-
-
-# nodes strength
-
-# plt.plot(n_strength, 'o')
-# plt.title('Node Strength')
-# plt.xlabel('node: number')
-# plt.ylabel('node: strength')
-# plt.show()
-
-
-resected_nodes = 15
-
-label_ind = np.zeros(len(n_strength))
-label_ind[0:resected_nodes] = True
-label_ind[resected_nodes+1:] = False
-Drs = roc_auc_score(label_ind, n_strength)
-
-
-# to show one node
-
-# coordinates = np.array([0])
-# node_str = np.zeros(coordinates.shape[0])
-# nplt.plot_markers(np.array([0, 0]), np.array([
-#     freesurf_dict['bankssts-lh'],
-#     np.array([1000, 1000, 1000]) ## plot markers does not work with one node
-# ]))
-# nplt.show()
-
-
-# to show all of nodes from freesurf_dict
-
-# coord_from_dict = list(freesurf_dict.values())
-# del coord_from_dict[0], coord_from_dict[34]
-# coordinates = np.array(coord_from_dict)
-# node_str = np.zeros(coordinates.shape[0])
-# nplt.plot_markers(node_str, coordinates)
-# nplt.show()
-
-
-# to show nodes in label pos coordinates
-
-
-if os.path.isfile(res_nodes_file):
-    print('Reading nodes...')
-    nodes = pickle.load(open(res_nodes_file, 'rb'))
-
-else:
-    print('PIPELINE: Nodes file not found, create new one')
-
-    if not os.path.exists(res_nodes_folder):
-        mkdir(res_nodes_folder)
-
-    nodes = []
-
-    for i in range(len(n_strength)):
-        nodes.append(Node(n_strength[i], label_tc[i, :], labels[i]))
-
-    pickle.dump(nodes, open(res_nodes_file, 'wb'))
-
-coordinates = []
-for node in nodes:
-    coordinates.append(node.nilearn_coordinates)
-
-nplt.plot_markers(n_strength, coordinates, node_cmap='black_red_r')
-nplt.show()
 
 
 vertexes = [mne.vertex_to_mni(
@@ -507,6 +430,6 @@ freesurf_dict_sample = {l[0].name: np.mean(l[1], axis=0) for l in zip(labels, ve
 # ]))
 # nplt.show()
 
-del nodes, stc, src, raw, fwd, arr, coordinates,\
+del stc, src, raw, fwd, \
     n_strength, bem, labels, label_tc, inv, noise_cov
 
