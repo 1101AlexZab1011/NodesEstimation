@@ -346,10 +346,6 @@ else:
     evoked = [evoked]
 
 
-evoked[0].plot()
-
-# del src, raw, fwd, bem
-
 if os.path.isfile(res_cov_file):
     noise_cov = mne.read_cov(res_cov_file)
 
@@ -408,27 +404,11 @@ else:
 
     n_strength.tofile(res_nodes_strength_file)
 
-
 vertexes = [mne.vertex_to_mni(
     label.vertices,
     hemis=0 if label.hemi == 'lh' else 1,
     subject=subject, subjects_dir=subjects_dir
 )for label in labels]
-
-freesurf_dict_sample = {l[0].name: np.mean(l[1], axis=0) for l in zip(labels, vertexes)}
-
-
-# # show one label
-# nplt.plot_markers(np.zeros(vertexes[0].shape[0]), vertexes[0])
-# nplt.show()
-
-# # show one node
-#
-# nplt.plot_markers(np.array([0, 0]), np.array([
-#     np.mean(vertexes[0], axis=0),
-#     np.array([1000, 1000, 1000]) ## plot markers does not work with one node
-# ]))
-# nplt.show()
 
 del stc, src, raw, fwd, \
     n_strength, bem, labels, label_tc, inv, noise_cov
