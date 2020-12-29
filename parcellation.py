@@ -68,4 +68,5 @@ freesurf_dict = {
     'temporalpole-lh': np.array([-35.94812575,  11.54630651, -38.85462315]),
     'temporalpole-rh': np.array([ 29.76990081,  13.6144807 , -41.16433817]),
     'transversetemporal-lh': np.array([-41.42720221, -23.67342816,   4.89873064]),
-    'transversetemporal-rh': np.array([ 42.35445952, -17.92964463,   2.01760023])}
+    'transversetemporal-rh': np.array([ 42.35445952, -17.92964463,   2.01760023])
+}

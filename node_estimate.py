@@ -5,11 +5,14 @@ import mne
 
 class Node(object):
 
-    def __init__(self, strength, data, label=None, type=None):
+    def __init__(self, data, strength=None, label=None, type=None, connections=None):
         self.strength = strength
         self.data = data
+        self.connections = connections
+
         if not isinstance(label, mne.Label):
             raise ValueError('label must be an instance of mne.Label')
+
         self.label = label
         self.type = type
 
@@ -19,8 +22,9 @@ class Node(object):
                 self.nilearn_coordinates = freesurf_dict[label.name]
 
             except KeyError:
-                print("Unexpected label")
+                print("Unexpected label: " + label.name)
                 self.nilearn_coordinates = None
+
         else:
 
             self.nilearn_coordinates = None
@@ -30,6 +34,9 @@ class Node(object):
 
     def set_data(self, data):
         self.data = data
+
+    def set_connections(self, connections):
+        self.connections = connections
 
     def set_label(self, label):
         self.label = label
@@ -48,9 +55,16 @@ class Node(object):
 
         self.nilearn_coordinates = coordinates
 
-    def set_type(self, type):
+    def set_type(self, type, mood='rename'):
 
-        self.type = type
+        if mood == 'rename':
+            self.type = type
+
+        elif mood == 'add':
+            self.type += '/' + type
+
+        else:
+            raise ValueError("Unknown action: ", mood)
 
 
 def central_node(*args):

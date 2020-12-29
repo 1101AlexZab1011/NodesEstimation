@@ -131,12 +131,6 @@ def mkdir(path):
         print("PIPELINE: successfully created the directory %s " % path)
 
 
-@sliding_window(size=1200, overlap=0.5)
-def do_nothing(sig):
-
-    return sig
-
-
 @sliding_window(1200, 0.5)
 def pearson(signals):
 
@@ -329,8 +323,6 @@ else:
 
     epochs.save(res_epochs_file)
 
-epochs.plot()
-
 
 if os.path.isfile(res_evoked_file):
     evoked = mne.read_evokeds(res_evoked_file)
@@ -409,6 +401,24 @@ vertexes = [mne.vertex_to_mni(
     hemis=0 if label.hemi == 'lh' else 1,
     subject=subject, subjects_dir=subjects_dir
 )for label in labels]
+
+# test spectral
+
+out = mne.connectivity.spectral_connectivity(
+    mne.minimum_norm.apply_inverse_epochs(
+        epochs,
+        inv,
+        lambda2,
+        method,
+        pick_ori="normal",
+        return_generator=True
+    ),
+    method='plv',
+    sfreq=200,
+    mode='fourier'
+)
+print(out[0].shape)
+print(out[0][:, 0, 0])
 
 del stc, src, raw, fwd, \
     n_strength, bem, labels, label_tc, inv, noise_cov
