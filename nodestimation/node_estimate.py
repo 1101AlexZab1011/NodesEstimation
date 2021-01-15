@@ -1,6 +1,9 @@
-from parcellation import freesurf_dict
 import numpy as np
+import scipy as sp
 import mne
+from nodestimation.parcellation import freesurf_dict
+from nodestimation.connectivity import pearson, phase_locking_value
+from nodestimation.timewindow import mean_across_tw
 
 
 class Node(object):
@@ -68,7 +71,6 @@ class Node(object):
 
 
 def central_node(*args):
-
     sum_strength = 0
     x_weight = 0
     y_weight = 0
@@ -81,6 +83,48 @@ def central_node(*args):
         y_weight += (node.strength * node.nilearn_coordinates[2])
 
     out = Node(strength=sum_strength, type='computed_local_center')
-    out.set_coordinates(np.array([x_weight/sum_strength, y_weight/sum_strength, z_weight/sum_strength]))
+    out.set_coordinates(np.array([x_weight / sum_strength, y_weight / sum_strength, z_weight / sum_strength]))
 
     return out
+
+
+def eigencentrality(matrix):
+    # only the greatest eigenvalue results in the desired centrality measure [Newman et al]
+    if len(matrix.shape) == 2:
+        if matrix.shape[0] != matrix.shape[1]:
+            raise ValueError('Can not compute centrality for non-square matrix')
+        out = np.real(sp.linalg.eigvals(matrix))
+
+        return out
+
+    elif len(matrix.shape) == 3:
+
+        if matrix.shape[0] != matrix.shape[1]:
+            raise ValueError('Matrix shape must be: [n x n x m]')
+
+        c = [sp.linalg.eigvals(matrix[:, :, i]) for i in range(matrix.shape[-1])]
+        out = [np.mean(np.real(np.array(c).T[i])) for i in range(matrix.shape[0])]
+
+        return np.array(out)
+
+    else:
+        raise ValueError('Can not work with dimension less than two and higher than four')
+
+
+def nodes_strength(label_tc, method):
+    if method == 'pearson':
+        pearson_matrices = pearson(label_tc)
+        pears_mean = mean_across_tw(pearson_matrices)
+        n_strength = np.array([])
+
+        for i in range(pears_mean.shape[0]):
+            n_strength = np.append(n_strength, np.sum(pears_mean[i, :]))
+
+        return n_strength, pears_mean
+
+    elif method == 'plv':
+        plv_matrices = phase_locking_value(label_tc)
+        plv_mean = mean_across_tw(plv_matrices)
+        centrality = eigencentrality(plv_mean)
+
+        return centrality, plv_mean

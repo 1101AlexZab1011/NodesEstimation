@@ -1,24 +1,23 @@
+import numpy as np
+
+
 class TimeWindow(object):
 
     def __init__(self, data, start, end):
-
         self.data = data
         self.start = start
         self.end = end
         self.len = end - start
 
     def set_data(self, data):
-
         self.data = data
 
     def set_size(self, t_start):
-
         self.start = t_start
         self.end = t_start + self.len
 
 
 def sliding_window(size, overlap):
-
     def decorator(func):
 
         def wrapper(*args, **kwargs):
@@ -78,3 +77,57 @@ def sliding_window(size, overlap):
         return wrapper
 
     return decorator
+
+
+def mean_across_tw(twlist):
+    if len(twlist[0].data.shape) == 2:
+        l, w = twlist[0].data.shape
+        voxel = voxel_from_tw(twlist)
+        out = np.zeros((l, w))
+        for i in range(l):
+            for j in range(w):
+                out[i, j] = np.mean(voxel[i, j, :])
+
+        return out
+
+    elif len(twlist[0].data.shape) == 3:
+        l, w, h = twlist[0].data.shape
+        voxel = voxel_from_tw(twlist)
+        out = np.zeros((l, w, h))
+
+        for i in range(l):
+            for j in range(w):
+                for k in range(h):
+                    out[i, j, k] = np.mean(voxel[i, j, k, :])
+
+        return out
+
+    else:
+        raise ValueError('Can not work with dimension less than two and higher than four')
+
+
+def voxel_from_tw(twlist):
+    if len(twlist[0].data.shape) == 2:
+        l, w = twlist[0].data.shape
+        h = len(twlist)
+        voxel = np.zeros((l, w, h))
+
+        for i in range(h):
+            voxel[:, :, i] = twlist[i].data
+
+        return voxel
+
+    elif len(twlist[0].data.shape) == 3:
+        l, w, h = twlist[0].data.shape
+        d = len(twlist)
+        voxel = np.zeros((l, w, h, d))
+
+        for i in range(d):
+            voxel[0:twlist[i].data.shape[0],
+            0:twlist[i].data.shape[1],
+            0:twlist[i].data.shape[2], i] = twlist[i].data
+
+        return voxel
+
+    else:
+        raise ValueError('Can not work with dimension less than two and higher than four')
