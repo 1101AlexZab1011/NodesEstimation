@@ -61,6 +61,26 @@ data_types = (
     'nodes'
 )
 
+subject_data_types = (
+    'raw',
+    'bem',
+    'src',
+    'trans',
+    'fwd',
+    'eve',
+    'epo',
+    'cov',
+    'ave',
+    'inv',
+    'stc',
+    'coords',
+    'resec_mni',
+    'parc',
+    'labels',
+    'con',
+    'psd'
+)
+
 connectivity_computation_output_features = (
     'con',
     'freqs',

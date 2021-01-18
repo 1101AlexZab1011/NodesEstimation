@@ -4,8 +4,16 @@ import nibabel
 import numpy as np
 import nilearn.image as image
 from nodestimation.project.path import read_or_write
-from nodestimation.project.structures import connectivity_computation_output_features, ml_features
 from nodestimation.node_estimate import Node
+import nodestimation.project.path as path
+from nodestimation.mlearning.features import \
+    prepare_connectivity,\
+    prepare_psd
+from nodestimation.project.structures import\
+    connectivity_computation_output_features,\
+    ml_features,\
+    subject_data_types
+from nodestimation.project.subject import Subject
 
 
 def notchfir(raw, lfreq, nfreq, hfreq):
@@ -308,3 +316,92 @@ def nodes_creation(labels, connectivity, psd, nodes_coordinates, resec_coordinat
         )
 
     return nodes
+
+
+def pipeline(
+    crop_time=120,
+    snr=0.5,
+    epochs_tmin=-1,
+    epochs_tmax=1,
+    conductivity=(0.3,),
+    se_method="sLORETA",
+    con_method='plv',
+    rfreq=200,
+    nfreq=50,
+    lfreq=1,
+    hfreq=70,
+    delta=(0.5, 4),
+    theta=(4, 7),
+    alpha=(7, 14),
+    beta=(14, 30),
+):
+    lambda2 = 1.0 / snr ** 2
+    subjects_dir, subjects = path.found_subject_dir()
+    tree = path.build_resources_tree(subjects)
+    subjects = list()
+    for subject in tree:
+        raw = read_original_raw('./', _subject_tree=tree[subject])
+        fp_raw = first_processing(raw, lfreq, nfreq, hfreq, rfreq=rfreq, crop=crop_time, _subject_tree=tree[subject])
+        bem = bem_computation(subject, subjects_dir, conductivity, _subject_tree=tree[subject])
+        src = src_computation(subject, subjects_dir, bem, _subject_tree=tree[subject])
+        trans = read_original_trans('./', _subject_tree=tree[subject])
+        fwd = forward_computation(fp_raw, trans, src, bem, _subject_tree=tree[subject])
+        eve = events_computation(fp_raw, range(1, 59), [1 for i in range(58)], _subject_tree=tree[subject])
+        epo = epochs_computation(fp_raw, eve, epochs_tmin, +epochs_tmax, _subject_tree=tree[subject])
+        cov = noise_covariance_computation(epo, epochs_tmin, 0, _subject_tree=tree[subject])
+        ave = evokeds_computation(epo, _subject_tree=tree[subject])
+        inv = inverse_computation(epo.info, fwd[0], cov, _subject_tree=tree[
+            subject])  # choosed the first fwd. It should be fixed in future release
+        stc = source_estimation(epo, inv, lambda2, se_method, _subject_tree=tree[subject])
+        resec = read_original_resec('./', _subject_tree=tree[subject])
+        resec_mni = resection_area_computation(resec, _subject_tree=tree[subject])
+        labels_parc = mne.read_labels_from_annot(subject, parc='aparc', subjects_dir=subjects_dir)
+        labels_aseg = mne.get_volume_labels_from_src(src[0], subject, subjects_dir)  # choosed the first src. It should be fixed in future release
+        labels = labels_parc + labels_aseg  # where is label_aseg?
+        parc = parcellation_creating(subject, subjects_dir, labels, _subject_tree=tree[subject])
+        coords = coordinates_computation(subject, subjects_dir, labels, _subject_tree=tree[subject])
+        label_names = [label.name for label in labels]
+        label_ts = mne.extract_label_time_course(stc, labels, src[0], mode='mean_flip')
+        con = connectivity_computation(label_ts, fp_raw.info['sfreq'], [delta, theta, alpha, beta],
+                                       con_method, _subject_tree=tree[subject])
+        psd = power_spectral_destiny_computation(epo, inv, lambda2, [delta, theta, alpha, beta], se_method, 4, labels,
+                                                 _subject_tree=tree[subject])
+        nodes = nodes_creation(
+            labels,
+            prepare_connectivity(label_names, con),
+            prepare_psd(label_names, psd),
+            coords,
+            resec_mni,
+            _subject_tree=tree[subject]
+        )
+
+        subjects.append(
+            Subject(
+                subject,
+                {
+                    data_type: data
+                    for data_type, data
+                    in zip(subject_data_types, (
+                        raw,
+                        bem,
+                        src,
+                        trans,
+                        fwd,
+                        eve,
+                        epo,
+                        cov,
+                        ave,
+                        inv,
+                        stc,
+                        coords,
+                        resec_mni,
+                        parc,
+                        labels,
+                        con,
+                        psd
+                    ))
+                },
+                nodes
+            )
+        )
+    return subjects
