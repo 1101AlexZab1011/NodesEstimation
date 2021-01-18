@@ -1,7 +1,8 @@
 import re
 import os
 import itertools
-from nodestimation.project.actions import save, read, save_format
+from nodestimation.project.actions import save, read
+from nodestimation.project.structures import file_save_format, file_search_regexps, data_types
 
 
 def found_subject_dir(root='./'):
@@ -29,18 +30,17 @@ def get_size(start_path='.'):
     for dirpath, dirnames, filenames in os.walk(start_path):
         for f in filenames:
             fp = os.path.join(dirpath, f)
-            # skip if it is symbolic link
             if not os.path.islink(fp):
                 total_size += os.path.getsize(fp)
 
     return total_size
 
 
-def add_file_to_tree(regular, file, subject_tree, type, walk):
-    if isinstance(regular, list):
-        found = any(re.search(reg, file) for reg in regular)
+def add_file_to_tree(regexp, file, subject_tree, type, walk):
+    if isinstance(regexp, list):
+        found = any(re.search(reg, file) for reg in regexp)
     else:
-        found = re.search(regular, file)
+        found = re.search(regexp, file)
     if found:
         if type in subject_tree.keys():
             if isinstance(subject_tree[type], list):
@@ -67,19 +67,8 @@ def build_resources_tree(subject_paths):
             subdirs = itertools.chain(subdirs, [os.path.join(walk[0], subdir) for subdir in walk[1]])
             files = itertools.chain(files, [os.path.join(walk[0], sfile) for sfile in walk[2]])
             for file in walk[2]:
-                add_file_to_tree(r'.*raw.*\.fif', file, subject_tree, 'raw', walk)
-                add_file_to_tree([r'.*src.*\.fif', r'.*source_space.*\.fif'], file, subject_tree, 'src', walk)
-                add_file_to_tree(r'.*bem.*\.fif', file, subject_tree, 'bem', walk)
-                add_file_to_tree(r'.*trans.*\.fif', file, subject_tree, 'trans', walk)
-                add_file_to_tree(r'.*cov.*\.fif', file, subject_tree, 'cov', walk)
-                add_file_to_tree([r'.*fwd.*\.fif', r'.*forward.*\.fif'], file, subject_tree, 'fwd', walk)
-                add_file_to_tree([r'.*inv.*\.fif', r'.*inverse.*\.fif'], file, subject_tree, 'inv', walk)
-                add_file_to_tree([r'.*eve.*', r'.*events.*'], file, subject_tree, 'eve', walk)
-                add_file_to_tree(r'.*epo.*\.fif', file, subject_tree, 'epo', walk)
-                add_file_to_tree(r'.*ave.*\.fif', file, subject_tree, 'ave', walk)
-                add_file_to_tree([r'.*stc.*\.fif', r'.*stc.*\.pkl'], file, subject_tree, 'stc', walk)
-                add_file_to_tree(r'.*resec.*\.nii.*', file, subject_tree, 'resec', walk)
-                add_file_to_tree(r'.*resec.*\.pkl.*', file, subject_tree, 'resec-mni', walk)
+                for type in data_types:
+                    add_file_to_tree(file_search_regexps[type], file, subject_tree, type, walk)
 
         meta = {'subject': subject,
                 'path': path,
@@ -93,26 +82,20 @@ def build_resources_tree(subject_paths):
     return tree
 
 
-def is_target(file, target):
+def is_target(files, target):
     if isinstance(target, int):
         num = target
     else:
         num = 0
+    if not isinstance(files, list):
+        files = [files]
     try:
-        if isinstance(file, list):
-            out = {
-                'any': True,
-                'nepf': any(['node_estimation_pipeline_file' in f for f in file]),
-                'original': any(['node_estimation_pipeline_file' not in f for f in file]),
-                num: bool(file[num])
-            }[target]
-        else:
-            out = {
-                'any': True,
-                'nepf': 'node_estimation_pipeline_file' in file,
-                'original': 'node_estimation_pipeline_file' not in file,
-                num: False
-            }[target]
+        out = {
+            'any': True,
+            'nepf': any(['node_estimation_pipeline_file' in file for file in files]),
+            'original': any(['node_estimation_pipeline_file' not in file for file in files]),
+            num: num < len(files) or num == 0
+        }[target]
 
     except KeyError:
         raise ValueError('Unexpected target: {}'.format(target))
@@ -139,7 +122,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
             if type in tree \
                     and is_target(tree[type], target) \
                     and read_file:
-                print('{} {} file has been found. Trying to read...'
+                print('{} {} file has been found; trying to read...'
                       .format(target, type).capitalize())
                 try:
                     if isinstance(tree[type], list) \
@@ -183,6 +166,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                             and (
                             (target == 'nepf' and 'node_estimation_pipeline_file' in tree[type])
                             or (target == 'original' and 'node_estimation_pipeline_file' not in tree[type])
+                            or target == 'any'
                     ):
                         out = read[type](tree[type])
 
@@ -207,15 +191,16 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                                   .format(type, target, func.__name__))
                 out = func(*args, **kwargs)
                 if write_file:
-                    path_to_file = os.path.join(meta['path'],
-                                                meta['subject'] +
-                                                '_node_estimation_pipeline_file_' +
-                                                func.__name__ +
-                                                '_output_' +
-                                                type +
-                                                '.' +
-                                                save_format[type]
-                                                )
+                    path_to_file = os.path.join(
+                        meta['path'],
+                        meta['subject'] +
+                        '_node_estimation_pipeline_file_' +
+                        func.__name__ +
+                        '_output_' +
+                        type +
+                        '.' +
+                        file_save_format[type]
+                    )
                     save[type](path_to_file, out)
                     print('Done. Path to new file: {}'
                           .format(path_to_file))

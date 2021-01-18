@@ -1,55 +1,26 @@
 import numpy as np
 import scipy as sp
 import mne
-from nodestimation.parcellation import freesurf_dict
 from nodestimation.connectivity import pearson, phase_locking_value
 from nodestimation.timewindow import mean_across_tw
 
 
 class Node(object):
 
-    def __init__(self, data, strength=None, label=None, type=None, connections=None):
-        self.strength = strength
-        self.data = data
-        self.connections = connections
+    def __init__(self, label, features, nilearn_coordinates=None, type=None, ml_class=None):
+        self.features = features
 
         if not isinstance(label, mne.Label):
             raise ValueError('label must be an instance of mne.Label')
 
         self.label = label
+        self.nilearn_coordinates = nilearn_coordinates
+        self.features = features
         self.type = type
-
-        if label is not None:
-
-            try:
-                self.nilearn_coordinates = freesurf_dict[label.name]
-
-            except KeyError:
-                print("Unexpected label: " + label.name)
-                self.nilearn_coordinates = None
-
-        else:
-
-            self.nilearn_coordinates = None
-
-    def set_strength(self, strength):
-        self.strength = strength
-
-    def set_data(self, data):
-        self.data = data
-
-    def set_connections(self, connections):
-        self.connections = connections
+        self.ml_class = ml_class
 
     def set_label(self, label):
         self.label = label
-
-        try:
-            self.nilearn_coordinates = freesurf_dict[label.name]
-
-        except KeyError:
-            print("Unexpected label")
-            self.coordinates = None
 
     def set_coordinates(self, coordinates):
 
@@ -57,6 +28,9 @@ class Node(object):
             raise ValueError('Coordinates must have shape (n, 3) but given shape is {}'.format(coordinates.shape))
 
         self.nilearn_coordinates = coordinates
+
+    def set_features(self, features):
+        self.features = features
 
     def set_type(self, type, mood='rename'):
 
@@ -69,23 +43,8 @@ class Node(object):
         else:
             raise ValueError("Unknown action: ", mood)
 
-
-def central_node(*args):
-    sum_strength = 0
-    x_weight = 0
-    y_weight = 0
-    z_weight = 0
-
-    for node in args:
-        sum_strength += node.strength
-        x_weight += (node.strength * node.nilearn_coordinates[0])
-        y_weight += (node.strength * node.nilearn_coordinates[1])
-        y_weight += (node.strength * node.nilearn_coordinates[2])
-
-    out = Node(strength=sum_strength, type='computed_local_center')
-    out.set_coordinates(np.array([x_weight / sum_strength, y_weight / sum_strength, z_weight / sum_strength]))
-
-    return out
+    def classify_as(self, ml_class):
+        self.ml_class = ml_class
 
 
 def eigencentrality(matrix):
