@@ -21,8 +21,7 @@ save = {
     'parc': lambda path, parc: pickle.dump(parc, open(path, 'wb')),
     'con': lambda path, con: pickle.dump(con, open(path, 'wb')),
     'psd': lambda path, psd: pickle.dump(psd, open(path, 'wb')),
-    'nodes': lambda path, nodes: pickle.dump(nodes, open(path, 'wb')),
-    'subjects': lambda path, subjects: pickle.dump(subjects, open(path, 'wb'))
+    'nodes': lambda path, nodes: pickle.dump(nodes, open(path, 'wb'))
 }
 
 read = {
@@ -43,6 +42,5 @@ read = {
     'parc': lambda path: pickle.load(open(path, 'rb')),
     'con': lambda path: pickle.load(open(path, 'rb')),
     'psd': lambda path: pickle.load(open(path, 'rb')),
-    'nodes': lambda path: pickle.load(open(path, 'rb')),
-    'subjects': lambda path: pickle.load(open(path, 'rb'))
+    'nodes': lambda path: pickle.load(open(path, 'rb'))
 }

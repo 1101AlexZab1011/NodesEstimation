@@ -103,6 +103,11 @@ def is_target(files, target):
     return out
 
 
+def check_path(path):
+    if not os.path.isdir(path):
+        os.mkdir(path)
+
+
 def read_or_write(type, target='any', read_file=True, write_file=True):
     def decorator(func):
 
@@ -110,74 +115,116 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
 
             out = None
 
+            types_found = False
+
             if '_subject_tree' in kwargs:
                 meta, tree = kwargs['_subject_tree']
             else:
                 raise OSError('{}: subject_tree parameter is lost'.format(func.__name__))
+
+            if kwargs['_conditions'] is not None:
+                conditions = kwargs['_conditions']
+                check_path(
+                    os.path.join(meta['path'], conditions)
+                )
+            else:
+                conditions = ''
+
             if read_file:
                 print('Looking for {} {} file in files tree...'
                       .format(target, type))
             else:
                 print('Skipping a reading step')
+
             if type in tree \
                     and is_target(tree[type], target) \
                     and read_file:
                 print('{} {} file has been found; trying to read...'
                       .format(target, type).capitalize())
+                types_found = True
                 try:
                     if isinstance(tree[type], list) \
-                            and isinstance(target, int):
-                        print('{} 4 files found: {}. Only {}th file is going to be read'
-                              .format(len(tree[type]), tree[type], target))
-                        out = read[type](tree[type][target])
+                            and isinstance(target, int) \
+                            and any([conditions in sample for sample in tree[type]]):
+                        print('{} files found: {}. Only {}th file in the {} folder is going to be read'
+                              .format(len(tree[type]), tree[type], target, conditions))
+                        to_read = [sample for sample in tree[type] if conditions in sample]
+                        out = (read[type](to_read[target]), to_read[target])
+                        print('Successfully read')
                     elif isinstance(tree[type], list) \
-                            and target == 'any':
-                        print('{} files found: {}. All the files are going to be read'
-                              .format(len(tree[type]), tree[type]))
-                        out = [
+                            and target == 'any'\
+                            and any([conditions in sample for sample in tree[type]]):
+                        print('{} files found: {}. All the files in {} are going to be read'
+                              .format(len(tree[type]), tree[type], conditions))
+                        out = ([
                             read[type](tree[type][i])
                             for i in range(len(tree[type]))
-                        ]
-                        if len(out) == 1:
-                            out = out[0]
+                            if conditions in tree[type][i]
+                        ], [
+                            tree[type][i]
+                            for i in range(len(tree[type]))
+                            if conditions in tree[type][i]
+                        ])
+                        if len(out[0]) == 1:
+                            out = (out[0][0], out[1][0])
+                        print('Successfully read')
                     elif isinstance(tree[type], list) \
-                            and target == 'nepf':
-                        print('{} files found: {}. Only the native files are going to be read'
-                              .format(len(tree[type]), tree[type]))
-                        out = [
+                            and target == 'nepf' \
+                            and any([conditions in sample for sample in tree[type]]):
+                        print('{} files found: {}. Only the native files in {} are going to be read'
+                              .format(len(tree[type]), tree[type], conditions))
+                        out = ([
                             read[type](tree[type][i])
                             for i in range(len(tree[type]))
                             if 'node_estimation_pipeline_file' in tree[type][i]
-                        ]
-                        if len(out) == 1:
-                            out = out[0]
+                               and conditions in tree[type][i]
+                        ], [
+                            tree[type][i]
+                            for i in range(len(tree[type]))
+                            if conditions in tree[type][i]
+                        ])
+                        if len(out[0]) == 1:
+                            out = (out[0][0], out[1][0])
+                        print('Successfully read')
                     elif isinstance(tree[type], list) \
-                            and target == 'original':
+                            and target == 'original' \
+                            and any([conditions in sample for sample in tree[type]]):
                         print('{} files found: {}. Only the original files are going to be read'
                               .format(len(tree[type]), tree[type]))
-                        out = [
+                        out = ([
                             read[type](tree[type][i])
                             for i in range(len(tree[type]))
                             if 'node_estimation_pipeline_file' not in tree[type][i]
-                        ]
-                        if len(out) == 1:
-                            out = out[0]
+                               and conditions in tree[type][i]
+                        ], [
+                            tree[type][i]
+                            for i in range(len(tree[type]))
+                            if conditions in tree[type][i]
+                        ])
+                        if len(out[0]) == 1:
+                            out = (out[0][0], out[1][0])
+                        print('Successfully read')
                     elif not isinstance(tree[type], list) \
+                            and conditions in tree[type] \
                             and (
                             (target == 'nepf' and 'node_estimation_pipeline_file' in tree[type])
                             or (target == 'original' and 'node_estimation_pipeline_file' not in tree[type])
                             or target == 'any'
                     ):
-                        out = read[type](tree[type])
+                        out = (read[type](tree[type]), tree[type])
+                        print('Successfully read')
+                    else:
+                        print('All found files do not meet the specified conditions')
+                        types_found = False
 
                 except OSError:
                     print('Incorrect reading conditions: '
                           '\n\tReading type: {}, '
                           '\n\tReading target: {}, '
                           '\n\tReading function: {}'
-                          .format(type, target, func.__name__))
-                print('Successfully read')
-            else:
+                          '\n\t Reading conditions: {}'
+                          .format(type, target, func.__name__, kwargs['_conditions']))
+            if not types_found:
                 if read_file:
                     print('The {} {} file has not been found'
                           .format(target, type))
@@ -185,14 +232,16 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                     print('Creating a new {} {} file'.format(target, type))
                 else:
                     raise OSError('Incorrect writing conditions: '
-                                  '\n\tReading type: {}, '
-                                  '\n\tReading target: {}, '
-                                  '\n\tReading function: {}'
-                                  .format(type, target, func.__name__))
+                                  '\n\tWriting type: {}, '
+                                  '\n\tWriting target: {}, '
+                                  '\n\tWriting function: {}'
+                                  '\n\t Writing conditions: {}'
+                                  .format(type, target, func.__name__, kwargs['_conditions']))
                 out = func(*args, **kwargs)
                 if write_file:
                     path_to_file = os.path.join(
                         meta['path'],
+                        conditions,
                         meta['subject'] +
                         '_node_estimation_pipeline_file_' +
                         func.__name__ +
@@ -204,7 +253,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                     save[type](path_to_file, out)
                     print('Done. Path to new file: {}'
                           .format(path_to_file))
-                    del path_to_file
+                    out = (out, path_to_file)
 
             return out
 

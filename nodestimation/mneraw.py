@@ -1,6 +1,8 @@
 import os
+import re
 import mne
 import nibabel
+import hashlib
 import numpy as np
 import nilearn.image as image
 from nodestimation.project.path import read_or_write
@@ -11,7 +13,6 @@ from nodestimation.mlearning.features import \
     prepare_psd
 from nodestimation.project.structures import\
     connectivity_computation_output_features,\
-    ml_features,\
     subject_data_types
 from nodestimation.project.subject import Subject
 
@@ -40,7 +41,7 @@ def artifacts_clean(raw):
 
 
 @read_or_write('raw', target='original', write_file=False)
-def read_original_raw(path, _subject_tree=None):
+def read_original_raw(path, _subject_tree=None, _conditions=None):
     return mne.io.read_raw_fif(path)
 
 
@@ -51,7 +52,8 @@ def first_processing(raw, lfreq, nfreq, hfreq,
                      reconstruct=False,
                      meg=True,
                      eeg=True,
-                     _subject_tree=None):
+                     _subject_tree=None,
+                     _conditions=None):
     out = raw.copy()
 
     if crop:
@@ -76,13 +78,13 @@ def first_processing(raw, lfreq, nfreq, hfreq,
 
 
 @read_or_write('bem')
-def bem_computation(subject, subjects_dir, conductivity, _subject_tree=None):
+def bem_computation(subject, subjects_dir, conductivity, _subject_tree=None, _conditions=None):
     model = mne.make_bem_model(subject=subject, conductivity=conductivity, subjects_dir=subjects_dir)
     return mne.make_bem_solution(model)
 
 
 @read_or_write('src')
-def src_computation(subject, subjects_dir, bem, _subject_tree=None):
+def src_computation(subject, subjects_dir, bem, _subject_tree=None, _conditions=None):
     labels_vol = ['Left-Amygdala',
                   'Left-Thalamus-Proper',
                   'Left-Cerebellum-Cortex',
@@ -103,18 +105,18 @@ def src_computation(subject, subjects_dir, bem, _subject_tree=None):
 
 
 @read_or_write('trans', target='original', write_file=False)
-def read_original_trans(path, _subject_tree=None):
+def read_original_trans(path, _subject_tree=None, _conditions=None):
     return mne.read_trans(path)
 
 
 @read_or_write('fwd')
-def forward_computation(raw, trans, src, bem, _subject_tree=None):
+def forward_computation(raw, trans, src, bem, _subject_tree=None, _conditions=None):
     return mne.make_forward_solution(raw, trans=trans, src=src, bem=bem, meg=True, eeg=False,
                                      mindist=5.0, n_jobs=1, verbose=True)
 
 
 @read_or_write('eve')
-def events_computation(raw, time_points, ids, _subject_tree=None):
+def events_computation(raw, time_points, ids, _subject_tree=None, _conditions=None):
     return np.array([[
         raw.first_samp + raw.time_as_index(time_point)[0],
         0,
@@ -124,27 +126,27 @@ def events_computation(raw, time_points, ids, _subject_tree=None):
 
 
 @read_or_write('epo')
-def epochs_computation(raw, events, tmin, tmax, _subject_tree=None):
+def epochs_computation(raw, events, tmin, tmax, _subject_tree=None, _conditions=None):
     return mne.Epochs(raw, events, tmin=tmin, tmax=tmax)
 
 
 @read_or_write('cov')
-def noise_covariance_computation(epochs, tmin, tmax, _subject_tree=None):
+def noise_covariance_computation(epochs, tmin, tmax, _subject_tree=None, _conditions=None):
     return mne.compute_covariance(epochs, tmin=tmin, tmax=tmax, method='empirical')
 
 
 @read_or_write('ave')
-def evokeds_computation(epochs, _subject_tree=None):
+def evokeds_computation(epochs, _subject_tree=None, _conditions=None):
     return epochs.average()
 
 
 @read_or_write('inv')
-def inverse_computation(info, fwd, cov, _subject_tree=None):
+def inverse_computation(info, fwd, cov, _subject_tree=None, _conditions=None):
     return mne.minimum_norm.make_inverse_operator(info, fwd, cov, depth=None, fixed=False)
 
 
 @read_or_write('stc')
-def source_estimation(epochs, inv, lambda2, method, _subject_tree=None):
+def source_estimation(epochs, inv, lambda2, method, _subject_tree=None, _conditions=None):
     return mne.minimum_norm.apply_inverse_epochs(epochs,
                                                  inv,
                                                  lambda2,
@@ -154,7 +156,7 @@ def source_estimation(epochs, inv, lambda2, method, _subject_tree=None):
 
 
 @read_or_write('coords')
-def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None):
+def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None, _conditions=None):
     vertexes = [mne.vertex_to_mni(
         label.vertices,
         hemis=0 if label.hemi == 'lh' else 1,
@@ -164,12 +166,12 @@ def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None):
 
 
 @read_or_write('resec', target='original', write_file=False)
-def read_original_resec(path, _subject_tree=None):
+def read_original_resec(path, _subject_tree=None, _conditions=None):
     return nibabel.load(path)
 
 
 @read_or_write('resec_mni')
-def resection_area_computation(img, _subject_tree=None):
+def resection_area_computation(img, _subject_tree=None, _conditions=None):
     res = np.array(img.get_data().tolist())
     img_coordinates = list()
     for i in range(res.shape[0]):
@@ -195,7 +197,7 @@ def resection_area_computation(img, _subject_tree=None):
 
 
 @read_or_write('parc')
-def parcellation_creating(subject, subjects_dir, labels, _subject_tree=None):
+def parcellation_creating(subject, subjects_dir, labels, _subject_tree=None, _conditions=None):
     vertexes = [
         mne.vertex_to_mni(
             label.vertices,
@@ -210,7 +212,7 @@ def parcellation_creating(subject, subjects_dir, labels, _subject_tree=None):
 
 
 @read_or_write('con')
-def connectivity_computation(label_ts, sfreq, freq_bands, methods, _subject_tree=None):
+def connectivity_computation(label_ts, sfreq, freq_bands, methods, _subject_tree=None, _conditions=None):
     if not isinstance(methods, list):
         methods = [methods]
     if not isinstance(freq_bands, list):
@@ -244,7 +246,15 @@ def connectivity_computation(label_ts, sfreq, freq_bands, methods, _subject_tree
 
 
 @read_or_write('psd')
-def power_spectral_destiny_computation(epochs, inv, lambda2, freq_bands, method, bandwidth, labels, _subject_tree=None):
+def power_spectral_destiny_computation(epochs,
+                                       inv,
+                                       lambda2,
+                                       freq_bands,
+                                       method,
+                                       bandwidth,
+                                       labels,
+                                       _subject_tree=None,
+                                       _conditions=None):
 
     def compute_psd_avg(epochs, inv, lambda2, method, fmin, fmax, bandwidth, label):
         psd_stc = mne.minimum_norm.compute_source_psd_epochs(epochs, inv,
@@ -282,7 +292,19 @@ def power_spectral_destiny_computation(epochs, inv, lambda2, freq_bands, method,
 
 
 @read_or_write('nodes')
-def nodes_creation(labels, connectivity, psd, nodes_coordinates, resec_coordinates, _subject_tree=None):
+def nodes_creation(labels,
+                   connectivity,
+                   con_methods,
+                   psd,
+                   nodes_coordinates,
+                   resec_coordinates,
+                   _subject_tree=None,
+                   _conditions=None):
+
+    if not isinstance(con_methods, list):
+        con_methods = [con_methods]
+
+    ml_features = con_methods + ['psd']
 
     def is_resected(node_coordinates, resec_coordinates):
 
@@ -318,90 +340,4 @@ def nodes_creation(labels, connectivity, psd, nodes_coordinates, resec_coordinat
     return nodes
 
 
-def pipeline(
-    crop_time=120,
-    snr=0.5,
-    epochs_tmin=-1,
-    epochs_tmax=1,
-    conductivity=(0.3,),
-    se_method="sLORETA",
-    con_method='plv',
-    rfreq=200,
-    nfreq=50,
-    lfreq=1,
-    hfreq=70,
-    delta=(0.5, 4),
-    theta=(4, 7),
-    alpha=(7, 14),
-    beta=(14, 30),
-):
-    lambda2 = 1.0 / snr ** 2
-    subjects_dir, subjects = path.found_subject_dir()
-    tree = path.build_resources_tree(subjects)
-    subjects = list()
-    for subject in tree:
-        raw = read_original_raw('./', _subject_tree=tree[subject])
-        fp_raw = first_processing(raw, lfreq, nfreq, hfreq, rfreq=rfreq, crop=crop_time, _subject_tree=tree[subject])
-        bem = bem_computation(subject, subjects_dir, conductivity, _subject_tree=tree[subject])
-        src = src_computation(subject, subjects_dir, bem, _subject_tree=tree[subject])
-        trans = read_original_trans('./', _subject_tree=tree[subject])
-        fwd = forward_computation(fp_raw, trans, src, bem, _subject_tree=tree[subject])
-        eve = events_computation(fp_raw, range(1, 59), [1 for i in range(58)], _subject_tree=tree[subject])
-        epo = epochs_computation(fp_raw, eve, epochs_tmin, +epochs_tmax, _subject_tree=tree[subject])
-        cov = noise_covariance_computation(epo, epochs_tmin, 0, _subject_tree=tree[subject])
-        ave = evokeds_computation(epo, _subject_tree=tree[subject])
-        inv = inverse_computation(epo.info, fwd[0], cov, _subject_tree=tree[
-            subject])  # choosed the first fwd. It should be fixed in future release
-        stc = source_estimation(epo, inv, lambda2, se_method, _subject_tree=tree[subject])
-        resec = read_original_resec('./', _subject_tree=tree[subject])
-        resec_mni = resection_area_computation(resec, _subject_tree=tree[subject])
-        labels_parc = mne.read_labels_from_annot(subject, parc='aparc', subjects_dir=subjects_dir)
-        labels_aseg = mne.get_volume_labels_from_src(src[0], subject, subjects_dir)  # choosed the first src. It should be fixed in future release
-        labels = labels_parc + labels_aseg  # where is label_aseg?
-        parc = parcellation_creating(subject, subjects_dir, labels, _subject_tree=tree[subject])
-        coords = coordinates_computation(subject, subjects_dir, labels, _subject_tree=tree[subject])
-        label_names = [label.name for label in labels]
-        label_ts = mne.extract_label_time_course(stc, labels, src[0], mode='mean_flip')
-        con = connectivity_computation(label_ts, fp_raw.info['sfreq'], [delta, theta, alpha, beta],
-                                       con_method, _subject_tree=tree[subject])
-        psd = power_spectral_destiny_computation(epo, inv, lambda2, [delta, theta, alpha, beta], se_method, 4, labels,
-                                                 _subject_tree=tree[subject])
-        nodes = nodes_creation(
-            labels,
-            prepare_connectivity(label_names, con),
-            prepare_psd(label_names, psd),
-            coords,
-            resec_mni,
-            _subject_tree=tree[subject]
-        )
 
-        subjects.append(
-            Subject(
-                subject,
-                {
-                    data_type: data
-                    for data_type, data
-                    in zip(subject_data_types, (
-                        raw,
-                        bem,
-                        src,
-                        trans,
-                        fwd,
-                        eve,
-                        epo,
-                        cov,
-                        ave,
-                        inv,
-                        stc,
-                        coords,
-                        resec_mni,
-                        parc,
-                        labels,
-                        con,
-                        psd
-                    ))
-                },
-                nodes
-            )
-        )
-    return subjects

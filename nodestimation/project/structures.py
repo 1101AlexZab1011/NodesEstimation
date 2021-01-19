@@ -63,6 +63,7 @@ data_types = (
 
 subject_data_types = (
     'raw',
+    'raw_fp',
     'bem',
     'src',
     'trans',
@@ -73,12 +74,13 @@ subject_data_types = (
     'ave',
     'inv',
     'stc',
-    'coords',
+    'resec',
     'resec_mni',
     'parc',
-    'labels',
+    'coords',
     'con',
-    'psd'
+    'psd',
+    'nodes'
 )
 
 connectivity_computation_output_features = (
@@ -87,13 +89,4 @@ connectivity_computation_output_features = (
     'times',
     'n_epochs',
     'n_tapers'
-)
-
-ml_features = (
-    'coh',
-    'imcoh',
-    'plv',
-    'ppc',
-    'pli',
-    'psd'
 )
