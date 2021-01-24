@@ -180,7 +180,7 @@ def resection_area_computation(img, _subject_tree=None, _conditions=None):
                 if res[i, j, k] != 0:
                     img_coordinates.append(np.array([i, j, k]))
     img_coordinates = np.array(img_coordinates)
-    mni_coordinates = []
+    mni_coordinates = list()
     for coordinate in img_coordinates:
         mni_coordinates.append(
             np.array(
@@ -192,7 +192,7 @@ def resection_area_computation(img, _subject_tree=None, _conditions=None):
                 )
             )
         )
-
+    print(np.array(mni_coordinates).shape)
     return np.array(mni_coordinates)
 
 
@@ -306,15 +306,13 @@ def nodes_creation(labels,
 
     ml_features = con_methods + ['psd']
 
-    def is_resected(node_coordinates, resec_coordinates):
-
-        for resec_coordinate in resec_coordinates:
+    def is_resected(node_coordinates, resec_coords):
+        for resec_coordinate in resec_coords:
             diff = node_coordinates - resec_coordinate
             dist = np.sqrt(diff[0]**2 + diff[1]**2 + diff[2]**2)
             if dist <= 1:
                 return True
-            else:
-                return False
+        return False
 
     nodes = list()
     freq_bands = connectivity.keys()
@@ -336,6 +334,9 @@ def nodes_creation(labels,
                 'resected' if is_resected(nodes_coordinates[label.name], resec_coordinates) else 'spared'
             )
         )
+
+    if not any([node.type == 'resected' for node in nodes]):
+        raise ValueError('Resected nodes not found')
 
     return nodes
 

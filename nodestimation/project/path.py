@@ -5,7 +5,7 @@ from nodestimation.project.actions import save, read
 from nodestimation.project.structures import file_save_format, file_search_regexps, data_types
 
 
-def found_subject_dir(root='./'):
+def find_subject_dir(root='./'):
     subjects_dir = None
     subjects_found = False
     for walk in os.walk(os.path.join(root, 'Source')):

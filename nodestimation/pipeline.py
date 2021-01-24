@@ -70,7 +70,7 @@ def pipeline(
         freq_diaps
     )
     lambda2 = 1.0 / snr ** 2
-    subjects_dir, subjects = path.found_subject_dir()
+    subjects_dir, subjects = path.find_subject_dir()
     subjects_file = os.path.join(subjects_dir, 'subjects_information_for_' + conditions_code + '.pkl')
     if os.path.exists(subjects_file):
         print('All computation has been already done, loading of the existing file with the solution...')
