@@ -1,20 +1,10 @@
 import os
-import re
 import mne
 import nibabel
-import hashlib
 import numpy as np
 import nilearn.image as image
 from nodestimation.project.path import read_or_write
 from nodestimation.node_estimate import Node
-import nodestimation.project.path as path
-from nodestimation.mlearning.features import \
-    prepare_connectivity,\
-    prepare_psd
-from nodestimation.project.structures import\
-    connectivity_computation_output_features,\
-    subject_data_types
-from nodestimation.project.subject import Subject
 
 
 def notchfir(raw, lfreq, nfreq, hfreq):
@@ -161,7 +151,7 @@ def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None, _
         label.vertices,
         hemis=0 if label.hemi == 'lh' else 1,
         subject=subject, subjects_dir=subjects_dir
-    )for label in labels]
+    ) for label in labels]
     return {label.name: np.mean(vertex, axis=0) for label, vertex in zip(labels, vertexes)}
 
 
@@ -211,113 +201,140 @@ def parcellation_creating(subject, subjects_dir, labels, _subject_tree=None, _co
     }
 
 
-@read_or_write('con')
-def connectivity_computation(label_ts, sfreq, freq_bands, methods, _subject_tree=None, _conditions=None):
+@read_or_write('feat')
+def features_computation(epochs,
+                         inv,
+                         lambda2,
+                         bandwidth,
+                         labels,
+                         label_ts,
+                         sfreq,
+                         freq_bands,
+                         methods,
+                         se_method,
+                         _subject_tree=None,
+                         _conditions=None):
     if not isinstance(methods, list):
         methods = [methods]
-    if not isinstance(freq_bands, list):
-        freq_bands = [freq_bands]
-    if any([not isinstance(freq_band, tuple) for freq_band in freq_bands]) \
-            or any([len(freq_band) % 2 != 0 for freq_band in freq_bands]):
-        raise ValueError('freq_bands must contain a list of frequency bands with [minimum_frequency, maximum_frequency]'
-                         ' or list of lists with frequency bands, however it contains: {}'.format(freq_bands))
+
+    def spectral_connectivity_computation(input):
+        label_ts, sfreq, fmin, fmax, method = input
+
+        return mne.connectivity.spectral_connectivity(
+            label_ts,
+            method=method,
+            mode='multitaper',
+            sfreq=sfreq,
+            fmin=fmin,
+            fmax=fmax,
+            faverage=True,
+            mt_adaptive=True,
+            n_jobs=1
+        )[0]
+
+    def power_spectral_destiny_computation(input):
+        epochs, inv, lambda2, fmin, fmax, method, bandwidth, labels = input
+
+        def compute_psd_avg(epochs, inv, lambda2, method, fmin, fmax, bandwidth, label):
+            psd_stc = mne.minimum_norm.compute_source_psd_epochs(epochs, inv,
+                                                                 lambda2=lambda2,
+                                                                 method=method, fmin=fmin, fmax=fmax,
+                                                                 bandwidth=bandwidth, label=label)
+            psd_avg = 0.
+            for i, stc in enumerate(psd_stc):
+                psd_avg += stc.data
+            psd_avg /= len(epochs)
+            return psd_avg
+
+        return np.array([
+            compute_psd_avg(epochs, inv, lambda2, method, fmin, fmax, bandwidth, label)
+            for label in labels
+        ])
+
+    def switch_params(epochs,
+                      inv,
+                      lambda2,
+                      bandwidth,
+                      labels,
+                      label_ts,
+                      sfreq,
+                      fmin,
+                      fmax,
+                      method,
+                      se_method):
+
+        spectral_connectivity_params = (label_ts, sfreq, fmin, fmax, method)
+        psd_params = (epochs, inv, lambda2, fmin, fmax, se_method, bandwidth, labels)
+
+        return {
+            'psd': psd_params,
+            'coh': spectral_connectivity_params,
+            'cohy': spectral_connectivity_params,
+            'imcoh': spectral_connectivity_params,
+            'plv': spectral_connectivity_params,
+            'ciplv': spectral_connectivity_params,
+            'ppc': spectral_connectivity_params,
+            'pli': spectral_connectivity_params,
+            'pli2_unbiased': spectral_connectivity_params,
+            'wpli': spectral_connectivity_params,
+            'wpli2_debiased': spectral_connectivity_params,
+            'envelope': label_ts,
+        }[method]
 
     return {
         str(fmin) + '-' + str(fmax) + 'Hz': {
             method: {
-                feature: result
-                for feature, result in zip(
-                    connectivity_computation_output_features,
-                    mne.connectivity.spectral_connectivity(
-                        label_ts,
-                        method=method,
-                        mode='multitaper',
-                        sfreq=sfreq,
-                        fmin=fmin,
-                        fmax=fmax,
-                        faverage=True,
-                        mt_adaptive=True,
-                        n_jobs=1
-                    )
+                'psd': power_spectral_destiny_computation,
+                'coh': spectral_connectivity_computation,
+                'cohy': spectral_connectivity_computation,
+                'imcoh': spectral_connectivity_computation,
+                'plv': spectral_connectivity_computation,
+                'ciplv': spectral_connectivity_computation,
+                'ppc': spectral_connectivity_computation,
+                'pli': spectral_connectivity_computation,
+                'pli2_unbiased': spectral_connectivity_computation,
+                'wpli': spectral_connectivity_computation,
+                'wpli2_debiased': spectral_connectivity_computation,
+                'envelope': mne.connectivity.envelope_correlation,
+            }[method](
+                switch_params(
+                    epochs,
+                    inv,
+                    lambda2,
+                    bandwidth,
+                    labels,
+                    label_ts,
+                    sfreq,
+                    fmin,
+                    fmax,
+                    method,
+                    se_method
                 )
-            } for method in methods
-        } for fmin, fmax in freq_bands
-    }
-
-
-@read_or_write('psd')
-def power_spectral_destiny_computation(epochs,
-                                       inv,
-                                       lambda2,
-                                       freq_bands,
-                                       method,
-                                       bandwidth,
-                                       labels,
-                                       _subject_tree=None,
-                                       _conditions=None):
-
-    def compute_psd_avg(epochs, inv, lambda2, method, fmin, fmax, bandwidth, label):
-        psd_stc = mne.minimum_norm.compute_source_psd_epochs(epochs, inv,
-                                                   lambda2=lambda2,
-                                                   method=method, fmin=fmin, fmax=fmax,
-                                                   bandwidth=bandwidth, label=label)
-        psd_avg = 0.
-        freqs = None
-        for i, stc in enumerate(psd_stc):
-            if i == 0:
-                freqs = stc.times
-            psd_avg += stc.data
-        psd_avg /= len(epochs)
-        return psd_avg, freqs
-
-
-    if not isinstance(freq_bands, list):
-        freq_bands = [freq_bands]
-    if any([not isinstance(freq_band, tuple) for freq_band in freq_bands]) \
-            or any([len(freq_band) % 2 != 0 for freq_band in freq_bands]):
-        raise ValueError('freq_bands must contain a list of frequency bands with [minimum_frequency, maximum_frequency]'
-                         ' or list of lists with frequency bands, however it contains: {}'.format(freq_bands))
-
-    return {
-        str(fmin) + '-' + str(fmax) + 'Hz': {
-            label.name: {
-                feature: result
-                for feature, result in zip(
-                    ('psd', 'freq'),
-                    compute_psd_avg(epochs, inv, lambda2, method, fmin, fmax, bandwidth, label)
-                )
-            } for label in labels
+            )
+            for method in methods
         } for fmin, fmax in freq_bands
     }
 
 
 @read_or_write('nodes')
 def nodes_creation(labels,
-                   connectivity,
-                   con_methods,
-                   psd,
+                   methods,
+                   features,
                    nodes_coordinates,
                    resec_coordinates,
                    _subject_tree=None,
                    _conditions=None):
 
-    if not isinstance(con_methods, list):
-        con_methods = [con_methods]
-
-    ml_features = con_methods + ['psd']
-
-    def is_resected(node_coordinates, resec_coords):
-        for resec_coordinate in resec_coords:
+    def is_resected(node_coordinates, resec_coordinates):
+        for resec_coordinate in resec_coordinates:
             diff = node_coordinates - resec_coordinate
-            dist = np.sqrt(diff[0]**2 + diff[1]**2 + diff[2]**2)
+            dist = np.sqrt(diff[0] ** 2 + diff[1] ** 2 + diff[2] ** 2)
             if dist <= 1:
                 return True
         return False
 
     nodes = list()
-    freq_bands = connectivity.keys()
-    if psd.keys() != freq_bands:
-        raise ValueError("Connectivity measures and power spectral destiny are computed in different frequency bands")
+    freq_bands = features.keys()
 
     for label in labels:
         nodes.append(
@@ -325,9 +342,8 @@ def nodes_creation(labels,
                 label,
                 {
                     freq_band: {
-                        feature: psd[freq_band][label.name] if feature == 'psd'
-                        else connectivity[freq_band][feature][label.name]
-                        for feature in ml_features
+                        method: features[freq_band][method][label.name]
+                        for method in methods
                     } for freq_band in freq_bands
                 },
                 nodes_coordinates[label.name],
@@ -339,6 +355,3 @@ def nodes_creation(labels,
         raise ValueError('Resected nodes not found')
 
     return nodes
-
-
-

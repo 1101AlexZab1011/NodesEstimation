@@ -6,8 +6,7 @@ import nodestimation.project.path as path
 from nodestimation.project.subject import Subject
 from nodestimation.project.structures import subject_data_types
 from nodestimation.mlearning.features import \
-    prepare_connectivity, \
-    prepare_psd
+    prepare_features
 from nodestimation.mneraw import \
     read_original_raw, \
     first_processing, \
@@ -25,8 +24,7 @@ from nodestimation.mneraw import \
     parcellation_creating, \
     read_original_resec, \
     resection_area_computation, \
-    connectivity_computation, \
-    power_spectral_destiny_computation, \
+    features_computation, \
     nodes_creation
 
 write_subjects = lambda path, subjects: pickle.dump(subjects, open(path, 'wb'))
@@ -48,13 +46,23 @@ def pipeline(
         epochs_tmax=1,
         conductivity=(0.3,),
         se_method="sLORETA",
-        con_method='plv',
+        methods='plv',
         rfreq=200,
         nfreq=50,
         lfreq=1,
         hfreq=70,
-        freq_diaps=(0.5, 4)
+        freq_bands=(0.5, 4)
 ):
+
+    if not isinstance(methods, list):
+        methods = [methods]
+    if not isinstance(freq_bands, list):
+        freq_bands = [freq_bands]
+    if any([not isinstance(freq_band, tuple) for freq_band in freq_bands]) \
+            or any([len(freq_band) % 2 != 0 for freq_band in freq_bands]):
+        raise ValueError('freq_bands must contain a list of frequency bands with [minimum_frequency, maximum_frequency]'
+                         ' or list of lists with frequency bands, however it contains: {}'.format(freq_bands))
+
     conditions_code = conditions_unique_code(
         crop_time,
         snr,
@@ -62,12 +70,12 @@ def pipeline(
         epochs_tmax,
         conductivity,
         se_method,
-        con_method,
+        methods,
         rfreq,
         nfreq,
         lfreq,
         hfreq,
-        freq_diaps
+        freq_bands
     )
     lambda2 = 1.0 / snr ** 2
     subjects_dir, subjects = path.find_subject_dir()
@@ -142,26 +150,25 @@ def pipeline(
                                                           _conditions=conditions_code)
             label_names = [label.name for label in labels]
             label_ts = mne.extract_label_time_course(stc, labels, src[0], mode='mean_flip')
-            con, con_path = connectivity_computation(label_ts,
-                                                     fp_raw.info['sfreq'],
-                                                     freq_diaps,
-                                                     con_method,
-                                                     _subject_tree=tree[subject],
-                                                     _conditions=conditions_code)
-            psd, psd_path = power_spectral_destiny_computation(epo,
-                                                               inv,
-                                                               lambda2,
-                                                               freq_diaps,
-                                                               se_method,
-                                                               4,
-                                                               labels,
-                                                               _subject_tree=tree[subject],
-                                                               _conditions=conditions_code)
+            feat, feat_path = features_computation(
+                epo,
+                inv,
+                lambda2,
+                4,
+                labels,
+                label_ts,
+                fp_raw.info['sfreq'],
+                freq_bands,
+                methods,
+                se_method,
+                _subject_tree=tree[subject],
+                _conditions=conditions_code
+            )
+            print(prepare_features(label_names, feat))
             nodes, nodes_path = nodes_creation(
                 labels,
-                prepare_connectivity(label_names, con),
-                con_method,
-                prepare_psd(label_names, psd),
+                methods,
+                prepare_features(label_names, feat),
                 coords,
                 resec_mni,
                 _subject_tree=tree[subject],
@@ -190,8 +197,7 @@ def pipeline(
                             resec_mni_path,
                             parc_path,
                             coords_path,
-                            con_path,
-                            psd_path,
+                            feat_path,
                             nodes_path
                         ])
                     },

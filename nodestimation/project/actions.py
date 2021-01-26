@@ -2,7 +2,6 @@ import mne
 import nibabel
 import pickle
 
-
 save = {
     'raw': lambda path, raw: raw.save(path),
     'bem': mne.write_bem_solution,
@@ -19,8 +18,7 @@ save = {
     'resec': nibabel.save,
     'resec_mni': lambda path, resec: pickle.dump(resec, open(path, 'wb')),
     'parc': lambda path, parc: pickle.dump(parc, open(path, 'wb')),
-    'con': lambda path, con: pickle.dump(con, open(path, 'wb')),
-    'psd': lambda path, psd: pickle.dump(psd, open(path, 'wb')),
+    'feat': lambda path, feat: pickle.dump(feat, open(path, 'wb')),
     'nodes': lambda path, nodes: pickle.dump(nodes, open(path, 'wb'))
 }
 
@@ -40,7 +38,6 @@ read = {
     'resec': nibabel.load,
     'resec_mni': lambda path: pickle.load(open(path, 'rb')),
     'parc': lambda path: pickle.load(open(path, 'rb')),
-    'con': lambda path: pickle.load(open(path, 'rb')),
-    'psd': lambda path: pickle.load(open(path, 'rb')),
+    'feat': lambda path: pickle.load(open(path, 'rb')),
     'nodes': lambda path: pickle.load(open(path, 'rb'))
 }

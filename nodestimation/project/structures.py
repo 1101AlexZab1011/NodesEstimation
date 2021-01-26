@@ -14,8 +14,7 @@ file_save_format = {
     'resec': 'nii',
     'resec_mni': 'pkl',
     'parc': 'pkl',
-    'con': 'pkl',
-    'psd': 'pkl',
+    'feat': 'pkl',
     'nodes': 'pkl'
 }
 
@@ -35,8 +34,7 @@ file_search_regexps = {
     'resec': r'.*resec.*\.nii.*',
     'resec_mni': r'.*resec.*\.pkl.*',
     'parc': r'.*parc.*\.pkl.*',
-    'con': r'.*con.*\.pkl.*',
-    'psd': [r'.*psd.*\.pkl.*', r'.*power_spectral_destiny.*\.pkl', r'.*power-spectral-destiny.*\.pkl'],
+    'feat': r'.*feat.*\.pkl.*',
     'nodes': r'.*nodes.*\.pkl.*'
 }
 
@@ -56,8 +54,7 @@ data_types = (
     'resec',
     'resec_mni',
     'parc',
-    'con',
-    'psd',
+    'feat',
     'nodes'
 )
 
@@ -78,15 +75,6 @@ subject_data_types = (
     'resec_mni',
     'parc',
     'coords',
-    'con',
-    'psd',
+    'feat',
     'nodes'
-)
-
-connectivity_computation_output_features = (
-    'con',
-    'freqs',
-    'times',
-    'n_epochs',
-    'n_tapers'
 )
