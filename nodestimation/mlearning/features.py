@@ -1,6 +1,8 @@
 import numpy as np
+import pandas as pd
 from scipy import interpolate
 from nodestimation.node_estimate import eigencentrality
+from nodestimation.project.path import read_or_write
 
 
 def prepare_features(label_names, features):
@@ -64,34 +66,37 @@ def prepare_features(label_names, features):
     return out
 
 
-def prepare_data(subjects):
-    subjects_copy = subjects
-    for subject in subjects_copy:
-        for node in subject.nodes:
-            for freq_band in node.features:
-                node.features[freq_band]['psd'] = iterp_for_psd(node.features[freq_band]['psd'], len(subject.nodes))
+@read_or_write('dataset')
+def prepare_data(nodes, _subject_tree=None, _conditions=None):
 
-    subjects_data = {
-        subject.name: np.array([[
-            node.label.name,
-            np.array([
-                np.array([
-                    node.features[freq_band][method] for method in node.features[freq_band]
-                ]) for freq_band in node.features
-            ]),
-            node.type
-        ] for node in subject.nodes
-        ]) for subject in subjects_copy
-    }
+    columns = list()
+    keys = list()
+    values = list()
+    for freq_band in nodes[0].features:
+        for method in nodes[0].features[freq_band]:
+            if freq_band != 'time-domain':
+                columns.append(freq_band + '_' + method)
+            else:
+                columns.append(method)
 
-    del subjects_copy
-    return {
-        subject.name: {
-            'labels': subjects_data[subject.name][:, 0],
-            'X': subjects_data[subject.name][:, 1],
-            'Y': [data == 'resected' for data in subjects_data[subject.name][:, 2]],
-        } for subject in subjects
-    }
+    columns.append('resected')
+
+    for node in nodes:
+        keys.append(node.label.name)
+
+    for node in nodes:
+        row = list()
+        for freq_band in node.features:
+            for method in node.features[freq_band]:
+                row.append(
+                    node.features[freq_band][method]
+                )
+        row.append(node.type == 'resected')
+        values.append(row)
+
+    data = dict(zip(keys, values))
+
+    return pd.DataFrame.from_dict(data, orient='index', columns=columns)
 
 
 def iterp_for_psd(psd, n_samples):

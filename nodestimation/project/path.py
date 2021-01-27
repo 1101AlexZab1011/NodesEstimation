@@ -152,19 +152,19 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                         out = (read[type](to_read[target]), to_read[target])
                         print('Successfully read')
                     elif isinstance(tree[type], list) \
-                            and target == 'any'\
+                            and target == 'any' \
                             and any([conditions in sample for sample in tree[type]]):
                         print('{} files found: {}. All the files in {} are going to be read'
                               .format(len(tree[type]), tree[type], conditions))
                         out = ([
-                            read[type](tree[type][i])
-                            for i in range(len(tree[type]))
-                            if conditions in tree[type][i]
-                        ], [
-                            tree[type][i]
-                            for i in range(len(tree[type]))
-                            if conditions in tree[type][i]
-                        ])
+                                   read[type](tree[type][i])
+                                   for i in range(len(tree[type]))
+                                   if conditions in tree[type][i]
+                               ], [
+                                   tree[type][i]
+                                   for i in range(len(tree[type]))
+                                   if conditions in tree[type][i]
+                               ])
                         if len(out[0]) == 1:
                             out = (out[0][0], out[1][0])
                         print('Successfully read')
@@ -174,15 +174,15 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                         print('{} files found: {}. Only the native files in {} are going to be read'
                               .format(len(tree[type]), tree[type], conditions))
                         out = ([
-                            read[type](tree[type][i])
-                            for i in range(len(tree[type]))
-                            if 'node_estimation_pipeline_file' in tree[type][i]
-                               and conditions in tree[type][i]
-                        ], [
-                            tree[type][i]
-                            for i in range(len(tree[type]))
-                            if conditions in tree[type][i]
-                        ])
+                                   read[type](tree[type][i])
+                                   for i in range(len(tree[type]))
+                                   if 'node_estimation_pipeline_file' in tree[type][i]
+                                      and conditions in tree[type][i]
+                               ], [
+                                   tree[type][i]
+                                   for i in range(len(tree[type]))
+                                   if conditions in tree[type][i]
+                               ])
                         if len(out[0]) == 1:
                             out = (out[0][0], out[1][0])
                         print('Successfully read')
@@ -192,15 +192,15 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                         print('{} files found: {}. Only the original files are going to be read'
                               .format(len(tree[type]), tree[type]))
                         out = ([
-                            read[type](tree[type][i])
-                            for i in range(len(tree[type]))
-                            if 'node_estimation_pipeline_file' not in tree[type][i]
-                               and conditions in tree[type][i]
-                        ], [
-                            tree[type][i]
-                            for i in range(len(tree[type]))
-                            if conditions in tree[type][i]
-                        ])
+                                   read[type](tree[type][i])
+                                   for i in range(len(tree[type]))
+                                   if 'node_estimation_pipeline_file' not in tree[type][i]
+                                      and conditions in tree[type][i]
+                               ], [
+                                   tree[type][i]
+                                   for i in range(len(tree[type]))
+                                   if conditions in tree[type][i]
+                               ])
                         if len(out[0]) == 1:
                             out = (out[0][0], out[1][0])
                         print('Successfully read')

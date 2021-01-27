@@ -319,7 +319,6 @@ def features_computation(epochs,
 
 @read_or_write('nodes')
 def nodes_creation(labels,
-                   methods,
                    features,
                    nodes_coordinates,
                    resec_coordinates,
@@ -335,7 +334,6 @@ def nodes_creation(labels,
         return False
 
     nodes = list()
-    freq_bands = features.keys()
 
     for label in labels:
         nodes.append(

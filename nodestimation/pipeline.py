@@ -6,7 +6,8 @@ import nodestimation.project.path as path
 from nodestimation.project.subject import Subject
 from nodestimation.project.structures import subject_data_types
 from nodestimation.mlearning.features import \
-    prepare_features
+    prepare_features,\
+    prepare_data
 from nodestimation.mneraw import \
     read_original_raw, \
     first_processing, \
@@ -78,14 +79,14 @@ def pipeline(
         freq_bands
     )
     lambda2 = 1.0 / snr ** 2
-    subjects_dir, subjects = path.find_subject_dir()
+    subjects_dir, subjects_ = path.find_subject_dir()
     subjects_file = os.path.join(subjects_dir, 'subjects_information_for_' + conditions_code + '.pkl')
     if os.path.exists(subjects_file):
         print('All computation has been already done, loading of the existing file with the solution...')
         return read_subjects(subjects_file)
     else:
         print('Building of the resources files tree...')
-        tree = path.build_resources_tree(subjects)
+        tree = path.build_resources_tree(subjects_)
         subjects = list()
         print('Preparing data...')
         for subject in tree:
@@ -166,10 +167,14 @@ def pipeline(
             )
             nodes, nodes_path = nodes_creation(
                 labels,
-                methods,
                 prepare_features(label_names, feat),
                 coords,
                 resec_mni,
+                _subject_tree=tree[subject],
+                _conditions=conditions_code
+            )
+            dataset, dataset_path = prepare_data(
+                nodes,
                 _subject_tree=tree[subject],
                 _conditions=conditions_code
             )
@@ -197,10 +202,13 @@ def pipeline(
                             parc_path,
                             coords_path,
                             feat_path,
-                            nodes_path
+                            nodes_path,
+                            dataset_path
                         ])
                     },
-                    nodes
+                    nodes,
+                    subjects_[subject],
+                    dataset
                 )
             )
 

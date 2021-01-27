@@ -1,6 +1,7 @@
 import mne
 import nibabel
 import pickle
+import pandas
 
 save = {
     'raw': lambda path, raw: raw.save(path),
@@ -19,7 +20,8 @@ save = {
     'resec_mni': lambda path, resec: pickle.dump(resec, open(path, 'wb')),
     'parc': lambda path, parc: pickle.dump(parc, open(path, 'wb')),
     'feat': lambda path, feat: pickle.dump(feat, open(path, 'wb')),
-    'nodes': lambda path, nodes: pickle.dump(nodes, open(path, 'wb'))
+    'nodes': lambda path, nodes: pickle.dump(nodes, open(path, 'wb')),
+    'dataset': lambda path, csv: csv.to_csv(path)
 }
 
 read = {
@@ -39,5 +41,6 @@ read = {
     'resec_mni': lambda path: pickle.load(open(path, 'rb')),
     'parc': lambda path: pickle.load(open(path, 'rb')),
     'feat': lambda path: pickle.load(open(path, 'rb')),
-    'nodes': lambda path: pickle.load(open(path, 'rb'))
+    'nodes': lambda path: pickle.load(open(path, 'rb')),
+    'dataset': pandas.read_csv
 }

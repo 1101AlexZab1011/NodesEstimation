@@ -15,7 +15,8 @@ file_save_format = {
     'resec_mni': 'pkl',
     'parc': 'pkl',
     'feat': 'pkl',
-    'nodes': 'pkl'
+    'nodes': 'pkl',
+    'dataset': 'csv'
 }
 
 file_search_regexps = {
@@ -35,7 +36,8 @@ file_search_regexps = {
     'resec_mni': r'.*resec.*\.pkl.*',
     'parc': r'.*parc.*\.pkl.*',
     'feat': r'.*feat.*\.pkl.*',
-    'nodes': r'.*nodes.*\.pkl.*'
+    'nodes': r'.*nodes.*\.pkl.*',
+    'dataset': r'.*dataset.*\.csv.*'
 }
 
 data_types = (
@@ -55,7 +57,8 @@ data_types = (
     'resec_mni',
     'parc',
     'feat',
-    'nodes'
+    'nodes',
+    'dataset'
 )
 
 subject_data_types = (
@@ -76,5 +79,6 @@ subject_data_types = (
     'parc',
     'coords',
     'feat',
-    'nodes'
+    'nodes',
+    'dataset'
 )
