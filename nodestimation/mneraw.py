@@ -3,6 +3,8 @@ import mne
 import nibabel
 import numpy as np
 import nilearn.image as image
+
+from nodestimation.connectivity import pearson_ts
 from nodestimation.project.path import read_or_write
 from nodestimation.node_estimate import Node
 
@@ -266,22 +268,12 @@ def features_computation(epochs,
         spectral_connectivity_params = (label_ts, sfreq, fmin, fmax, method)
         psd_params = (epochs, inv, lambda2, fmin, fmax, se_method, bandwidth, labels)
 
-        return {
-            'psd': psd_params,
-            'coh': spectral_connectivity_params,
-            'cohy': spectral_connectivity_params,
-            'imcoh': spectral_connectivity_params,
-            'plv': spectral_connectivity_params,
-            'ciplv': spectral_connectivity_params,
-            'ppc': spectral_connectivity_params,
-            'pli': spectral_connectivity_params,
-            'pli2_unbiased': spectral_connectivity_params,
-            'wpli': spectral_connectivity_params,
-            'wpli2_debiased': spectral_connectivity_params,
-            'envelope': label_ts,
-        }[method]
+        if method == 'psd':
+            return psd_params
+        else:
+            return spectral_connectivity_params
 
-    return {
+    out = {
         str(fmin) + '-' + str(fmax) + 'Hz': {
             method: {
                 'psd': power_spectral_destiny_computation,
@@ -295,7 +287,6 @@ def features_computation(epochs,
                 'pli2_unbiased': spectral_connectivity_computation,
                 'wpli': spectral_connectivity_computation,
                 'wpli2_debiased': spectral_connectivity_computation,
-                'envelope': mne.connectivity.envelope_correlation,
             }[method](
                 switch_params(
                     epochs,
@@ -311,9 +302,19 @@ def features_computation(epochs,
                     se_method
                 )
             )
-            for method in methods
+            for method in methods if method != 'pearson' and method != 'envelope'
         } for fmin, fmax in freq_bands
     }
+
+    if 'pearson' or 'envelope' in methods:
+        upd = {'time-domain': {}}
+        if 'pearson' in methods:
+            upd['time-domain'].update({'pearson': pearson_ts(label_ts)})
+        if 'envelope' in methods:
+            upd['time-domain'].update({'envelope': mne.connectivity.envelope_correlation(label_ts)})
+        out.update(upd)
+
+    return out
 
 
 @read_or_write('nodes')
@@ -343,8 +344,8 @@ def nodes_creation(labels,
                 {
                     freq_band: {
                         method: features[freq_band][method][label.name]
-                        for method in methods
-                    } for freq_band in freq_bands
+                        for method in features[freq_band]
+                    } for freq_band in features
                 },
                 nodes_coordinates[label.name],
                 'resected' if is_resected(nodes_coordinates[label.name], resec_coordinates) else 'spared'

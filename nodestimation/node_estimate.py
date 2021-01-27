@@ -52,7 +52,7 @@ def eigencentrality(matrix):
     if len(matrix.shape) == 2:
         if matrix.shape[0] != matrix.shape[1]:
             raise ValueError('Can not compute centrality for non-square matrix')
-        out = np.real(sp.linalg.eigvals(matrix))
+        out = sp.linalg.eigvalsh(matrix)
 
         return out
 
@@ -61,8 +61,8 @@ def eigencentrality(matrix):
         if matrix.shape[0] != matrix.shape[1]:
             raise ValueError('Matrix shape must be: [n x n x m]')
 
-        c = [sp.linalg.eigvals(matrix[:, :, i]) for i in range(matrix.shape[-1])]
-        out = [np.mean(np.real(np.array(c).T[i])) for i in range(matrix.shape[0])]
+        c = [sp.linalg.eigvalsh(matrix[:, :, i]) for i in range(matrix.shape[-1])]
+        out = [np.mean(np.array(c).T[i]) for i in range(matrix.shape[0])]
 
         return np.array(out)
 

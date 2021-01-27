@@ -1,15 +1,14 @@
 from nodestimation.timewindow import sliding_window
 import numpy as np
 
+
 @sliding_window(size=400, overlap=0.5)
 def do_nothing(sig):
-
     return sig
 
 
 @sliding_window(400, 0.5)
 def pearson(signals):
-
     nsigmals, lsignals = signals.shape
     out = np.zeros((nsigmals, nsigmals))
 
@@ -25,9 +24,22 @@ def pearson(signals):
     return out
 
 
+def pearson_ts(label_ts):
+    out = list()
+    for signals in label_ts:
+        n, m = signals.shape
+        lout = np.zeros((n, n))
+        for i in range(n):
+            for j in range(n):
+                if i == j:
+                    continue
+                lout[i, j] = np.corrcoef(signals[i, :], signals[j, :])[0, 1]
+        out.append(lout)
+    return np.mean(np.array(out), axis=0)
+
+
 @sliding_window(400, 0.5)
 def phase_locking_value(signals):
-
     nsigmals, lsignals = signals.shape
     out = np.zeros((nsigmals, nsigmals, lsignals))
 
@@ -39,9 +51,9 @@ def phase_locking_value(signals):
             plv_1_2 = []
 
             for k in range(lsignals):
-                plv_1_2.append(sig1_fourier[k] * np.conj(sig2_fourier[k])/
-                           (np.abs(sig1_fourier[k]) * np.abs(sig2_fourier[k])))
+                plv_1_2.append(sig1_fourier[k] * np.conj(sig2_fourier[k]) /
+                               (np.abs(sig1_fourier[k]) * np.abs(sig2_fourier[k])))
 
-            out[i,j, :] = plv_1_2
+            out[i, j, :] = plv_1_2
 
     return np.array(out)

@@ -164,7 +164,6 @@ def pipeline(
                 _subject_tree=tree[subject],
                 _conditions=conditions_code
             )
-            print(prepare_features(label_names, feat))
             nodes, nodes_path = nodes_creation(
                 labels,
                 methods,

@@ -27,7 +27,14 @@ def prepare_features(label_names, features):
             for label, row in zip(label_names, envelope)
         }
 
-    return {
+    def prepare_pearson(label_names, pearson):
+        pearson = eigencentrality(pearson)
+        return {
+            label: row
+            for label, row in zip(label_names, pearson)
+        }
+
+    out = {
         freq_band: {
             method: {
                 'psd': prepare_psd,
@@ -41,11 +48,20 @@ def prepare_features(label_names, features):
                 'pli2_unbiased': prepare_spectral_connectivity,
                 'wpli': prepare_spectral_connectivity,
                 'wpli2_debiased': prepare_spectral_connectivity,
-                'envelope': prepare_envelope,
             }[method](label_names, features[freq_band][method])
-            for method in features[freq_band]
+            for method in features[freq_band] if method != 'pearson' and method != 'envelope'
         } for freq_band in features
     }
+
+    if 'time-domain' in features:
+        upd = {'time-domain': {}}
+        if 'pearson' in features['time-domain']:
+            upd['time-domain'].update({'pearson': prepare_pearson(label_names, features['time-domain']['pearson'])})
+        if 'envelope' in features['time-domain']:
+            upd['time-domain'].update({'envelope': prepare_envelope(label_names, features['time-domain']['envelope'])})
+        out.update(upd)
+
+    return out
 
 
 def prepare_data(subjects):
