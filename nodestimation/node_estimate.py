@@ -1,5 +1,6 @@
 import numpy as np
 import scipy as sp
+import networkx as nx
 import mne
 from nodestimation.connectivity import pearson, phase_locking_value
 from nodestimation.timewindow import mean_across_tw
@@ -48,26 +49,22 @@ class Node(object):
 
 
 def eigencentrality(matrix):
-    # only the greatest eigenvalue results in the desired centrality measure [Newman et al]
     if len(matrix.shape) == 2:
         if matrix.shape[0] != matrix.shape[1]:
             raise ValueError('Can not compute centrality for non-square matrix')
-        out = np.real(sp.linalg.eigvals(matrix))
 
-        return out
+        out = list()
 
-    elif len(matrix.shape) == 3:
+        G = nx.from_numpy_matrix(pearson)
+        centrality = nx.eigenvector_centrality_numpy(G, weight='weight')
 
-        if matrix.shape[0] != matrix.shape[1]:
-            raise ValueError('Matrix shape must be: [n x n x m]')
-
-        c = [np.real(sp.linalg.eigvals(matrix[:, :, i])) for i in range(matrix.shape[-1])]
-        out = [np.mean(np.array(c).T[i]) for i in range(matrix.shape[0])]
+        for node in centrality:
+            out.append(centrality[node])
 
         return np.array(out)
 
     else:
-        raise ValueError('Can not work with dimension less than two and higher than four')
+        raise ValueError('Can work with two dimensions only')
 
 
 def nodes_strength(label_tc, method):

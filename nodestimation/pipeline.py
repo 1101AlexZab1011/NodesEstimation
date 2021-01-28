@@ -6,7 +6,7 @@ import nodestimation.project.path as path
 from nodestimation.project.subject import Subject
 from nodestimation.project.structures import subject_data_types
 from nodestimation.mlearning.features import \
-    prepare_features,\
+    prepare_features, \
     prepare_data
 from nodestimation.mneraw import \
     read_original_raw, \
@@ -52,8 +52,14 @@ def pipeline(
         nfreq=50,
         lfreq=1,
         hfreq=70,
-        freq_bands=(0.5, 4)
+        freq_bands=(0.5, 4),
+        priority=0
 ):
+    def get_ith(list_, i):
+        if isinstance(list_, list):
+            return list_[i]
+        else:
+            return list_
 
     if not isinstance(methods, list):
         methods = [methods]
@@ -90,68 +96,84 @@ def pipeline(
         subjects = list()
         print('Preparing data...')
         for subject in tree:
-            raw, raw_path = read_original_raw('./', _subject_tree=tree[subject], _conditions=None)
-            fp_raw, fp_raw_path = first_processing(raw,
-                                                   lfreq,
-                                                   nfreq,
-                                                   hfreq,
-                                                   rfreq=rfreq,
-                                                   crop=crop_time,
-                                                   _subject_tree=tree[subject],
-                                                   _conditions=conditions_code)
-            bem, bem_path = bem_computation(subject, subjects_dir, conductivity, _subject_tree=tree[subject],
-                                            _conditions=None)
-            src, src_path = src_computation(subject, subjects_dir, bem, _subject_tree=tree[subject], _conditions=None)
-            trans, trans_path = read_original_trans('./', _subject_tree=tree[subject], _conditions=None)
-            fwd, fwd_path = forward_computation(fp_raw, trans, src, bem, _subject_tree=tree[subject], _conditions=None)
-            eve, eve_path = events_computation(fp_raw,
+            raw, raw_path = get_ith(read_original_raw('./', _subject_tree=tree[subject], _conditions=None), priority)
+            fp_raw, fp_raw_path = get_ith(first_processing(raw,
+                                                           lfreq,
+                                                           nfreq,
+                                                           hfreq,
+                                                           rfreq=rfreq,
+                                                           crop=crop_time,
+                                                           _subject_tree=tree[subject],
+                                                           _conditions=conditions_code), priority)
+            bem, bem_path = get_ith(bem_computation(subject,
+                                                    subjects_dir,
+                                                    conductivity,
+                                                    _subject_tree=tree[subject],
+                                                    _conditions=None), priority)
+            src, src_path = get_ith(src_computation(subject,
+                                                    subjects_dir,
+                                                    bem, _subject_tree=tree[subject],
+                                                    _conditions=None), priority)
+            trans, trans_path = get_ith(read_original_trans('./', _subject_tree=tree[subject], _conditions=None))
+            fwd, fwd_path = get_ith(forward_computation(fp_raw.info,
+                                                        trans,
+                                                        src,
+                                                        bem,
+                                                        _subject_tree=tree[subject],
+                                                        _conditions=None), priority)
+            eve, eve_path = get_ith(events_computation(fp_raw,
                                                range(1, 59),
                                                [1 for i in range(58)],
                                                _subject_tree=tree[subject],
-                                               _conditions=conditions_code)
-            epo, epo_path = epochs_computation(fp_raw,
+                                               _conditions=conditions_code), priority)
+            epo, epo_path = get_ith(epochs_computation(fp_raw,
                                                eve,
                                                epochs_tmin,
                                                epochs_tmax,
                                                _subject_tree=tree[subject],
-                                               _conditions=conditions_code)
-            cov, cov_path = noise_covariance_computation(epo,
+                                               _conditions=conditions_code), priority)
+            cov, cov_path = get_ith(noise_covariance_computation(epo,
                                                          epochs_tmin,
                                                          0,
                                                          _subject_tree=tree[subject],
-                                                         _conditions=conditions_code)
-            ave, ave_path = evokeds_computation(epo, _subject_tree=tree[subject], _conditions=conditions_code)
-            inv, inv_path = inverse_computation(epo.info,
-                                                fwd[0],
+                                                         _conditions=conditions_code), priority)
+            ave, ave_path = get_ith(evokeds_computation(epo,
+                                                        _subject_tree=tree[subject],
+                                                        _conditions=conditions_code), priority)
+            inv, inv_path = get_ith(inverse_computation(epo.info,
+                                                fwd,
                                                 cov,
                                                 _subject_tree=tree[subject],
-                                                _conditions=conditions_code)  # choosed the first fwd. It should be fixed in future release
-            stc, stc_path = source_estimation(epo,
+                                                _conditions=conditions_code), priority)
+            stc, stc_path = get_ith(source_estimation(epo,
                                               inv,
                                               lambda2,
                                               se_method,
                                               _subject_tree=tree[subject],
-                                              _conditions=conditions_code)
-            resec, resec_path = read_original_resec('./', _subject_tree=tree[subject], _conditions=None)
-            resec_mni, resec_mni_path = resection_area_computation(resec, _subject_tree=tree[subject],
-                                                                   _conditions=conditions_code)
+                                              _conditions=conditions_code), priority)
+            resec, resec_path = get_ith(read_original_resec('./',
+                                                            _subject_tree=tree[subject],
+                                                            _conditions=None), priority)
+            resec_mni, resec_mni_path = get_ith(resection_area_computation(resec,
+                                                                            _subject_tree=tree[subject],
+                                                                            _conditions=conditions_code), priority)
             labels_parc = mne.read_labels_from_annot(subject, parc='aparc', subjects_dir=subjects_dir)
             labels_aseg = mne.get_volume_labels_from_src(src[0], subject,
                                                          subjects_dir)  # choosed the first src. It should be fixed in future release
             labels = labels_parc + labels_aseg  # where is label_aseg?
-            parc, parc_path = parcellation_creating(subject,
+            parc, parc_path = get_ith(parcellation_creating(subject,
                                                     subjects_dir,
                                                     labels,
                                                     _subject_tree=tree[subject],
-                                                    _conditions=conditions_code)
-            coords, coords_path = coordinates_computation(subject,
+                                                    _conditions=conditions_code), priority)
+            coords, coords_path = get_ith(coordinates_computation(subject,
                                                           subjects_dir,
                                                           labels,
                                                           _subject_tree=tree[subject],
-                                                          _conditions=conditions_code)
+                                                          _conditions=conditions_code), priority)
             label_names = [label.name for label in labels]
             label_ts = mne.extract_label_time_course(stc, labels, src[0], mode='mean_flip')
-            feat, feat_path = features_computation(
+            feat, feat_path = get_ith(features_computation(
                 epo,
                 inv,
                 lambda2,
@@ -164,20 +186,20 @@ def pipeline(
                 se_method,
                 _subject_tree=tree[subject],
                 _conditions=conditions_code
-            )
-            nodes, nodes_path = nodes_creation(
+            ), priority)
+            nodes, nodes_path = get_ith(nodes_creation(
                 labels,
                 prepare_features(label_names, feat),
                 coords,
                 resec_mni,
                 _subject_tree=tree[subject],
                 _conditions=conditions_code
-            )
-            dataset, dataset_path = prepare_data(
+            ), priority)
+            dataset, dataset_path = get_ith(prepare_data(
                 nodes,
                 _subject_tree=tree[subject],
                 _conditions=conditions_code
-            )
+            ), priority)
             subjects.append(
                 Subject(
                     subject,
@@ -185,26 +207,26 @@ def pipeline(
                         data_type: data_path
                         for data_type, data_path
                         in zip(subject_data_types, [
-                            raw_path,
-                            fp_raw_path,
-                            bem_path,
-                            src_path,
-                            trans_path,
-                            fwd_path,
-                            eve_path,
-                            epo_path,
-                            cov_path,
-                            ave_path,
-                            inv_path,
-                            stc_path,
-                            resec_path,
-                            resec_mni_path,
-                            parc_path,
-                            coords_path,
-                            feat_path,
-                            nodes_path,
-                            dataset_path
-                        ])
+                        raw_path,
+                        fp_raw_path,
+                        bem_path,
+                        src_path,
+                        trans_path,
+                        fwd_path,
+                        eve_path,
+                        epo_path,
+                        cov_path,
+                        ave_path,
+                        inv_path,
+                        stc_path,
+                        resec_path,
+                        resec_mni_path,
+                        parc_path,
+                        coords_path,
+                        feat_path,
+                        nodes_path,
+                        dataset_path
+                    ])
                     },
                     nodes,
                     subjects_[subject],

@@ -76,24 +76,31 @@ def bem_computation(subject, subjects_dir, conductivity, _subject_tree=None, _co
 
 
 @read_or_write('src')
-def src_computation(subject, subjects_dir, bem, _subject_tree=None, _conditions=None):
-    labels_vol = ['Left-Amygdala',
-                  'Left-Thalamus-Proper',
-                  'Left-Cerebellum-Cortex',
-                  'Brain-Stem',
-                  'Right-Amygdala',
-                  'Right-Thalamus-Proper',
-                  'Right-Cerebellum-Cortex']
-    fname_aseg = os.path.join(subjects_dir, subject, 'mri', 'aseg.mgz')
-    vol_src = mne.setup_volume_source_space(
-        subject, mri=fname_aseg,
-        pos=10.0, bem=bem,
-        add_interpolator=True,
-        volume_label=labels_vol,
-        subjects_dir=subjects_dir
-    )
+def src_computation(subject, subjects_dir, bem, volume=False, _subject_tree=None, _conditions=None):
+
     src = mne.setup_source_space(subject, spacing='ico5', add_dist='patch', subjects_dir=subjects_dir)
-    return src + vol_src
+
+    if volume:
+        labels_vol = ['Left-Amygdala',
+                      'Left-Thalamus-Proper',
+                      'Left-Cerebellum-Cortex',
+                      'Brain-Stem',
+                      'Right-Amygdala',
+                      'Right-Thalamus-Proper',
+                      'Right-Cerebellum-Cortex']
+        fname_aseg = os.path.join(subjects_dir, subject, 'mri', 'aseg.mgz')
+        vol_src = mne.setup_volume_source_space(
+            subject, mri=fname_aseg,
+            pos=10.0, bem=bem,
+            add_interpolator=True,
+            volume_label=labels_vol,
+            subjects_dir=subjects_dir
+        )
+
+        return src + vol_src
+
+    else:
+        return src
 
 
 @read_or_write('trans', target='original', write_file=False)
@@ -102,8 +109,8 @@ def read_original_trans(path, _subject_tree=None, _conditions=None):
 
 
 @read_or_write('fwd')
-def forward_computation(raw, trans, src, bem, _subject_tree=None, _conditions=None):
-    return mne.make_forward_solution(raw, trans=trans, src=src, bem=bem, meg=True, eeg=False,
+def forward_computation(info, trans, src, bem, _subject_tree=None, _conditions=None):
+    return mne.make_forward_solution(info, trans=trans, src=src, bem=bem, meg=True, eeg=False,
                                      mindist=5.0, n_jobs=1, verbose=True)
 
 
