@@ -1,4 +1,4 @@
-from nodestimation.timewindow import sliding_window
+from nodestimation.processing.timewindow import sliding_window
 import numpy as np
 
 
@@ -9,6 +9,8 @@ def do_nothing(sig):
 
 @sliding_window(400, 0.5)
 def pearson(signals):
+    # computes Pearson's correlation coefficients map for 400-dots time windows with 50% overlapping
+
     nsigmals, lsignals = signals.shape
     out = np.zeros((nsigmals, nsigmals))
 
@@ -25,6 +27,8 @@ def pearson(signals):
 
 
 def pearson_ts(label_ts):
+    # computes Pearson's correlation coefficients map for list of data
+
     out = list()
     for signals in label_ts:
         n, m = signals.shape
@@ -40,6 +44,8 @@ def pearson_ts(label_ts):
 
 @sliding_window(400, 0.5)
 def phase_locking_value(signals):
+    # computes Phase Locking Value coefficients map for 400-dots time windows with 50% overlapping
+
     nsigmals, lsignals = signals.shape
     out = np.zeros((nsigmals, nsigmals, lsignals))
 

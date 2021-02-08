@@ -18,6 +18,8 @@ class TimeWindow(object):
 
 
 def sliding_window(size, overlap):
+    # does computation dividing given data into slices of given size with given overlap
+
     def decorator(func):
 
         def wrapper(*args, **kwargs):
@@ -80,6 +82,8 @@ def sliding_window(size, overlap):
 
 
 def mean_across_tw(twlist):
+    # computes mean value for the given list of time windows
+
     if len(twlist[0].data.shape) == 2:
         l, w = twlist[0].data.shape
         voxel = voxel_from_tw(twlist)
@@ -107,6 +111,8 @@ def mean_across_tw(twlist):
 
 
 def voxel_from_tw(twlist):
+    # creates n+1-dimensional voxel from the given time windows of n-dimensional data (n supposed to be 2 or 3)
+
     if len(twlist[0].data.shape) == 2:
         l, w = twlist[0].data.shape
         h = len(twlist)

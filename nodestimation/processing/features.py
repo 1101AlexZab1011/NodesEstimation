@@ -1,11 +1,12 @@
 import numpy as np
 import pandas as pd
 from scipy import interpolate
-from nodestimation.node_estimate import eigencentrality
-from nodestimation.project.path import read_or_write
+from nodestimation import eigencentrality
+from nodestimation.project import read_or_write
 
 
 def prepare_features(label_names, features):
+    # creates a dictionary of dictionaries with the following structure: { feature_name: { label_name: feature_value } }
 
     def prepare_spectral_connectivity(label_names, connectivity):
         conmat = connectivity[:, :, 0]
@@ -68,6 +69,7 @@ def prepare_features(label_names, features):
 
 @read_or_write('dataset')
 def prepare_data(nodes, _subject_tree=None, _conditions=None):
+    # creates a pandas DataFrame of features values with features and frequencies as columns and labels as index
 
     columns = list()
     keys = list()
@@ -100,6 +102,8 @@ def prepare_data(nodes, _subject_tree=None, _conditions=None):
 
 
 def iterp_for_psd(psd, n_samples):
+    # resamples given psd
+
     scale = np.arange(psd.shape[0])
     f = interpolate.interp1d(scale, psd, kind='cubic')
     scale_new = np.arange(0, psd.shape[0] - 1, (psd.shape[0] - 1) / n_samples)
