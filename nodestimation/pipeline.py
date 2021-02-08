@@ -86,6 +86,7 @@ def pipeline(
         print('Preparing data...')
         for subject in tree:
             raw, raw_path = read_original_raw('./', _subject_tree=tree[subject], _conditions=None)
+            print(raw)
             fp_raw, fp_raw_path = first_processing(raw,
                                                    lfreq,
                                                    nfreq,
