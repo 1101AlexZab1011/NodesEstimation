@@ -248,7 +248,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                                   '\n\tWriting function: {}'
                                   '\n\t Writing conditions: {}'
                                   .format(type, target, func.__name__, kwargs['_conditions']))
-                out = (func(*args, **kwargs), None)
+                out = func(*args, **kwargs)
                 if write_file:
                     path_to_file = os.path.join(
                         meta['path'],
