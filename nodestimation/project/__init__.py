@@ -224,7 +224,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                       .format(target, type).capitalize())
                 types_found = True
                 try:
-                    out = (read_target_file(type, tree[type], target, priority), tree[type]),
+                    out = (read_target_file(type, tree[type], target, priority), tree[type])
                     print('Successfully read')
 
                 except OSError:
@@ -248,7 +248,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                                   '\n\tWriting function: {}'
                                   '\n\t Writing conditions: {}'
                                   .format(type, target, func.__name__, kwargs['_conditions']))
-                out = (func(*args, **kwargs), None)
+                out = func(*args, **kwargs)
                 if write_file:
                     path_to_file = os.path.join(
                         meta['path'],
