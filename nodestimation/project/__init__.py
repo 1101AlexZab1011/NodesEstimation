@@ -224,7 +224,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                       .format(target, type).capitalize())
                 types_found = True
                 try:
-                    out = (read_target_file(type, tree[type], target, priority), tree[type])
+                    out = read_target_file(type, tree[type], target, priority)
                     print('Successfully read')
 
                 except OSError:
