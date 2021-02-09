@@ -37,13 +37,11 @@ def artifacts_clean(raw, n_components=15, method='correlation', threshold=3.0):
     return raw
 
 
-@by_default
 @read_or_write('raw', target='original', write_file=False)
 def read_original_raw(path, _subject_tree=None, _conditions=None, _priority=0):
     return mne.io.read_raw_fif(path)
 
 
-@by_default
 @read_or_write('raw', target='nepf')
 def first_processing(raw, lfreq, nfreq, hfreq,
                      rfreq=None,
@@ -77,14 +75,12 @@ def first_processing(raw, lfreq, nfreq, hfreq,
     return out
 
 
-@by_default
 @read_or_write('bem')
 def bem_computation(subject, subjects_dir, conductivity, _subject_tree=None, _conditions=None, _priority=0):
     model = mne.make_bem_model(subject=subject, conductivity=conductivity, subjects_dir=subjects_dir)
     return mne.make_bem_solution(model)
 
 
-@by_default
 @read_or_write('src')
 def src_computation(subject, subjects_dir, bem, volume=False, _subject_tree=None, _conditions=None, _priority=0):
 
@@ -113,20 +109,17 @@ def src_computation(subject, subjects_dir, bem, volume=False, _subject_tree=None
         return src
 
 
-@by_default
 @read_or_write('trans', target='original', write_file=False)
 def read_original_trans(path, _subject_tree=None, _conditions=None, _priority=0):
     return mne.read_trans(path)
 
 
-@by_default
 @read_or_write('fwd')
 def forward_computation(info, trans, src, bem, _subject_tree=None, _conditions=None, _priority=0):
     return mne.make_forward_solution(info, trans=trans, src=src, bem=bem, meg=True, eeg=False,
                                      mindist=5.0, n_jobs=1, verbose=True)
 
 
-@by_default
 @read_or_write('eve')
 def events_computation(raw, time_points, ids, _subject_tree=None, _conditions=None, _priority=0):
     return np.array([[
@@ -137,31 +130,26 @@ def events_computation(raw, time_points, ids, _subject_tree=None, _conditions=No
     ] for time_point, event_id in zip(time_points, ids)])
 
 
-@by_default
 @read_or_write('epo')
 def epochs_computation(raw, events, tmin, tmax, _subject_tree=None, _conditions=None, _priority=0):
     return mne.Epochs(raw, events, tmin=tmin, tmax=tmax)
 
 
-@by_default
 @read_or_write('cov')
 def noise_covariance_computation(epochs, tmin, tmax, _subject_tree=None, _conditions=None, _priority=0):
     return mne.compute_covariance(epochs, tmin=tmin, tmax=tmax, method='empirical')
 
 
-@by_default
 @read_or_write('ave')
 def evokeds_computation(epochs, _subject_tree=None, _conditions=None, _priority=0):
     return epochs.average()
 
 
-@by_default
 @read_or_write('inv')
 def inverse_computation(info, fwd, cov, _subject_tree=None, _conditions=None, _priority=0):
     return mne.minimum_norm.make_inverse_operator(info, fwd, cov, depth=None, fixed=False)
 
 
-@by_default
 @read_or_write('stc')
 def source_estimation(epochs, inv, lambda2, method, _subject_tree=None, _conditions=None, _priority=0):
     return mne.minimum_norm.apply_inverse_epochs(epochs,
@@ -172,7 +160,6 @@ def source_estimation(epochs, inv, lambda2, method, _subject_tree=None, _conditi
                                                  )
 
 
-@by_default
 @read_or_write('coords')
 def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None, _conditions=None, _priority=0):
     vertexes = [mne.vertex_to_mni(
@@ -183,13 +170,11 @@ def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None, _
     return {label.name: np.mean(vertex, axis=0) for label, vertex in zip(labels, vertexes)}
 
 
-@by_default
 @read_or_write('resec', target='original', write_file=False)
 def read_original_resec(path, _subject_tree=None, _conditions=None, _priority=0):
     return nibabel.load(path)
 
 
-@by_default
 @read_or_write('resec_mni')
 def resection_area_computation(img, _subject_tree=None, _conditions=None, _priority=0):
     res = np.array(img.get_data().tolist())
@@ -216,13 +201,11 @@ def resection_area_computation(img, _subject_tree=None, _conditions=None, _prior
     return np.array(mni_coordinates)
 
 
-@by_default
 @read_or_write('resec_txt', target='original', write_file=False)
 def read_original_resec_txt(path, _subject_tree=None, _conditions=None, _priority=0):
     return open(path, 'r').read()
 
 
-@by_default
 @read_or_write('parc')
 def parcellation_creating(subject, subjects_dir, labels, _subject_tree=None, _conditions=None, _priority=0):
     vertexes = [
@@ -238,7 +221,6 @@ def parcellation_creating(subject, subjects_dir, labels, _subject_tree=None, _co
     }
 
 
-@by_default
 @read_or_write('feat')
 def features_computation(epochs,
                          inv,
@@ -354,7 +336,6 @@ def features_computation(epochs,
     return out
 
 
-@by_default
 @read_or_write('nodes')
 def nodes_creation(labels,
                    features,

@@ -249,7 +249,10 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                                   '\n\tWriting function: {}'
                                   '\n\t Writing conditions: {}'
                                   .format(type, target, func.__name__, kwargs['_conditions']))
-                out = func(*args, **kwargs)
+                if args[0] is not None:
+                    out = func(*args, **kwargs)
+                else:
+                    out = None
                 if write_file and out is not None:
                     path_to_file = os.path.join(
                         meta['path'],
