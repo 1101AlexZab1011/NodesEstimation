@@ -2,7 +2,7 @@ import re
 import os
 import itertools
 from nodestimation.project.actions import save, read
-from nodestimation.project.structures import file_save_format, file_search_regexps, data_types
+from nodestimation.project.structures import file_save_format, file_search_regexps, tree_data_types
 import hashlib
 
 
@@ -84,10 +84,11 @@ def build_resources_tree(subject_paths):
             subdirs = itertools.chain(subdirs, [os.path.join(walk[0], subdir) for subdir in walk[1]])
             files = itertools.chain(files, [os.path.join(walk[0], sfile) for sfile in walk[2]])
             for file in walk[2]:
-                for type in data_types:
+                for type in tree_data_types:
                     add_file_to_tree(file_search_regexps[type], file, subject_tree, type, walk)
 
-        meta = {'subject': subject,
+        meta = {
+                'subject': subject,
                 'path': path,
                 'directories': list(subdirs),
                 'files': list(files),
@@ -126,7 +127,7 @@ def read_file(type, paths, priority):
             for p in priority
         ]
     else:
-        raise ValueError('Incorrect conditions; type of read files: {}, found {} files of this type, paths to these files: {} and are going to be read: {}'.format(type, len(path), path, priority))
+        raise ValueError('Incorrect conditions; type of read files: {}, found {} files of this type, paths to these files: {} and are going to be read: {}'.format(type, len(paths), paths, priority))
 
 
 def target_exists(paths, target):
@@ -239,7 +240,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                 if read_file:
                     print('The {} {} file has not been found'
                           .format(target, type))
-                if not isinstance(target, int):
+                if isinstance(target, str) and write_file:
                     print('Creating a new {} {} file'.format(target, type))
                 else:
                     raise OSError('Incorrect writing conditions: '
@@ -249,7 +250,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                                   '\n\t Writing conditions: {}'
                                   .format(type, target, func.__name__, kwargs['_conditions']))
                 out = func(*args, **kwargs)
-                if write_file:
+                if write_file and out is not None:
                     path_to_file = os.path.join(
                         meta['path'],
                         conditions,
@@ -265,6 +266,8 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                     print('Done. Path to new file: {}'
                           .format(path_to_file))
                     out = (out, path_to_file)
+                else:
+                    out = (out, None)
 
             return out
 
@@ -272,19 +275,3 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
 
     return decorator
 
-
-def get_ith(func):
-    # if wrapped function returns list, it ignores all except priority_ value
-    def wrapper(*args, **kwargs):
-        out = func(*args, **kwargs)
-
-        if not isinstance(out, list):
-            return out
-
-        elif 'priority_' in kwargs:
-            return out[kwargs['priority_']]
-
-        else:
-            return out[0]
-
-    return wrapper

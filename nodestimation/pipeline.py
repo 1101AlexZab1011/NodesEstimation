@@ -25,7 +25,7 @@ from nodestimation.processing.mneraw import \
     read_original_resec, \
     resection_area_computation, \
     features_computation, \
-    nodes_creation
+    nodes_creation, read_original_resec_txt
 
 
 def write_subjects(path, subjects):
@@ -85,7 +85,7 @@ def pipeline(
         subjects = list()
         print('Preparing data...')
         for subject in tree:
-            raw, raw_path = read_original_raw('./', _subject_tree=tree[subject], _conditions=None)
+            raw, raw_path = read_original_raw(None, _subject_tree=tree[subject], _conditions=None)
             fp_raw, fp_raw_path = first_processing(raw,
                                                    lfreq,
                                                    nfreq,
@@ -103,7 +103,7 @@ def pipeline(
                                             subjects_dir,
                                             bem, _subject_tree=tree[subject],
                                             _conditions=None)
-            trans, trans_path = read_original_trans('./', _subject_tree=tree[subject], _conditions=None)
+            trans, trans_path = read_original_trans(None, _subject_tree=tree[subject], _conditions=None)
             fwd, fwd_path = forward_computation(fp_raw.info,
                                                 trans,
                                                 src,
@@ -140,9 +140,12 @@ def pipeline(
                                               se_method,
                                               _subject_tree=tree[subject],
                                               _conditions=conditions_code)
-            resec, resec_path = read_original_resec('./',
+            resec, resec_path = read_original_resec(None,
                                                     _subject_tree=tree[subject],
                                                     _conditions=None)
+            resec_txt, resec_txt_path = read_original_resec_txt(None,
+                                                                _subject_tree=tree[subject],
+                                                                _conditions=None)
             resec_mni, resec_mni_path = resection_area_computation(resec,
                                                                    _subject_tree=tree[subject],
                                                                    _conditions=conditions_code)
@@ -181,6 +184,7 @@ def pipeline(
                 prepare_features(label_names, feat),
                 coords,
                 resec_mni,
+                resec_txt,
                 _subject_tree=tree[subject],
                 _conditions=conditions_code
             )
@@ -196,28 +200,29 @@ def pipeline(
                         data_type: data_path
                         for data_type, data_path
                         in zip(
-                            subject_data_types, [
-                                raw_path,
-                                fp_raw_path,
-                                bem_path,
-                                src_path,
-                                trans_path,
-                                fwd_path,
-                                eve_path,
-                                epo_path,
-                                cov_path,
-                                ave_path,
-                                inv_path,
-                                stc_path,
-                                resec_path,
-                                resec_mni_path,
-                                parc_path,
-                                coords_path,
-                                feat_path,
-                                nodes_path,
-                                dataset_path
-                            ]
-                        )
+                        subject_data_types, [
+                            raw_path,
+                            fp_raw_path,
+                            bem_path,
+                            src_path,
+                            trans_path,
+                            fwd_path,
+                            eve_path,
+                            epo_path,
+                            cov_path,
+                            ave_path,
+                            inv_path,
+                            stc_path,
+                            resec_path,
+                            resec_txt_path,
+                            resec_mni_path,
+                            parc_path,
+                            coords_path,
+                            feat_path,
+                            nodes_path,
+                            dataset_path
+                        ]
+                    )
                     },
                     nodes,
                     subjects_[subject],

@@ -13,6 +13,7 @@ file_save_format = {
     'coords': 'pkl',
     'resec': 'nii',
     'resec_mni': 'pkl',
+    'resec_txt': 'txt',
     'parc': 'pkl',
     'feat': 'pkl',
     'nodes': 'pkl',
@@ -34,13 +35,14 @@ file_search_regexps = {
     'coords': [r'.*coord.*\.pkl', r'.*coordinate.*\.pkl'],
     'resec': r'.*resec.*\.nii.*',
     'resec_mni': r'.*resec.*\.pkl.*',
+    'resec_txt': r'.*resec.*\.txt.*',
     'parc': r'.*parc.*\.pkl.*',
     'feat': r'.*feat.*\.pkl.*',
     'nodes': r'.*nodes.*\.pkl.*',
     'dataset': r'.*dataset.*\.csv.*'
 }
 
-data_types = (
+tree_data_types = (
     'raw',
     'bem',
     'src',
@@ -54,6 +56,7 @@ data_types = (
     'stc',
     'coords',
     'resec',
+    'resec_txt',
     'resec_mni',
     'parc',
     'feat',
@@ -75,6 +78,7 @@ subject_data_types = (
     'inv',
     'stc',
     'resec',
+    'resec_txt',
     'resec_mni',
     'parc',
     'coords',
