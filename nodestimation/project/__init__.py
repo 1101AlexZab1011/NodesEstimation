@@ -260,13 +260,13 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                     print('Done. Path to new file: {}'
                           .format(path_to_file))
                     out = (out, path_to_file)
-                elif write_file:
+                elif write_file and not all([arg is not None for arg in args]):
                     raise OSError('Incorrect writing conditions: '
                                   '\n\tWriting type: {}, '
                                   '\n\tWriting target: {}, '
-                                  '\n\tWriting function: {} with args: {} and kwargs: {}'
+                                  '\n\tWriting function: {}'
                                   '\n\t Writing conditions: {}'
-                                  .format(type, target, func.__name__, args, kwargs, kwargs['_conditions']))
+                                  .format(type, target, func.__name__, kwargs['_conditions']))
                 else:
                     out = (None, None)
 
