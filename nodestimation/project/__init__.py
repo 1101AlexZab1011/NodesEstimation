@@ -242,18 +242,9 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                           .format(target, type))
                 if isinstance(target, str) and write_file:
                     print('Creating a new {} {} file'.format(target, type))
-                else:
-                    raise OSError('Incorrect writing conditions: '
-                                  '\n\tWriting type: {}, '
-                                  '\n\tWriting target: {}, '
-                                  '\n\tWriting function: {}'
-                                  '\n\t Writing conditions: {}'
-                                  .format(type, target, func.__name__, kwargs['_conditions']))
-                if args[0] is not None:
+
+                if write_file and args[0] is not None:
                     out = func(*args, **kwargs)
-                else:
-                    out = None
-                if write_file and out is not None:
                     path_to_file = os.path.join(
                         meta['path'],
                         conditions,
@@ -269,8 +260,15 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                     print('Done. Path to new file: {}'
                           .format(path_to_file))
                     out = (out, path_to_file)
+                elif write_file:
+                    raise OSError('Incorrect writing conditions: '
+                                  '\n\tWriting type: {}, '
+                                  '\n\tWriting target: {}, '
+                                  '\n\tWriting function: {}'
+                                  '\n\t Writing conditions: {}'
+                                  .format(type, target, func.__name__, kwargs['_conditions']))
                 else:
-                    out = (out, None)
+                    out = (None, None)
 
             return out
 
