@@ -6,7 +6,7 @@ import nilearn.image as image
 
 from nodestimation.processing import by_default
 from nodestimation.processing.connectivity import pearson_ts
-from nodestimation.project import read_or_write, get_ith
+from nodestimation.project import read_or_write
 from nodestimation import Node
 
 
