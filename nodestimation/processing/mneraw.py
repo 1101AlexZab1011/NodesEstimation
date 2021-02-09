@@ -346,13 +346,13 @@ def nodes_creation(labels,
                    _conditions=None,
                    _priority=0):
 
-    @by_default
     def is_resected(resec_coordinates, node_coordinates):
-        for resec_coordinate in resec_coordinates:
-            diff = node_coordinates - resec_coordinate
-            dist = np.sqrt(diff[0] ** 2 + diff[1] ** 2 + diff[2] ** 2)
-            if dist <= 1:
-                return True
+        if resec_coordinates is not None:
+            for resec_coordinate in resec_coordinates:
+                diff = node_coordinates - resec_coordinate
+                dist = np.sqrt(diff[0] ** 2 + diff[1] ** 2 + diff[2] ** 2)
+                if dist <= 1:
+                    return True
         return False
 
     nodes = list()
