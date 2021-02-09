@@ -1,11 +1,15 @@
 def by_default(value=None):
     # if the wrapped function has None as the first argument, it ignores the wrapped function and returns specified value or None
+
+    def pseudo_func(value, *args, **kwargs):
+        return value
+
     def decorator(func):
 
         def wrapper(*args, **kwargs):
 
             if args[0] is None:
-                out = value
+                out = pseudo_func(value, *args, **kwargs)
             else:
                 out = func(*args, **kwargs)
 
