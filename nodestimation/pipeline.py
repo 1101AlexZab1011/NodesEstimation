@@ -85,7 +85,7 @@ def pipeline(
         subjects = list()
         print('Preparing data...')
         for subject in tree:
-            raw, raw_path = read_original_raw(None, _subject_tree=tree[subject], _conditions=None)
+            raw, raw_path = read_original_raw(None, _subject_tree=tree[subject], _conditions=None, _priority=0)
             fp_raw, fp_raw_path = first_processing(raw,
                                                    lfreq,
                                                    nfreq,
@@ -93,62 +93,75 @@ def pipeline(
                                                    rfreq=rfreq,
                                                    crop=crop_time,
                                                    _subject_tree=tree[subject],
-                                                   _conditions=conditions_code)
+                                                   _conditions=conditions_code,
+                                                   _priority=0)
             bem, bem_path = bem_computation(subject,
                                             subjects_dir,
                                             conductivity,
                                             _subject_tree=tree[subject],
-                                            _conditions=None)
+                                            _conditions=None,
+                                            _priority=0)
             src, src_path = src_computation(subject,
                                             subjects_dir,
                                             bem, _subject_tree=tree[subject],
-                                            _conditions=None)
-            trans, trans_path = read_original_trans(None, _subject_tree=tree[subject], _conditions=None)
+                                            _conditions=None,
+                                            _priority=0)
+            trans, trans_path = read_original_trans(None, _subject_tree=tree[subject], _conditions=None, _priority=0)
             fwd, fwd_path = forward_computation(fp_raw.info,
                                                 trans,
                                                 src,
                                                 bem,
                                                 _subject_tree=tree[subject],
-                                                _conditions=None)
+                                                _conditions=None,
+                                                _priority=0)
             eve, eve_path = events_computation(fp_raw,
                                                range(1, 59),
                                                [1 for i in range(58)],
                                                _subject_tree=tree[subject],
-                                               _conditions=conditions_code)
+                                               _conditions=conditions_code,
+                                               _priority=0)
             epo, epo_path = epochs_computation(fp_raw,
                                                eve,
                                                epochs_tmin,
                                                epochs_tmax,
                                                _subject_tree=tree[subject],
-                                               _conditions=conditions_code)
+                                               _conditions=conditions_code,
+                                               _priority=0)
             cov, cov_path = noise_covariance_computation(epo,
                                                          epochs_tmin,
                                                          0,
                                                          _subject_tree=tree[subject],
-                                                         _conditions=conditions_code)
+                                                         _conditions=conditions_code,
+                                                         _priority=0)
             ave, ave_path = evokeds_computation(epo,
                                                 _subject_tree=tree[subject],
-                                                _conditions=conditions_code)
+                                                _conditions=conditions_code,
+                                                _priority=0)
             inv, inv_path = inverse_computation(epo.info,
                                                 fwd,
                                                 cov,
                                                 _subject_tree=tree[subject],
-                                                _conditions=conditions_code)
+                                                _conditions=conditions_code,
+                                                _priority=0)
             stc, stc_path = source_estimation(epo,
                                               inv,
                                               lambda2,
                                               se_method,
                                               _subject_tree=tree[subject],
-                                              _conditions=conditions_code)
+                                              _conditions=conditions_code,
+                                              _priority=0)
             resec, resec_path = read_original_resec(None,
                                                     _subject_tree=tree[subject],
-                                                    _conditions=None)
+                                                    _conditions=None,
+                                                    _priority=0)
             resec_txt, resec_txt_path = read_original_resec_txt(None,
                                                                 _subject_tree=tree[subject],
-                                                                _conditions=None)
+                                                                _conditions=None,
+                                                                _priority=0)
             resec_mni, resec_mni_path = resection_area_computation(resec,
                                                                    _subject_tree=tree[subject],
-                                                                   _conditions=conditions_code)
+                                                                   _conditions=conditions_code,
+                                                                   _priority=0)
             labels_parc = mne.read_labels_from_annot(subject, parc='aparc.a2009s', subjects_dir=subjects_dir)
             labels_aseg = mne.get_volume_labels_from_src(src, subject,
                                                          subjects_dir)
@@ -157,12 +170,14 @@ def pipeline(
                                                     subjects_dir,
                                                     labels,
                                                     _subject_tree=tree[subject],
-                                                    _conditions=conditions_code)
+                                                    _conditions=conditions_code,
+                                                    _priority=0)
             coords, coords_path = coordinates_computation(subject,
                                                           subjects_dir,
                                                           labels,
                                                           _subject_tree=tree[subject],
-                                                          _conditions=conditions_code)
+                                                          _conditions=conditions_code,
+                                                          _priority=0)
             label_names = [label.name for label in labels]
             label_ts = mne.extract_label_time_course(stc, labels, src, mode='pca_flip')
             feat, feat_path = features_computation(
@@ -177,7 +192,8 @@ def pipeline(
                 methods,
                 se_method,
                 _subject_tree=tree[subject],
-                _conditions=conditions_code
+                _conditions=conditions_code,
+                _priority=0
             )
             nodes, nodes_path = nodes_creation(
                 labels,
@@ -186,12 +202,14 @@ def pipeline(
                 resec_mni,
                 resec_txt,
                 _subject_tree=tree[subject],
-                _conditions=conditions_code
+                _conditions=conditions_code,
+                _priority=0
             )
             dataset, dataset_path = prepare_data(
                 nodes,
                 _subject_tree=tree[subject],
-                _conditions=conditions_code
+                _conditions=conditions_code,
+                _priority=0
             )
             subjects.append(
                 Subject(

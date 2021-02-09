@@ -1,12 +1,12 @@
-def by_default(value=None):
+def by_default(default_values, default_result=None):
     # if the wrapped function has None as the first argument, it ignores the wrapped function and returns specified value or None
 
     def decorator(func):
 
         def wrapper(*args, **kwargs):
 
-            if args[0] is None:
-                out = value
+            if all([default_value == arg for default_value, arg in zip(default_values, args)]):
+                out = default_result
             else:
                 out = func(*args, **kwargs)
 

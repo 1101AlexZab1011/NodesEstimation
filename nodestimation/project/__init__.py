@@ -107,7 +107,7 @@ def check_path(path):
         os.mkdir(path)
 
 
-def read_file(type, paths, priority):
+def read_files(type, paths, priority):
     if not isinstance(paths, list):
         print('There is only one suitable {} file, trying to read...'.format(type))
         return read[type](paths), paths
@@ -160,6 +160,7 @@ def is_target(path, target):
 def select_suitable_paths(type, paths, target):
     print('Choosing {} {} files...'.format(target, type))
     if not isinstance(paths, list) and is_target(paths, target):
+        print('Required files found')
         return paths
     else:
         out = [
@@ -168,17 +169,13 @@ def select_suitable_paths(type, paths, target):
             if is_target(path, target)
         ]
         if len(out) == 1:
+            print('Required files found')
             return out[0]
         elif len(out) > 1:
+            print('Required files found')
             return out
         else:
             raise ValueError('There are not {} files of type {}'.format(target, type))
-
-
-def read_target_file(type, paths, target, priority):
-    suitable_paths = select_suitable_paths(type, paths, target)
-    print('Required files found')
-    return read_file(type, suitable_paths, priority)
 
 
 def read_or_write(type, target='any', read_file=True, write_file=True):
@@ -191,7 +188,6 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
         def wrapper(*args, **kwargs):
 
             out = None
-
             types_found = False
 
             if '_subject_tree' in kwargs:
@@ -216,16 +212,20 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                 print('Looking for {} {} file in files tree...'
                       .format(target, type))
             else:
-                print('Skipping a reading step')
+                print('Skipping the reading step')
 
             if type in tree \
                     and target_exists(tree[type], target) \
                     and read_file:
-                print('{} {} file has been found; trying to read...'
-                      .format(target, type).capitalize())
+                print('The {} {} file has been found; trying to read...'
+                      .format(target, type))
                 types_found = True
                 try:
-                    out = read_target_file(type, tree[type], target, priority)
+                    out = read_files(
+                        type,
+                        select_suitable_paths(type, tree[type], target),
+                        priority
+                    )
                     print('Successfully read')
 
                 except OSError:
@@ -243,7 +243,7 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                 if isinstance(target, str) and write_file:
                     print('Creating a new {} {} file'.format(target, type))
 
-                if write_file and args[0] is not None:
+                if write_file and all([arg is not None for arg in args]):
                     out = func(*args, **kwargs)
                     path_to_file = os.path.join(
                         meta['path'],
@@ -264,9 +264,9 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                     raise OSError('Incorrect writing conditions: '
                                   '\n\tWriting type: {}, '
                                   '\n\tWriting target: {}, '
-                                  '\n\tWriting function: {}'
+                                  '\n\tWriting function: {} with args: {} and kwargs: {}'
                                   '\n\t Writing conditions: {}'
-                                  .format(type, target, func.__name__, kwargs['_conditions']))
+                                  .format(type, target, func.__name__, args, kwargs, kwargs['_conditions']))
                 else:
                     out = (None, None)
 
