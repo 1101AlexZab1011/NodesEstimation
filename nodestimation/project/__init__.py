@@ -29,11 +29,12 @@ def find_subject_dir(root='./'):
                 raise OSError("There are two subjects directories: {}, {}; Only one must be".format(
                     subjects_dir, os.path.join(walk[0], subdir)
                 ))
-            return subjects_dir, \
-                   {
-                       subject: os.path.join(subjects_dir, subject) for subject in next(os.walk(subjects_dir))[1]
-                   }
-    if not subjects_found:
+    if subjects_found:
+        return subjects_dir, \
+               {
+                   subject: os.path.join(subjects_dir, subject) for subject in next(os.walk(subjects_dir))[1]
+               }
+    else:
         raise OSError("Subjects directory not found!")
 
 
