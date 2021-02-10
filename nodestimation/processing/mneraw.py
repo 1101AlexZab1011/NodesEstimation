@@ -37,12 +37,12 @@ def artifacts_clean(raw, n_components=15, method='correlation', threshold=3.0):
     return raw
 
 
-@read_or_write('raw', target='original', write_file=False)
+@read_or_write('raw', search_target='original', write_file=False)
 def read_original_raw(path, _subject_tree=None, _conditions=None, _priority=None):
     return mne.io.read_raw_fif(path)
 
 
-@read_or_write('raw', target='nepf')
+@read_or_write('raw', search_target='nepf')
 def first_processing(raw, lfreq, nfreq, hfreq,
                      rfreq=None,
                      crop=None,
@@ -109,7 +109,7 @@ def src_computation(subject, subjects_dir, bem, volume=False, _subject_tree=None
         return src
 
 
-@read_or_write('trans', target='original', write_file=False)
+@read_or_write('trans', search_target='original', write_file=False)
 def read_original_trans(path, _subject_tree=None, _conditions=None, _priority=None):
     return mne.read_trans(path)
 
@@ -170,7 +170,7 @@ def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None, _
     return {label.name: np.mean(vertex, axis=0) for label, vertex in zip(labels, vertexes)}
 
 
-@read_or_write('resec', target='original', write_file=False)
+@read_or_write('resec', search_target='original', write_file=False)
 def read_original_resec(path, _subject_tree=None, _conditions=None, _priority=None):
     return nibabel.load(path)
 
@@ -201,7 +201,7 @@ def resection_area_computation(img, _subject_tree=None, _conditions=None, _prior
     return np.array(mni_coordinates)
 
 
-@read_or_write('resec_txt', target='original', write_file=False)
+@read_or_write('resec_txt', search_target='original', write_file=False)
 def read_original_resec_txt(path, _subject_tree=None, _conditions=None, _priority=None):
     return open(path, 'r').read()
 
@@ -355,6 +355,11 @@ def nodes_creation(labels,
                     return True
         return False
 
+    def add_resected(resec_txt, nodes):
+        for node in nodes:
+            if node.label.name in resec_txt:
+                node.set_type('resected')
+
     nodes = list()
 
     for label in labels:
@@ -373,9 +378,7 @@ def nodes_creation(labels,
         )
 
     if resec_txt:
-        for node in nodes:
-            if node.label.name in resec_txt:
-                node.set_type('resected')
+        add_resected(resec_txt, nodes)
 
     if not any(['resected' in node.type for node in nodes]):
         raise Warning('Resected nodes not found')

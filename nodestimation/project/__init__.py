@@ -132,7 +132,7 @@ def read_files(type, paths, priority):
 
 
 def target_exists(paths, target):
-    # determines if a file suitable to the target of a search exists
+    # determines if a file suitable to the search_target of a search exists
 
     if not isinstance(paths, list):
         paths = [paths]
@@ -144,13 +144,13 @@ def target_exists(paths, target):
         }[target]
 
     except KeyError:
-        raise ValueError('Unexpected target: {}'.format(target))
+        raise ValueError('Unexpected search_target: {}'.format(target))
 
     return out
 
 
 def is_target(path, target):
-    # determines if a file is the target of a search
+    # determines if a file is the search_target of a search
     return {
         'any': True,
         'nepf': 'node_estimation_pipeline_file' in path,
@@ -179,14 +179,19 @@ def select_suitable_paths(type, paths, target):
             raise ValueError('There are not {} files of type {}'.format(target, type))
 
 
-def read_or_write(type, target='any', read_file=True, write_file=True):
+def read_or_write(type, search_target='any', read_file=True, write_file=True, main_arg_indexes=0):
     # if the file with the result of the function exists, then it reads the file, otherwise it executes the function and writes the result to the file
     # possible types given in nodestimation/project/structures.py in data_types list
     # possible targets: 'any' - any found file, 'nepf' - NodeEstimationPipeline File, native program files, 'original' - given source files
 
+    if not isinstance(main_arg_indexes, list):
+        main_arg_indexes = [main_arg_indexes]
+
     def decorator(func):
 
         def wrapper(*args, **kwargs):
+
+            main_args = [args[i] for i in main_arg_indexes]
 
             out = None
             types_found = False
@@ -211,20 +216,20 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
 
             if read_file:
                 print('Looking for {} {} file in files tree...'
-                      .format(target, type))
+                      .format(search_target, type))
             else:
                 print('Skipping the reading step')
 
             if type in tree \
-                    and target_exists(tree[type], target) \
+                    and target_exists(tree[type], search_target) \
                     and read_file:
                 print('The {} {} file has been found; trying to read...'
-                      .format(target, type))
+                      .format(search_target, type))
                 types_found = True
                 try:
                     out = read_files(
                         type,
-                        select_suitable_paths(type, tree[type], target),
+                        select_suitable_paths(type, tree[type], search_target),
                         priority
                     )
                     print('Successfully read')
@@ -232,19 +237,19 @@ def read_or_write(type, target='any', read_file=True, write_file=True):
                 except OSError:
                     print('Incorrect reading conditions: '
                           '\n\tReading type: {}, '
-                          '\n\tReading target: {}, '
+                          '\n\tReading search_target: {}, '
                           '\n\tReading function: {}'
                           '\n\t Reading conditions: {}'
-                          .format(type, target, func.__name__, kwargs['_conditions']))
+                          .format(type, search_target, func.__name__, kwargs['_conditions']))
 
             if not types_found:
                 if read_file:
                     print('The {} {} file has not been found'
-                          .format(target, type))
-                if isinstance(target, str) and write_file:
-                    print('Creating a new {} {} file'.format(target, type))
+                          .format(search_target, type))
+                if isinstance(search_target, str) and write_file:
+                    print('Creating a new {} {} file'.format(search_target, type))
 
-                if write_file and all([arg is not None for arg in args]):
+                if write_file and all([arg is not None for arg in main_args]):
                     out = func(*args, **kwargs)
                     path_to_file = os.path.join(
                         meta['path'],
