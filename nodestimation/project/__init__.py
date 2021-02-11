@@ -1,6 +1,8 @@
 import re
 import os
 import itertools
+from typing import *
+
 from nodestimation.project.actions import save, read
 from nodestimation.project.structures import file_save_format, file_search_regexps, tree_data_types
 import hashlib

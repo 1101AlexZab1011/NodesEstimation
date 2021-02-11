@@ -1,14 +1,19 @@
+from typing import *
+
 import numpy as np
 import pandas as pd
 from scipy import interpolate
+
+import nodestimation
 from nodestimation import eigencentrality
 from nodestimation.project import read_or_write
+from nodestimation.project.annotations import Features, LabelsFeatures, SubjectTree
 
 
-def prepare_features(label_names, features):
+def prepare_features(label_names: List[str], features: Features) -> LabelsFeatures:
     # creates a dictionary of dictionaries with the following structure: { feature_name: { label_name: feature_value } }
 
-    def prepare_spectral_connectivity(label_names, connectivity):
+    def prepare_spectral_connectivity(label_names: List[str], connectivity: np.ndarray) -> Dict[str, float]:
         conmat = connectivity[:, :, 0]
         conmat_full = conmat + conmat.T
         conmat_full = eigencentrality(conmat_full)
@@ -17,20 +22,20 @@ def prepare_features(label_names, features):
             for label, row in zip(label_names, conmat_full)
         }
 
-    def prepare_psd(label_names, psd):
+    def prepare_psd(label_names: List[str], psd: np.ndarray) -> Dict[str, float]:
         return {
             label: np.sum(row.mean(axis=0))
             for label, row in zip(label_names, psd)
         }
 
-    def prepare_envelope(label_names, envelope):
+    def prepare_envelope(label_names: List[str], envelope: np.ndarray) -> Dict[str, float]:
         envelope = eigencentrality(envelope)
         return {
             label: row
             for label, row in zip(label_names, envelope)
         }
 
-    def prepare_pearson(label_names, pearson):
+    def prepare_pearson(label_names: List[str], pearson: np.ndarray) -> Dict[str, float]:
         pearson = eigencentrality(pearson)
         return {
             label: row
@@ -68,7 +73,7 @@ def prepare_features(label_names, features):
 
 
 @read_or_write('dataset')
-def prepare_data(nodes, _subject_tree=None, _conditions=None):
+def prepare_data(nodes: List[nodestimation.Node], _subject_tree: SubjectTree = None, _conditions: str = None) -> pd.DataFrame:
     # creates a pandas DataFrame of features values with features and frequencies as columns and labels as index
 
     columns = list()
@@ -101,7 +106,7 @@ def prepare_data(nodes, _subject_tree=None, _conditions=None):
     return pd.DataFrame.from_dict(data, orient='index', columns=columns)
 
 
-def iterp_for_psd(psd, n_samples):
+def iterp_for_psd(psd: np.ndarray, n_samples: int) -> np.ndarray:
     # resamples given psd
 
     scale = np.arange(psd.shape[0])

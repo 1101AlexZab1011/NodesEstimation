@@ -117,7 +117,7 @@
 # coordinates = []
 # n_strength = []
 # for node in nodes:
-#     coordinates.append(node.nilearn_coordinates)
+#     coordinates.append(node.center_coordinates)
 #     n_strength.append(node.strength)
 #
 # nplt.plot_markers(n_strength, coordinates, node_cmap='black_red_r')
@@ -147,7 +147,7 @@
 # coordinates = []
 # n_strength = []
 # for node in nodes:
-#     coordinates.append(node.nilearn_coordinates)
+#     coordinates.append(node.center_coordinates)
 #     n_strength.append(node.strength)
 #
 # nplt.plot_markers(n_strength, coordinates, node_cmap='black_red_r')

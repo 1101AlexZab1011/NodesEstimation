@@ -1,7 +1,10 @@
-def by_default(default_values, default_result=None):
+from typing import *
+
+
+def by_default(default_values: tuple, default_result: Optional[tuple, Any] = None) -> Any:
     # if the wrapped function has None as the first argument, it ignores the wrapped function and returns specified value or None
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
 
         def wrapper(*args, **kwargs):
 
@@ -17,7 +20,7 @@ def by_default(default_values, default_result=None):
     return decorator
 
 
-def get_ith(func):
+def get_ith(func: Callable) -> Callable:
     # if wrapped function returns list, it ignores all except priority_ value
     def wrapper(*args, **kwargs):
         out = func(*args, **kwargs)

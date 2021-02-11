@@ -1,3 +1,5 @@
+from typing import *
+
 import mne
 import os
 import pickle
@@ -28,28 +30,28 @@ from nodestimation.processing.mneraw import \
     nodes_creation, read_original_resec_txt
 
 
-def write_subjects(path, subjects):
+def write_subjects(path: str, subjects: List[Subject]):
     pickle.dump(subjects, open(path, 'wb'))
 
 
-def read_subjects(path):
+def read_subjects(path: str):
     return pickle.load(open(path, 'rb'))
 
 
 def pipeline(
-        crop_time=120,
-        snr=0.5,
-        epochs_tmin=-1,
-        epochs_tmax=1,
-        conductivity=(0.3,),
-        se_method="sLORETA",
-        methods='plv',
-        rfreq=200,
-        nfreq=50,
-        lfreq=1,
-        hfreq=70,
-        freq_bands=(0.5, 4),
-):
+        crop_time: Optional[int] = 120,
+        snr: Optional[float] = 0.5,
+        epochs_tmin: Optional[int] = -1,
+        epochs_tmax: Optional[int] = 1,
+        conductivity: Optional[tuple] = (0.3,),
+        se_method: Optional[str] = "sLORETA",
+        methods: Optional[Union[str, List[str]]] = 'plv',
+        rfreq: Optional[int] = 200,
+        nfreq: Optional[int] = 50,
+        lfreq: Optional[int] = 1,
+        hfreq: Optional[int] = 70,
+        freq_bands: Optional[Union[tuple, List[tuple]]] = (0.5, 4),
+) -> List[Subject]:
     if not isinstance(methods, list):
         methods = [methods]
     if not isinstance(freq_bands, list):

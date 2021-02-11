@@ -1,16 +1,17 @@
 import os
+from typing import *
+
 import mne
 import nibabel
 import numpy as np
 import nilearn.image as image
-
-from nodestimation.processing import by_default
 from nodestimation.processing.connectivity import pearson_ts
 from nodestimation.project import read_or_write
 from nodestimation import Node
+from nodestimation.project.annotations import SubjectTree
 
 
-def notchfir(raw, lfreq, nfreq, hfreq):
+def notchfir(raw: mne.io.Raw, lfreq: int, nfreq: int, hfreq: int) -> mne.io.Raw:
     # filters the given raw-object from lfreq to nfreq and from nfreq to hfreq
 
     meg_picks = mne.pick_types(raw.info, meg=True, eeg=False, eog=False)
@@ -22,7 +23,7 @@ def notchfir(raw, lfreq, nfreq, hfreq):
     return raw_filtered
 
 
-def artifacts_clean(raw, n_components=15, method='correlation', threshold=3.0):
+def artifacts_clean(raw: mne.io.Raw, n_components: Optional[int] = 15, method: Optional[str] = 'correlation', threshold: Optional[float] = 3.0) -> mne.io.Raw:
     # makes artifacts cleaning of raw-object using ICA
 
     ica = mne.preprocessing.ICA(n_components=n_components)
@@ -38,20 +39,27 @@ def artifacts_clean(raw, n_components=15, method='correlation', threshold=3.0):
 
 
 @read_or_write('raw', search_target='original', write_file=False)
-def read_original_raw(path, _subject_tree=None, _conditions=None, _priority=None):
+def read_original_raw(
+        path: Union[str, None],
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> mne.io.Raw:
     return mne.io.read_raw_fif(path)
 
 
 @read_or_write('raw', search_target='nepf')
-def first_processing(raw, lfreq, nfreq, hfreq,
-                     rfreq=None,
-                     crop=None,
-                     reconstruct=False,
-                     meg=True,
-                     eeg=True,
-                     _subject_tree=None,
-                     _conditions=None,
-                     _priority=None):
+def first_processing(
+        raw: mne.io.Raw, lfreq: int, nfreq: int, hfreq: int,
+        rfreq: Optional[int] = None,
+        crop: Optional[float] = None,
+        reconstruct: Optional[bool] = False,
+        meg: Optional[bool] = True,
+        eeg: Optional[bool] = True,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> mne.io.Raw:
     out = raw.copy()
 
     if crop:
@@ -76,14 +84,28 @@ def first_processing(raw, lfreq, nfreq, hfreq,
 
 
 @read_or_write('bem')
-def bem_computation(subject, subjects_dir, conductivity, _subject_tree=None, _conditions=None, _priority=None):
+def bem_computation(
+        subject: str,
+        subjects_dir: str,
+        conductivity: tuple,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> mne.bem.ConductorModel:
     model = mne.make_bem_model(subject=subject, conductivity=conductivity, subjects_dir=subjects_dir)
     return mne.make_bem_solution(model)
 
 
 @read_or_write('src')
-def src_computation(subject, subjects_dir, bem, volume=False, _subject_tree=None, _conditions=None, _priority=None):
-
+def src_computation(
+        subject: str,
+        subjects_dir: str,
+        bem: mne.bem.ConductorModel,
+        volume: Optional[bool] = False,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> Union[mne.SourceSpaces, List[mne.SourceSpaces]]:
     src = mne.setup_source_space(subject, spacing='ico5', add_dist='patch', subjects_dir=subjects_dir)
 
     if volume:
@@ -110,18 +132,38 @@ def src_computation(subject, subjects_dir, bem, volume=False, _subject_tree=None
 
 
 @read_or_write('trans', search_target='original', write_file=False)
-def read_original_trans(path, _subject_tree=None, _conditions=None, _priority=None):
+def read_original_trans(
+        path: Union[str, None],
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> Union[dict, List[dict]]:
     return mne.read_trans(path)
 
 
 @read_or_write('fwd')
-def forward_computation(info, trans, src, bem, _subject_tree=None, _conditions=None, _priority=None):
+def forward_computation(
+        info: mne.Info,
+        trans: mne.Transform,
+        src: mne.SourceSpaces,
+        bem: mne.bem.ConductorModel,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> mne.forward.Forward:
     return mne.make_forward_solution(info, trans=trans, src=src, bem=bem, meg=True, eeg=False,
                                      mindist=5.0, n_jobs=1, verbose=True)
 
 
 @read_or_write('eve')
-def events_computation(raw, time_points, ids, _subject_tree=None, _conditions=None, _priority=None):
+def events_computation(
+        raw: mne.io.Raw,
+        time_points: Union[List[int], range, np.ndarray],
+        ids: List[int],
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> np.ndarray:
     return np.array([[
         raw.first_samp + raw.time_as_index(time_point)[0],
         0,
@@ -131,27 +173,62 @@ def events_computation(raw, time_points, ids, _subject_tree=None, _conditions=No
 
 
 @read_or_write('epo')
-def epochs_computation(raw, events, tmin, tmax, _subject_tree=None, _conditions=None, _priority=None):
+def epochs_computation(
+        raw: mne.io.Raw,
+        events: np.ndarray,
+        tmin: int,
+        tmax: int,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> mne.Epochs:
     return mne.Epochs(raw, events, tmin=tmin, tmax=tmax)
 
 
 @read_or_write('cov')
-def noise_covariance_computation(epochs, tmin, tmax, _subject_tree=None, _conditions=None, _priority=None):
+def noise_covariance_computation(
+        epochs: mne.Epochs,
+        tmin: int,
+        tmax: int,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> mne.Covariance:
     return mne.compute_covariance(epochs, tmin=tmin, tmax=tmax, method='empirical')
 
 
 @read_or_write('ave')
-def evokeds_computation(epochs, _subject_tree=None, _conditions=None, _priority=0):
+def evokeds_computation(
+        epochs: mne.Epochs,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> mne.Evoked:
     return epochs.average()
 
 
 @read_or_write('inv')
-def inverse_computation(info, fwd, cov, _subject_tree=None, _conditions=None, _priority=None):
+def inverse_computation(
+        info: mne.Info,
+        fwd: mne.Forward,
+        cov: mne.Covariance,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> mne.minimum_norm.inverse.InverseOperator:
     return mne.minimum_norm.make_inverse_operator(info, fwd, cov, depth=None, fixed=False)
 
 
 @read_or_write('stc')
-def source_estimation(epochs, inv, lambda2, method, _subject_tree=None, _conditions=None, _priority=None):
+def source_estimation(
+        epochs: mne.Epochs,
+        inv: mne.minimum_norm.inverse.InverseOperator,
+        lambda2: Union[int, float],
+        method: str,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> List[mne.SourceEstimate]:
     return mne.minimum_norm.apply_inverse_epochs(epochs,
                                                  inv,
                                                  lambda2,
@@ -161,7 +238,14 @@ def source_estimation(epochs, inv, lambda2, method, _subject_tree=None, _conditi
 
 
 @read_or_write('coords')
-def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None, _conditions=None, _priority=None):
+def coordinates_computation(
+        subject: str,
+        subjects_dir: str,
+        labels: List[mne.Label],
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> Dict[str, np.ndarray]:
     vertexes = [mne.vertex_to_mni(
         label.vertices,
         hemis=0 if label.hemi == 'lh' else 1,
@@ -171,12 +255,17 @@ def coordinates_computation(subject, subjects_dir, labels, _subject_tree=None, _
 
 
 @read_or_write('resec', search_target='original', write_file=False)
-def read_original_resec(path, _subject_tree=None, _conditions=None, _priority=None):
+def read_original_resec(
+        path: Union[str, None],
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> Any:
     return nibabel.load(path)
 
 
 @read_or_write('resec_mni')
-def resection_area_computation(img, _subject_tree=None, _conditions=None, _priority=None):
+def resection_area_computation(img : Any, _subject_tree=None, _conditions=None, _priority=None):
     res = np.array(img.get_data().tolist())
     img_coordinates = list()
     for i in range(res.shape[0]):
@@ -345,7 +434,6 @@ def nodes_creation(labels,
                    _subject_tree=None,
                    _conditions=None,
                    _priority=None):
-
     def is_resected(resec_coordinates, node_coordinates):
         if resec_coordinates is not None:
             for resec_coordinate in resec_coordinates:

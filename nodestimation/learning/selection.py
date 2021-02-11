@@ -1,8 +1,10 @@
+from typing import *
+
 import pandas as pd
 import numpy as np
 
 
-def collect_statistic(data):
+def collect_statistic(data: pd.DataFrame) -> pd.DataFrame:
     means = pd.Series([data[feat].mean() for feat in data.columns], index=data.columns)
     stds = pd.Series([data[feat].std() for feat in data.columns], index=data.columns)
     upper_bound = pd.Series([mean + std for mean, std in zip(means, stds)], index=data.columns)
@@ -12,9 +14,8 @@ def collect_statistic(data):
                         index=['mean', 'stdev', 'm+std', 'm-std'])
 
 
-def compute_importance(data, statistic):
-
-    def append_series(df, series, index=None):
+def compute_importance(data: pd.DataFrame, statistic: pd.DataFrame) -> pd.Series:
+    def append_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[int] = None) -> pd.DataFrame:
 
         if not isinstance(series, list):
             series = [series]
@@ -33,7 +34,7 @@ def compute_importance(data, statistic):
 
         return pd.DataFrame(df_series, index=index)
 
-    def appstart_series(df, series, index=None):
+    def appstart_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[int] = None) -> pd.DataFrame:
 
         if not isinstance(series, list):
             series = [series]
@@ -82,7 +83,7 @@ def compute_importance(data, statistic):
     ], index=feature_imp_statistics.columns)
 
 
-def separate_datasets(datasets, target):
+def separate_datasets(datasets: Union[pd.DataFrame, List[pd.DataFrame]], target: str) -> Tuple[List[pd.DataFrame], List[pd.DataFrame], List[pd.DataFrame]]:
     if not isinstance(datasets, list):
         datasets = [datasets]
     data = [dataset.drop([dataset.columns[0], target], axis=1) for dataset in datasets]
@@ -103,7 +104,7 @@ def separate_datasets(datasets, target):
     return data, true_cases, false_cases
 
 
-def collect_cross_statistic(data, true_cases, false_cases):
+def collect_cross_statistic(data: List[pd.DataFrame], true_cases: List[pd.DataFrame], false_cases: List[pd.DataFrame]) -> pd.DataFrame:
     statistics = [collect_statistic(sample) for sample in data]
     mean_values = pd.DataFrame([statistic.loc['mean'] for statistic in statistics])
     true_importance = pd.DataFrame([compute_importance(true_case, statistic) for true_case, statistic in zip(true_cases, statistics)])
@@ -120,7 +121,7 @@ def collect_cross_statistic(data, true_cases, false_cases):
     ])
 
 
-def make_selection_map(cross_statistic):
+def make_selection_map(cross_statistic: pd.DataFrame) -> pd.DataFrame:
     criteria = pd.Series([
         cross_statistic.loc['mean, std / mean, averaged'].mean(),
         cross_statistic.loc['true importance, averaged'].mean(),
@@ -151,7 +152,7 @@ def make_selection_map(cross_statistic):
     ], index=['for true cases', 'for false cases'])
 
 
-def select(data, droplist):
+def select(data: Union[pd.DataFrame, List[pd.DataFrame]], droplist: List[str]) -> Union[pd.DataFrame, List[pd.DataFrame]]:
     if isinstance(data, list):
         return [
             sample.drop(droplist, axis=1) for sample in data
@@ -160,7 +161,7 @@ def select(data, droplist):
         return data.drop(droplist, axis=1)
 
 
-def selected_data(data, selection_map):
+def selected_data(data: Union[pd.DataFrame, List[pd.DataFrame]], selection_map: pd.DataFrame) -> Tuple[Union[pd.DataFrame, List[pd.DataFrame]], Union[pd.DataFrame, List[pd.DataFrame]]]:
     droplist_true = [feat for feat in data[0].columns if not selection_map.loc['for true cases'][feat]]
     droplist_false = [feat for feat in data[0].columns if not selection_map.loc['for false cases'][feat]]
 
@@ -170,15 +171,14 @@ def selected_data(data, selection_map):
     )
 
 
-def selected_statistic(cross_statistic, selection_map):
+def selected_statistic(cross_statistic: pd.DataFrame, selection_map: pd.DataFrame) -> Union[pd.DataFrame, List[pd.DataFrame]]:
     droplist = [feat for feat in cross_statistic.columns if not selection_map.loc['for true cases'][feat] and not selection_map.loc['for false cases'][feat]]
 
     return select(cross_statistic, droplist)
 
 
-def choose_best(data, cross_statistic, for_, corr_thresholds=0.9):
-
-    def worst_feature(feat1, feat2, for_, cross_statistic):
+def choose_best(data: List[pd.DataFrame], cross_statistic: pd.DataFrame, for_: str, corr_thresholds: float = 0.9) -> pd.Index:
+    def worst_feature(feat1: str, feat2: str, for_: str, cross_statistic: pd.DataFrame) -> str:
 
         if for_ == 'both':
             if (cross_statistic.loc['true importance, averaged'][feat1] /
@@ -205,7 +205,7 @@ def choose_best(data, cross_statistic, for_, corr_thresholds=0.9):
             else:
                 return feat1
 
-    def choose(corrmap, from_=None):
+    def choose(corrmap: pd.DataFrame, from_: Optional[int] = None) -> pd.Index:
 
         if from_ is None:
             from_ = corrmap.columns.tolist()[0]
@@ -213,7 +213,7 @@ def choose_best(data, cross_statistic, for_, corr_thresholds=0.9):
         for column in corrmap.columns.tolist()[corrmap.columns.tolist().index(from_)::]:
             for row in corrmap.index.tolist()[corrmap.index.tolist().index(from_)::]:
                 if row != column \
-                        and (corrmap.loc[row][column] > corr_thresholds \
+                        and (corrmap.loc[row][column] > corr_thresholds
                              or corrmap.loc[row][column] < -corr_thresholds):
                     worst = worst_feature(column, row, for_, cross_statistic)
                     from_ = corrmap.columns.tolist()[corrmap.columns.tolist().index(worst) + 1]
@@ -232,7 +232,7 @@ def choose_best(data, cross_statistic, for_, corr_thresholds=0.9):
     return choose(corrmap)
 
 
-def make_feature_selection(datasets, target):
+def make_feature_selection(datasets: List[pd.DataFrame], target: str) -> List[pd.DataFrame]:
     data, true_cases, false_cases = separate_datasets(datasets, target)
     cross_statistic = collect_cross_statistic(data, true_cases, false_cases)
     selection_map = make_selection_map(cross_statistic)
