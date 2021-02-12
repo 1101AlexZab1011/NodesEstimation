@@ -474,7 +474,7 @@ def nodes_creation(
     def add_resected(resec_txt: str, nodes: List[Node]) -> None:
         for node in nodes:
             if node.label.name in resec_txt:
-                node.type('resected')
+                node.type = 'resected'
 
     nodes = list()
 
