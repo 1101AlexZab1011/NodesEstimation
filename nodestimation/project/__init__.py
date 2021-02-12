@@ -4,11 +4,12 @@ import itertools
 from typing import *
 
 from nodestimation.project.actions import save, read
+from nodestimation.project.annotations import SubjectTree, ResourcesTree
 from nodestimation.project.structures import file_save_format, file_search_regexps, tree_data_types
 import hashlib
 
 
-def conditions_unique_code(*args):
+def conditions_unique_code(*args) -> str:
     # creates code which lets to identify given conditions (whether this condition appears at the first time or computations are already done)
 
     out = ''
@@ -17,7 +18,7 @@ def conditions_unique_code(*args):
     return hashlib.md5(bytes(out, 'utf-8')).hexdigest()
 
 
-def find_subject_dir(root='./'):
+def find_subject_dir(root: str = './') -> Tuple[str, Dict[str, str]]:
     # Analyses project file structure trying to find a directory containing subjects subdirectories
 
     subjects_dir = None
@@ -40,7 +41,7 @@ def find_subject_dir(root='./'):
         raise OSError("Subjects directory not found!")
 
 
-def get_size(start_path='.'):
+def get_size(start_path: str = '.') -> float:
     # computes the size (in bytes) of all contained files
 
     total_size = 0
@@ -53,7 +54,7 @@ def get_size(start_path='.'):
     return total_size
 
 
-def add_file_to_tree(regexp, file, subject_tree, type, walk):
+def add_file_to_tree(regexp: str, file: Any, subject_tree: SubjectTree, type: str, walk: Sequence) -> None:
     # adds a file matching the search conditions to the project tree
 
     if isinstance(regexp, list):
@@ -72,7 +73,7 @@ def add_file_to_tree(regexp, file, subject_tree, type, walk):
             print('\t\t' + '{} file: ok'.format(type).capitalize())
 
 
-def build_resources_tree(subject_paths):
+def build_resources_tree(subject_paths: Dict[str, str]) -> Dict[str, Tuple[Dict[str, Union[str, list, float]], ResourcesTree]]:
     # builds a project tree describing all the required files
 
     print('Analysing project structure...')
@@ -103,14 +104,14 @@ def build_resources_tree(subject_paths):
     return tree
 
 
-def check_path(path):
+def check_path(path: str) -> None:
     # creates a directory at the specified path if it does not exist
 
     if not os.path.isdir(path):
         os.mkdir(path)
 
 
-def read_files(type, paths, priority):
+def read_files(type: str, paths: List[str], priority: int) -> Any:
     if not isinstance(paths, list):
         print('There is only one suitable {} file, trying to read...'.format(type))
         return read[type](paths), paths
@@ -133,7 +134,7 @@ def read_files(type, paths, priority):
         raise ValueError('Incorrect conditions; type of read files: {}, found {} files of this type, paths to these files: {} and are going to be read: {}'.format(type, len(paths), paths, priority))
 
 
-def target_exists(paths, target):
+def target_exists(paths: List[str], target: str) -> bool:
     # determines if a file suitable to the search_target of a search exists
 
     if not isinstance(paths, list):
@@ -151,7 +152,7 @@ def target_exists(paths, target):
     return out
 
 
-def is_target(path, target):
+def is_target(path: str, target: str) -> bool:
     # determines if a file is the search_target of a search
     return {
         'any': True,
@@ -160,7 +161,7 @@ def is_target(path, target):
     }[target]
 
 
-def select_suitable_paths(type, paths, target):
+def select_suitable_paths(type: str, paths: Union[str, List[str]], target: str) -> Union[str, List[str]]:
     print('Choosing {} {} files...'.format(target, type))
     if not isinstance(paths, list) and is_target(paths, target):
         print('Required files found')
@@ -181,7 +182,7 @@ def select_suitable_paths(type, paths, target):
             raise ValueError('There are not {} files of type {}'.format(target, type))
 
 
-def read_or_write(type, search_target='any', read_file=True, write_file=True, main_arg_indexes=0):
+def read_or_write(type: str, search_target: str = 'any', read_file: bool = True, write_file: bool = True, main_arg_indexes: int = 0):
     # if the file with the result of the function exists, then it reads the file, otherwise it executes the function and writes the result to the file
     # possible types given in nodestimation/project/structures.py in data_types list
     # possible targets: 'any' - any found file, 'nepf' - NodeEstimationPipeline File, native program files, 'original' - given source files
@@ -189,7 +190,7 @@ def read_or_write(type, search_target='any', read_file=True, write_file=True, ma
     if not isinstance(main_arg_indexes, list):
         main_arg_indexes = [main_arg_indexes]
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
 
         def wrapper(*args, **kwargs):
 
