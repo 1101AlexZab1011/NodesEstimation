@@ -52,8 +52,8 @@ class Node(object):
     @center_coordinates.setter
     def center_coordinates(self, coordinates: np.ndarray):
 
-        if coordinates.shape[1] != 3:
-            raise ValueError('Coordinates must have shape (n, 3) but given shape is {}'.format(coordinates.shape))
+        if coordinates.shape[0] != 3:
+            raise ValueError('Coordinates must have shape (3, ) but given shape is {}'.format(coordinates.shape))
 
         self._center_coordinates = coordinates
 
