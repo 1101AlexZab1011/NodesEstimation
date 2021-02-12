@@ -73,7 +73,7 @@ def prepare_features(label_names: List[str], features: Features) -> LabelsFeatur
 
 
 @read_or_write('dataset')
-def prepare_data(nodes: List[nodestimation.Node], _subject_tree: SubjectTree = None, _conditions: str = None) -> pd.DataFrame:
+def prepare_data(nodes: List[nodestimation.Node], _subject_tree: SubjectTree = None, _conditions: str = None, _priority: Optional[int] = None) -> pd.DataFrame:
     # creates a pandas DataFrame of features values with features and frequencies as columns and labels as index
 
     columns = list()
