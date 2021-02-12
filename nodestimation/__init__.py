@@ -73,16 +73,8 @@ class Node(object):
         return self._features
 
     @type.setter
-    def type(self, type: str, mood: str = 'rename'):
-
-        if mood == 'rename':
-            self._type = type
-
-        elif mood == 'add':
-            self._type += '/' + type
-
-        else:
-            raise ValueError("Unknown action: ", mood)
+    def type(self, type: str):
+        self._type = type
 
     @type.getter
     def type(self):
