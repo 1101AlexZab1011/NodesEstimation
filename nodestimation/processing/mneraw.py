@@ -8,7 +8,7 @@ import nilearn.image as image
 from nodestimation.processing.connectivity import pearson_ts
 from nodestimation.project import read_or_write
 from nodestimation import Node
-from nodestimation.project.annotations import SubjectTree
+from nodestimation.project.annotations import SubjectTree, Features
 
 
 def notchfir(raw: mne.io.Raw, lfreq: int, nfreq: int, hfreq: int) -> mne.io.Raw:
@@ -265,7 +265,7 @@ def read_original_resec(
 
 
 @read_or_write('resec_mni')
-def resection_area_computation(img : Any, _subject_tree=None, _conditions=None, _priority=None):
+def resection_area_computation(img: Any, _subject_tree=None, _conditions=None, _priority=None):
     res = np.array(img.get_data().tolist())
     img_coordinates = list()
     for i in range(res.shape[0]):
@@ -291,12 +291,24 @@ def resection_area_computation(img : Any, _subject_tree=None, _conditions=None, 
 
 
 @read_or_write('resec_txt', search_target='original', write_file=False)
-def read_original_resec_txt(path, _subject_tree=None, _conditions=None, _priority=None):
+def read_original_resec_txt(
+        path: str,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> str:
     return open(path, 'r').read()
 
 
 @read_or_write('parc')
-def parcellation_creating(subject, subjects_dir, labels, _subject_tree=None, _conditions=None, _priority=None):
+def parcellation_creating(
+        subject: str,
+        subjects_dir: str,
+        labels: List[mne.Label],
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> Dict[str, np.ndarray]:
     vertexes = [
         mne.vertex_to_mni(
             label.vertices,
@@ -311,23 +323,25 @@ def parcellation_creating(subject, subjects_dir, labels, _subject_tree=None, _co
 
 
 @read_or_write('feat')
-def features_computation(epochs,
-                         inv,
-                         lambda2,
-                         bandwidth,
-                         labels,
-                         label_ts,
-                         sfreq,
-                         freq_bands,
-                         methods,
-                         se_method,
-                         _subject_tree=None,
-                         _conditions=None,
-                         _priority=None):
+def features_computation(
+        epochs: mne.Epochs,
+        inv: mne.minimum_norm.inverse.InverseOperator,
+        lambda2: float,
+        bandwidth: Union[int, float],
+        labels: List[mne.Label],
+        label_ts: List[np.ndarray],
+        sfreq: Union[int, float],
+        freq_bands: Union[tuple, List[tuple]],
+        methods: Union[str, List[str]],
+        se_method: str,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> Features:
     if not isinstance(methods, list):
         methods = [methods]
 
-    def spectral_connectivity_computation(input):
+    def spectral_connectivity_computation(input: tuple) -> Any:
         label_ts, sfreq, fmin, fmax, method = input
 
         return mne.connectivity.spectral_connectivity(
@@ -342,10 +356,19 @@ def features_computation(epochs,
             n_jobs=1
         )[0]
 
-    def power_spectral_destiny_computation(input):
+    def power_spectral_destiny_computation(input: tuple) -> np.ndarray:
         epochs, inv, lambda2, fmin, fmax, method, bandwidth, labels = input
 
-        def compute_psd_avg(epochs, inv, lambda2, method, fmin, fmax, bandwidth, label):
+        def compute_psd_avg(
+                epochs: mne.Epochs,
+                inv: mne.minimum_norm.InverseOperator,
+                lambda2: float,
+                method: Union[str, List[str]],
+                fmin: int,
+                fmax: int,
+                bandwidth: Union[int, float],
+                label: mne.Label
+        ) -> float:
             psd_stc = mne.minimum_norm.compute_source_psd_epochs(epochs, inv,
                                                                  lambda2=lambda2,
                                                                  method=method, fmin=fmin, fmax=fmax,
@@ -361,17 +384,19 @@ def features_computation(epochs,
             for label in labels
         ])
 
-    def switch_params(epochs,
-                      inv,
-                      lambda2,
-                      bandwidth,
-                      labels,
-                      label_ts,
-                      sfreq,
-                      fmin,
-                      fmax,
-                      method,
-                      se_method):
+    def switch_params(
+            epochs: mne.Epochs,
+            inv: mne.minimum_norm.InverseOperator,
+            lambda2: float,
+            bandwidth: Union[int, float],
+            labels: List[mne.Label],
+            label_ts: List[np.ndarray],
+            sfreq: int,
+            fmin: int,
+            fmax: int,
+            method: Union[str, List[str]],
+            se_method: str
+    ) -> tuple:
 
         spectral_connectivity_params = (label_ts, sfreq, fmin, fmax, method)
         psd_params = (epochs, inv, lambda2, fmin, fmax, se_method, bandwidth, labels)
@@ -426,15 +451,18 @@ def features_computation(epochs,
 
 
 @read_or_write('nodes')
-def nodes_creation(labels,
-                   features,
-                   nodes_coordinates,
-                   resec_coordinates,
-                   resec_txt,
-                   _subject_tree=None,
-                   _conditions=None,
-                   _priority=None):
-    def is_resected(resec_coordinates, node_coordinates):
+def nodes_creation(
+        labels: List[mne.Label],
+        features: Features,
+        nodes_coordinates: np.ndarray,
+        resec_coordinates: Union[None, np.ndarray],
+        resec_txt: str,
+        _subject_tree: Optional[SubjectTree] = None,
+        _conditions: Optional[str] = None,
+        _priority: Optional[int] = None
+) -> List[Node]:
+
+    def is_resected(resec_coordinates: Union[None, np.ndarray], node_coordinates: np.ndarray) -> bool:
         if resec_coordinates is not None:
             for resec_coordinate in resec_coordinates:
                 diff = node_coordinates - resec_coordinate
@@ -443,10 +471,10 @@ def nodes_creation(labels,
                     return True
         return False
 
-    def add_resected(resec_txt, nodes):
+    def add_resected(resec_txt: str, nodes: List[Node]) -> None:
         for node in nodes:
             if node.label.name in resec_txt:
-                node.set_type('resected')
+                node.type('resected')
 
     nodes = list()
 

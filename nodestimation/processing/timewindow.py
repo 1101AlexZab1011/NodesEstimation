@@ -1,26 +1,58 @@
+from typing import *
+
 import numpy as np
 
 
 class TimeWindow(object):
 
-    def __init__(self, data, start, end):
+    def __init__(self, data: np.ndarray, start: Union[int, float], end: Union[int, float]):
         self.data = data
         self.start = start
         self.end = end
-        self.len = end - start
+        self.__len = end - start
 
-    def set_data(self, data):
-        self.data = data
+    @property
+    def end(self):
+        return self
 
-    def set_size(self, t_start):
-        self.start = t_start
-        self.end = t_start + self.len
+    @property
+    def data(self):
+        return self
+
+    @property
+    def start(self):
+        return self
+
+    @data.setter
+    def data(self, data: np.ndarray):
+        self._data = data
+
+    @data.getter
+    def data(self):
+        return self._data
+
+    @start.setter
+    def start(self, t_start):
+        self._start = t_start
+        self._end = t_start + self.__len
+
+    @start.getter
+    def start(self):
+        return self._start
+
+    @end.setter
+    def end(self, value):
+        self._end = value
+
+    @end.getter
+    def end(self):
+        return self._end
 
 
-def sliding_window(size, overlap):
+def sliding_window(size: int, overlap: float):
     # does computation dividing given data into slices of given size with given overlap
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
 
         def wrapper(*args, **kwargs):
 
@@ -81,8 +113,8 @@ def sliding_window(size, overlap):
     return decorator
 
 
-def mean_across_tw(twlist):
-    # computes mean value for the given list of time windows
+def mean_across_tw(twlist: List[TimeWindow]) -> np.ndarray:
+    # computes mean nodes for the given list of time windows
 
     if len(twlist[0].data.shape) == 2:
         l, w = twlist[0].data.shape

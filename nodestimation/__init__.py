@@ -15,40 +15,78 @@ class Node(object):
             label: mne.label.Label,
             features: NodeFeatures,
             center_coordinates: np.ndarray,
-            type: Union[str, None] = None
+            type: Optional[str] = None
     ):
         self.features = features
         self.label = label
         self.center_coordinates = center_coordinates
-        self.features = features
         self.type = type
 
-    def set_label(self, label: mne.label.Label):
-        self.label = label
+    def __str__(self):
+        return 'Node for {}, {}'.format(self.label, self.type)
 
-    def set_coordinates(self, coordinates: np.ndarray):
+    @property
+    def label(self):
+        return self
+
+    @property
+    def center_coordinates(self):
+        return self
+
+    @property
+    def features(self):
+        return self
+
+    @property
+    def type(self):
+        return self
+
+    @label.setter
+    def label(self, label: mne.label.Label):
+        self._label = label
+
+    @label.getter
+    def label(self):
+        return self._label
+
+    @center_coordinates.setter
+    def center_coordinates(self, coordinates: np.ndarray):
 
         if coordinates.shape[1] != 3:
             raise ValueError('Coordinates must have shape (n, 3) but given shape is {}'.format(coordinates.shape))
 
-        self.center_coordinates = coordinates
+        self._center_coordinates = coordinates
 
-    def set_features(
+    @center_coordinates.getter
+    def center_coordinnates(self):
+        return self._center_coordinates
+
+    @features.setter
+    def features(
             self,
             features: NodeFeatures
     ):
-        self.features = features
+        self._features = features
 
-    def set_type(self, type: str, mood: str = 'rename'):
+    @features.getter
+    def features(self):
+        return self._features
+
+    @type.setter
+    def type(self, type: str, mood: str = 'rename'):
 
         if mood == 'rename':
-            self.type = type
+            self._type = type
 
         elif mood == 'add':
-            self.type += '/' + type
+            self._type += '/' + type
 
         else:
             raise ValueError("Unknown action: ", mood)
+
+    @type.getter
+    def type(self):
+        return self._type
 
 
 def eigencentrality(matrix: np.ndarray) -> np.ndarray:

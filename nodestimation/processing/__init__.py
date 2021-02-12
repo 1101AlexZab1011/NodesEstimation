@@ -1,8 +1,8 @@
 from typing import *
 
 
-def by_default(default_values: tuple, default_result: Optional[tuple, Any] = None) -> Any:
-    # if the wrapped function has None as the first argument, it ignores the wrapped function and returns specified value or None
+def by_default(default_values: tuple, default_result: Optional[Union[tuple, Any]] = None) -> Any:
+    # if the wrapped function has None as the first argument, it ignores the wrapped function and returns specified nodes or None
 
     def decorator(func: Callable) -> Callable:
 
@@ -21,7 +21,7 @@ def by_default(default_values: tuple, default_result: Optional[tuple, Any] = Non
 
 
 def get_ith(func: Callable) -> Callable:
-    # if wrapped function returns list, it ignores all except priority_ value
+    # if wrapped function returns list, it ignores all except priority_ nodes
     def wrapper(*args, **kwargs):
         out = func(*args, **kwargs)
 
