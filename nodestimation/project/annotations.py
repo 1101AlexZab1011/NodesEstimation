@@ -2,10 +2,19 @@ from typing import *
 
 import numpy as np
 
-SubjectTree = Dict[
+SubjectTreeData = Dict[
     str, Union[
         str, List[str]
     ]
+]
+
+SubjectTreeMetaData = Dict[
+    str, Union[float, str, List[str]]
+]
+
+SubjectTree = Tuple[
+    SubjectTreeMetaData,
+    SubjectTreeData
 ]
 
 ResourcesTree = Dict[

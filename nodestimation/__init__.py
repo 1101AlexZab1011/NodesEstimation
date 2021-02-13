@@ -58,7 +58,7 @@ class Node(object):
         self._center_coordinates = coordinates
 
     @center_coordinates.getter
-    def center_coordinnates(self):
+    def center_coordinates(self):
         return self._center_coordinates
 
     @features.setter

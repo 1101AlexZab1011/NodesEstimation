@@ -4,7 +4,7 @@ import itertools
 from typing import *
 
 from nodestimation.project.actions import save, read
-from nodestimation.project.annotations import SubjectTree, ResourcesTree
+from nodestimation.project.annotations import SubjectTree, ResourcesTree, SubjectTreeData
 from nodestimation.project.structures import file_save_format, file_search_regexps, tree_data_types
 import hashlib
 
@@ -54,7 +54,7 @@ def get_size(start_path: str = '.') -> float:
     return total_size
 
 
-def add_file_to_tree(regexp: str, file: Any, subject_tree: SubjectTree, type: str, walk: Sequence) -> None:
+def add_file_to_tree(regexp: str, file: Any, subject_tree: SubjectTreeData, type: str, walk: Sequence) -> None:
     # adds a file matching the search conditions to the project tree
 
     if isinstance(regexp, list):
@@ -73,7 +73,7 @@ def add_file_to_tree(regexp: str, file: Any, subject_tree: SubjectTree, type: st
             print('\t\t' + '{} file: ok'.format(type).capitalize())
 
 
-def build_resources_tree(subject_paths: Dict[str, str]) -> Dict[str, Tuple[Dict[str, Union[str, list, float]], ResourcesTree]]:
+def build_resources_tree(subject_paths: Dict[str, str]) -> ResourcesTree:
     # builds a project tree describing all the required files
 
     print('Analysing project structure...')

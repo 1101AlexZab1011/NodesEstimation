@@ -8,7 +8,7 @@ import nilearn.image as image
 from nodestimation.processing.connectivity import pearson_ts
 from nodestimation.project import read_or_write
 from nodestimation import Node
-from nodestimation.project.annotations import SubjectTree, Features
+from nodestimation.project.annotations import SubjectTree, Features, LabelsFeatures
 
 
 def notchfir(raw: mne.io.Raw, lfreq: int, nfreq: int, hfreq: int) -> mne.io.Raw:
@@ -453,7 +453,7 @@ def features_computation(
 @read_or_write('nodes')
 def nodes_creation(
         labels: List[mne.Label],
-        features: Features,
+        features: LabelsFeatures,
         nodes_coordinates: np.ndarray,
         resec_coordinates: Union[None, np.ndarray],
         resec_txt: str,

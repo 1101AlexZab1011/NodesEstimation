@@ -220,29 +220,29 @@ def pipeline(
                         data_type: data_path
                         for data_type, data_path
                         in zip(
-                        subject_data_types, [
-                            raw_path,
-                            fp_raw_path,
-                            bem_path,
-                            src_path,
-                            trans_path,
-                            fwd_path,
-                            eve_path,
-                            epo_path,
-                            cov_path,
-                            ave_path,
-                            inv_path,
-                            stc_path,
-                            resec_path,
-                            resec_txt_path,
-                            resec_mni_path,
-                            parc_path,
-                            coords_path,
-                            feat_path,
-                            nodes_path,
-                            dataset_path
-                        ]
-                    )
+                            subject_data_types, [
+                                raw_path,
+                                fp_raw_path,
+                                bem_path,
+                                src_path,
+                                trans_path,
+                                fwd_path,
+                                eve_path,
+                                epo_path,
+                                cov_path,
+                                ave_path,
+                                inv_path,
+                                stc_path,
+                                resec_path,
+                                resec_txt_path,
+                                resec_mni_path,
+                                parc_path,
+                                coords_path,
+                                feat_path,
+                                nodes_path,
+                                dataset_path
+                            ]
+                        )
                     },
                     nodes,
                     subjects_[subject],
