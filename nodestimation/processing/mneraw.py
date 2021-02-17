@@ -292,7 +292,7 @@ def resection_area_computation(img: Any, _subject_tree=None, _conditions=None, _
 
 @read_or_write('resec_txt', search_target='original', write_file=False)
 def read_original_resec_txt(
-        path: str,
+        path: Union[None, str],
         _subject_tree: Optional[SubjectTree] = None,
         _conditions: Optional[str] = None,
         _priority: Optional[int] = None
