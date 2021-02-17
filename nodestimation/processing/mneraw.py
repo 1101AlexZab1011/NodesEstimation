@@ -462,12 +462,12 @@ def nodes_creation(
         _priority: Optional[int] = None
 ) -> List[Node]:
 
-    def is_resected(resec_coordinates: Union[None, np.ndarray], node_coordinates: np.ndarray) -> bool:
+    def is_resected(resec_coordinates: Union[None, np.ndarray], node_coordinates: np.ndarray, radius: int = 1) -> bool:
         if resec_coordinates is not None:
             for resec_coordinate in resec_coordinates:
                 diff = node_coordinates - resec_coordinate
                 dist = np.sqrt(diff[0] ** 2 + diff[1] ** 2 + diff[2] ** 2)
-                if dist <= 1:
+                if dist <= radius:
                     return True
         return False
 
@@ -477,6 +477,9 @@ def nodes_creation(
                 node.type = 'resected'
 
     nodes = list()
+
+    if resec_txt:
+        add_resected(resec_txt, nodes)
 
     for label in labels:
         nodes.append(
@@ -493,8 +496,11 @@ def nodes_creation(
             )
         )
 
-    if resec_txt:
-        add_resected(resec_txt, nodes)
+    if not any(['resected' in node.type for node in nodes]):
+        for i in range(2, 10):
+            print('Resected nodes not found, increase node radius from {} to {}'.format(i-1, i))
+            for node in nodes:
+                node.type = 'resected' if is_resected(resec_coordinates, node.center_coordinates, i) else 'spared'
 
     if not any(['resected' in node.type for node in nodes]):
         raise Warning('Resected nodes not found')
