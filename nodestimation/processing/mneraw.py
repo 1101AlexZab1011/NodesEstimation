@@ -479,7 +479,7 @@ def nodes_creation(
     nodes = list()
 
     if resec_txt:
-    	print(resec_txt)
+        print(resec_txt)
         add_resected(resec_txt, nodes)
 
     for label in labels:
