@@ -501,6 +501,8 @@ def nodes_creation(
             print('Resected nodes not found, increase node radius from {} to {}'.format(i-1, i))
             for node in nodes:
                 node.type = 'resected' if is_resected(resec_coordinates, node.center_coordinates, i) else 'spared'
+            if not all(['spared' in node.type for node in nodes]):
+                break
 
     if all(['spared' in node.type for node in nodes]):
         raise Warning('Resected nodes not found')
