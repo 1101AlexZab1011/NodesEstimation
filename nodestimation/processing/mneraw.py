@@ -473,13 +473,13 @@ def nodes_creation(
 
     def add_resected(resec_txt: str, nodes: List[Node]) -> None:
         for node in nodes:
+            print(node.label.name, ' in ', resec_txt, node.label.name in resec_txt)
             if node.label.name in resec_txt:
                 node.type = 'resected'
 
     nodes = list()
 
     if resec_txt:
-        print(resec_txt)
         add_resected(resec_txt, nodes)
 
     for label in labels:
