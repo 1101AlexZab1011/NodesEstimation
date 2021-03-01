@@ -14,44 +14,47 @@ def collect_statistic(data: pd.DataFrame) -> pd.DataFrame:
                         index=['mean', 'stdev', 'm+std', 'm-std'])
 
 
+def append_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[int] = None) -> pd.DataFrame:
+
+    if not isinstance(series, list):
+        series = [series]
+
+    if index is not None:
+
+        if not isinstance(index, list):
+            index = [index]
+
+        index = np.concatenate(df.columns, np.array(index), axis=0)
+
+    df_series = [df.iloc[i] for i in range(df.shape[0])]
+
+    for s in series:
+        df_series.append(s)
+
+    return pd.DataFrame(df_series, index=index)
+
+
+def appstart_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[int] = None) -> pd.DataFrame:
+
+    if not isinstance(series, list):
+        series = [series]
+
+    if index is not None:
+
+        if not isinstance(index, list):
+            index = [index]
+
+        index = np.concatenate(np.array(index), df.columns, axis=0)
+
+    df_series = [df.iloc[i] for i in range(df.shape[0])]
+
+    for s in df_series:
+        series.append(s)
+
+    return pd.DataFrame(series, index=index)
+
+
 def compute_importance(data: pd.DataFrame, statistic: pd.DataFrame) -> pd.Series:
-    def append_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[int] = None) -> pd.DataFrame:
-
-        if not isinstance(series, list):
-            series = [series]
-
-        if index is not None:
-
-            if not isinstance(index, list):
-                index = [index]
-
-            index = np.concatenate(df.columns, np.array(index), axis=0)
-
-        df_series = [df.iloc[i] for i in range(df.shape[0])]
-
-        for s in series:
-            df_series.append(s)
-
-        return pd.DataFrame(df_series, index=index)
-
-    def appstart_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[int] = None) -> pd.DataFrame:
-
-        if not isinstance(series, list):
-            series = [series]
-
-        if index is not None:
-
-            if not isinstance(index, list):
-                index = [index]
-
-            index = np.concatenate(np.array(index), df.columns, axis=0)
-
-        df_series = [df.iloc[i] for i in range(df.shape[0])]
-
-        for s in df_series:
-            series.append(s)
-
-        return pd.DataFrame(series, index=index)
 
     sample_statistics = list()
 
