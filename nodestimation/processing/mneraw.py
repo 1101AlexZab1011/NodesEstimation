@@ -478,9 +478,6 @@ def nodes_creation(
 
     nodes = list()
 
-    if resec_txt:
-        add_resected(resec_txt, nodes)
-
     for label in labels:
         nodes.append(
             Node(
@@ -496,15 +493,18 @@ def nodes_creation(
             )
         )
 
-    if not any(['resected' in node.type for node in nodes]):
-        for i in range(2, 10):
+    if resec_txt:
+        add_resected(resec_txt, nodes)
+
+    if all(['spared' in node.type for node in nodes]):
+        for i in range(2, 11):
             print('Resected nodes not found, increase node radius from {} to {}'.format(i-1, i))
             for node in nodes:
                 node.type = 'resected' if is_resected(resec_coordinates, node.center_coordinates, i) else 'spared'
-                if any(['resected' in node.type for node in nodes]):
-                    return nodes
+            if not all(['spared' in node.type for node in nodes]):
+                break
 
-    if not any(['resected' in node.type for node in nodes]):
+    if all(['spared' in node.type for node in nodes]):
         raise Warning('Resected nodes not found')
 
     return nodes

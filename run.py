@@ -4,7 +4,7 @@ import nilearn.plotting as nplt
 import matplotlib.pyplot as plt
 from nodestimation.project.actions import read
 
-subjects = pipeline(methods=['wpli', 'psd'],
+subjects = pipeline(methods=['wpli', 'psd', 'envelope', 'imcoh', 'ciplv'],
                     freq_bands=[(0.5, 4), (4, 7), (7, 14), (14, 30), (30, 70)])
 
 for subject in subjects:

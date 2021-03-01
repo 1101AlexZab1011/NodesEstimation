@@ -96,7 +96,7 @@ def pipeline(
         print('Preparing data...')
         for subject_name in tree:
             subject_tree_metadata = tree[subject_name][0]
-            subject_file = os.path.join(subject_tree_metadata['path'], 'subjects_information_for_' + conditions_code + '.pkl')
+            subject_file = os.path.join(subject_tree_metadata['path'], 'subject_information_for_' + conditions_code + '.pkl')
             if os.path.exists(subject_file):
                 print('All computation has been already done, loading of the existing file with the solution...')
                 subject = read_subject(subject_file)
