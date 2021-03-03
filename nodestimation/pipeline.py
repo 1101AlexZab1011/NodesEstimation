@@ -30,27 +30,55 @@ from nodestimation.processing.mneraw import \
     nodes_creation, read_original_resec_txt
 
 
-def write_subjects(path: str, subjects: List[Subject]):
+def write_subjects(path: str, subjects: List[Subject]) -> None:
+    """Stores information for entrie set of :class:`nodestimation.project.subject.Subject` objects
+
+    :param path: path to write
+    :type path: str
+    :param subjects: list with :class:`nodestimation.project.subject.Subject` objects
+    :type subjects: list
+    """
     pickle.dump(subjects, open(path, 'wb'))
 
 
-def read_subjects(path: str):
+def read_subjects(path: str) -> List[Subject]:
+    """Reads set of :class:`nodestimation.project.subject.Subject` objects
+
+        :param path: path to read
+        :return: list of :class:`nodestimation.project.subject.Subject` objects
+        :rtype: list
+    """
+
     return pickle.load(open(path, 'rb'))
 
 
 def write_subject(path: str, subject: Subject):
+    """Stores information about one :class:`nodestimation.project.subject.Subject` object
+
+        :param path: path to write
+        :type path: str
+        :param subject: :class:`nodestimation.project.subject.Subject` object
+        :type subject: :class:`nodestimation.project.subject.Subject`
+    """
+
     pickle.dump(subject, open(path, 'wb'))
 
 
 def read_subject(path: str):
+    """Reads one :class:`nodestimation.project.subject.Subject` object
+
+            :param path: path to read
+            :rtype: :class:`nodestimation.project.subject.Subject`
+        """
+
     return pickle.load(open(path, 'rb'))
 
 
 def pipeline(
         crop_time: Optional[int] = 120,
         snr: Optional[float] = 0.5,
-        epochs_tmin: Optional[int] = -1,
-        epochs_tmax: Optional[int] = 1,
+        epochs_tmin: Optional[Union[int, float]] = -1,
+        epochs_tmax: Optional[Union[int, float]] = 1,
         conductivity: Optional[tuple] = (0.3,),
         se_method: Optional[str] = "sLORETA",
         methods: Optional[Union[str, List[str]]] = 'plv',
@@ -60,6 +88,49 @@ def pipeline(
         hfreq: Optional[int] = 70,
         freq_bands: Optional[Union[tuple, List[tuple]]] = (0.5, 4),
 ) -> List[Subject]:
+    """Pipeline for brain data transformation
+
+        :param methods: set of metrics to be computed (see `list of metrics`_), default ``"plv"``
+        :type methods: list of str or str, optional
+        :param se_method: MNE solution for inverse computations (see `list of MNE solutions`_), default ``"sLORETA"``
+        :type se_method: str, optional
+        :param conductivity: suggested tissues conductivity, default (0.3,)
+        :type conductivity: tuple of float, optional
+        :param epochs_tmin: start time (s) before event, default -1
+        :type epochs_tmin: int or float, optional
+        :param epochs_tmax: end time (s) after event, default 1
+        :type epochs_tmax: int or float, optional
+        :param rfreq: resampling frequency (Hz), default 200
+        :type rfreq: int, optional
+        :param nfreq: frequency (Hz) for notch-filtering, default 50
+        :type nfreq: int, optional
+        :param lfreq: frequency (Hz) for low-pass-filtering, default 1
+        :type lfreq: int, optional
+        :param hfreq: frequency (Hz) for high-pass-filtering, default 70
+        :type hfreq: int, optional
+        :param freq_bands: in what frequency (Hz) diapasons are the calculations performed, default (0.5, 4)
+        :type freq_bands: tuple of float or list of tuple of float
+        :param crop_time: what time (s) of brain data be read, default 200
+        :type crop_time: int, optional
+        :param snr: regularization parameter, default 0.5
+        :type snr: float, optional
+        :return: subjects information, computed according to given parameters
+        :rtype: list of :class:`nodestimation.project.subject.Subject` objects
+        :raise ValueError: if freq_bands given in wrong format
+
+        .. _`list of metrics`:
+        .. note:: metrics that can be calculated:
+            `psd, coh, cohy, imcoh, plv, ciplv, ppc, pli, pli2_unbiased, wpli,
+            wpli2_debiased <https://mne.tools/stable/generated/mne.connectivity.spectral_connectivity.html>`_,
+            `pearson <https://www.researchgate.net/figure/nferring-of-Pearson-correlation-based-functional-connectivity-map-including-the-Fishers_fig1_235882165>`_,
+            `envelope <https://mne.tools/stable/auto_examples/connectivity/plot_mne_inverse_envelope_correlation.html>`_
+
+        .. _`list of MNE solutions`:
+        .. note:: MNE solutions that can be applied:
+            `MNE, dSPM, sLORETA, eLORETA <https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse>`_
+
+    """
+
     if not isinstance(methods, list):
         methods = [methods]
     if not isinstance(freq_bands, list):

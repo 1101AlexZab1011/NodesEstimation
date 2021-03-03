@@ -1,0 +1,22 @@
+nodestimation.learning package
+==============================
+
+Submodules
+----------
+
+nodestimation.learning.selection module
+---------------------------------------
+
+.. automodule:: nodestimation.learning.selection
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: nodestimation.learning
+    :members:
+    :undoc-members:
+    :show-inheritance:

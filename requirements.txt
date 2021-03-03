@@ -1,0 +1,8 @@
+numpy
+mne
+networkx
+pandas
+scipy
+nilearn
+nibabel
+sclearn

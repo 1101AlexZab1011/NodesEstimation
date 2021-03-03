@@ -1,0 +1,228 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>nodestimation.project package &#8212; NodesEstimation  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="nodestimation.processing package" href="nodestimation.processing.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="nodestimation-project-package">
+<h1>nodestimation.project package<a class="headerlink" href="#nodestimation-project-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nodestimation.project.actions">
+<span id="nodestimation-project-actions-module"></span><h2>nodestimation.project.actions module<a class="headerlink" href="#module-nodestimation.project.actions" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nodestimation.project.annotations">
+<span id="nodestimation-project-annotations-module"></span><h2>nodestimation.project.annotations module<a class="headerlink" href="#module-nodestimation.project.annotations" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nodestimation.project.structures">
+<span id="nodestimation-project-structures-module"></span><h2>nodestimation.project.structures module<a class="headerlink" href="#module-nodestimation.project.structures" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nodestimation.project.subject">
+<span id="nodestimation-project-subject-module"></span><h2>nodestimation.project.subject module<a class="headerlink" href="#module-nodestimation.project.subject" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nodestimation.project.subject.Subject">
+<em class="property">class </em><code class="descclassname">nodestimation.project.subject.</code><code class="descname">Subject</code><span class="sig-paren">(</span><em>name: str, data: Dict[str, str], nodes: List[nodestimation.Node], directory: str, dataset: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/project/subject.html#Subject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.subject.Subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="attribute">
+<dt id="nodestimation.project.subject.Subject.data">
+<code class="descname">data</code><a class="headerlink" href="#nodestimation.project.subject.Subject.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nodestimation.project.subject.Subject.data_description">
+<code class="descname">data_description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/project/subject.html#Subject.data_description"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.subject.Subject.data_description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.project.subject.Subject.dataset">
+<code class="descname">dataset</code><a class="headerlink" href="#nodestimation.project.subject.Subject.dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.project.subject.Subject.dir">
+<code class="descname">dir</code><a class="headerlink" href="#nodestimation.project.subject.Subject.dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.project.subject.Subject.nodes">
+<code class="descname">nodes</code><a class="headerlink" href="#nodestimation.project.subject.Subject.nodes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nodestimation.project">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nodestimation.project" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nodestimation.project.add_file_to_tree">
+<code class="descclassname">nodestimation.project.</code><code class="descname">add_file_to_tree</code><span class="sig-paren">(</span><em>regexp: str, file: Any, subject_tree: Dict[str, Union[str, List[str]]], type: str, walk: Sequence[T_co]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/nodestimation/project.html#add_file_to_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.add_file_to_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.build_resources_tree">
+<code class="descclassname">nodestimation.project.</code><code class="descname">build_resources_tree</code><span class="sig-paren">(</span><em>subject_paths: Dict[str, str]</em><span class="sig-paren">)</span> &#x2192; Dict[str, Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]]<a class="reference internal" href="_modules/nodestimation/project.html#build_resources_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.build_resources_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.check_path">
+<code class="descclassname">nodestimation.project.</code><code class="descname">check_path</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/nodestimation/project.html#check_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.check_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.conditions_unique_code">
+<code class="descclassname">nodestimation.project.</code><code class="descname">conditions_unique_code</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/nodestimation/project.html#conditions_unique_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.conditions_unique_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.find_subject_dir">
+<code class="descclassname">nodestimation.project.</code><code class="descname">find_subject_dir</code><span class="sig-paren">(</span><em>root: str = './'</em><span class="sig-paren">)</span> &#x2192; Tuple[str, Dict[str, str]]<a class="reference internal" href="_modules/nodestimation/project.html#find_subject_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.find_subject_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.get_size">
+<code class="descclassname">nodestimation.project.</code><code class="descname">get_size</code><span class="sig-paren">(</span><em>start_path: str = '.'</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/nodestimation/project.html#get_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.get_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.is_target">
+<code class="descclassname">nodestimation.project.</code><code class="descname">is_target</code><span class="sig-paren">(</span><em>path: str</em>, <em>target: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/nodestimation/project.html#is_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.is_target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.read_files">
+<code class="descclassname">nodestimation.project.</code><code class="descname">read_files</code><span class="sig-paren">(</span><em>type: str, paths: List[str], priority: int</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="_modules/nodestimation/project.html#read_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.read_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.read_or_write">
+<code class="descclassname">nodestimation.project.</code><code class="descname">read_or_write</code><span class="sig-paren">(</span><em>type: str</em>, <em>search_target: str = 'any'</em>, <em>read_file: bool = True</em>, <em>write_file: bool = True</em>, <em>main_arg_indexes: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/project.html#read_or_write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.read_or_write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.select_suitable_paths">
+<code class="descclassname">nodestimation.project.</code><code class="descname">select_suitable_paths</code><span class="sig-paren">(</span><em>type: str, paths: Union[str, List[str]], target: str</em><span class="sig-paren">)</span> &#x2192; Union[str, List[str]]<a class="reference internal" href="_modules/nodestimation/project.html#select_suitable_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.select_suitable_paths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.project.target_exists">
+<code class="descclassname">nodestimation.project.</code><code class="descname">target_exists</code><span class="sig-paren">(</span><em>paths: List[str], target: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/nodestimation/project.html#target_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.target_exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">NodesEstimation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">NodesEstimation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nodestimation.html">nodestimation package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="nodestimation.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nodestimation.processing.html">nodestimation.processing package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">nodestimation.project package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project.actions">nodestimation.project.actions module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project.annotations">nodestimation.project.annotations module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project.structures">nodestimation.project.structures module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project.subject">nodestimation.project.subject module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">NodesEstimation</a><ul>
+  <li><a href="nodestimation.html">nodestimation package</a><ul>
+      <li>Previous: <a href="nodestimation.processing.html" title="previous chapter">nodestimation.processing package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alexey Zabolotniy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/nodestimation.project.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -92,12 +92,12 @@ def build_resources_tree(subject_paths: Dict[str, str]) -> ResourcesTree:
                     add_file_to_tree(file_search_regexps[type], file, subject_tree, type, walk)
 
         meta = {
-                'subject': subject,
-                'path': path,
-                'directories': list(subdirs),
-                'files': list(files),
-                'size': get_size(path)
-                }
+            'subject': subject,
+            'path': path,
+            'directories': list(subdirs),
+            'files': list(files),
+            'size': get_size(path)
+        }
         tree.update({subject: (meta, subject_tree)})
         print('\tFiles structure for {} has been analysed. Files tree is built'.format(subject))
 
@@ -134,15 +134,22 @@ def read_files(type: str, paths: List[str], priority: int) -> Any:
         raise ValueError('Incorrect conditions; type of read files: {}, found {} files of this type, paths to these files: {} and are going to be read: {}'.format(type, len(paths), paths, priority))
 
 
-def target_exists(paths: List[str], target: str) -> bool:
+def is_allowed_type(path, conditions):
+    if 'node_estimation_pipeline_file' in path and conditions not in path:
+        return False
+    else:
+        return True
+
+
+def target_exists(paths: List[str], target: str, conditions: str) -> bool:
     # determines if a file suitable to the search_target of a search exists
 
     if not isinstance(paths, list):
         paths = [paths]
     try:
         out = {
-            'any': True,
-            'nepf': any(['node_estimation_pipeline_file' in file for file in paths]),
+            'any': any([is_allowed_type(file, conditions) for file in paths]),
+            'nepf': any(['node_estimation_pipeline_file' in file and is_allowed_type(file, conditions) for file in paths]),
             'original': any(['node_estimation_pipeline_file' not in file for file in paths])
         }[target]
 
@@ -152,28 +159,28 @@ def target_exists(paths: List[str], target: str) -> bool:
     return out
 
 
-def is_target(path: str, target: str) -> bool:
+def is_target(path: str, target: str, conditions: str) -> bool:
     # determines if a file is the search_target of a search
     return {
-        'any': True,
-        'nepf': 'node_estimation_pipeline_file' in path,
+        'any': is_allowed_type(path, conditions),
+        'nepf': 'node_estimation_pipeline_file' in path and is_allowed_type(path, conditions),
         'original': 'node_estimation_pipeline_file' not in path
     }[target]
 
 
-def select_suitable_paths(type: str, paths: Union[str, List[str]], target: str) -> Union[str, List[str]]:
+def select_suitable_paths(type: str, paths: Union[str, List[str]], target: str, conditions: str) -> Union[str, List[str]]:
     print('Choosing {} {} files...'.format(target, type))
-    if not isinstance(paths, list) and is_target(paths, target):
-        print('Required files found')
+    if not isinstance(paths, list) and is_target(paths, target, conditions):
+        print('Required file found')
         return paths
     else:
         out = [
             path
             for path in paths
-            if is_target(path, target)
+            if is_target(path, target, conditions)
         ]
         if len(out) == 1:
-            print('Required files found')
+            print('Required file found')
             return out[0]
         elif len(out) > 1:
             print('Required files found')
@@ -224,7 +231,7 @@ def read_or_write(type: str, search_target: str = 'any', read_file: bool = True,
                 print('Skipping the reading step')
 
             if type in tree \
-                    and target_exists(tree[type], search_target) \
+                    and target_exists(tree[type], search_target, conditions) \
                     and read_file:
                 print('The {} {} file has been found; trying to read...'
                       .format(search_target, type))
@@ -232,7 +239,7 @@ def read_or_write(type: str, search_target: str = 'any', read_file: bool = True,
                 try:
                     out = read_files(
                         type,
-                        select_suitable_paths(type, tree[type], search_target),
+                        select_suitable_paths(type, tree[type], search_target, conditions),
                         priority
                     )
                     print('Successfully read')
@@ -277,4 +284,3 @@ def read_or_write(type: str, search_target: str = 'any', read_file: bool = True,
         return wrapper
 
     return decorator
-
