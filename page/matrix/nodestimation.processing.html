@@ -1,0 +1,216 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>nodestimation.processing package &#8212; NodesEstimation  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="nodestimation.project package" href="nodestimation.project.html" />
+    <link rel="prev" title="nodestimation.learning package" href="nodestimation.learning.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="nodestimation-processing-package">
+<h1>nodestimation.processing package<a class="headerlink" href="#nodestimation-processing-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nodestimation.processing.connectivity">
+<span id="nodestimation-processing-connectivity-module"></span><h2>nodestimation.processing.connectivity module<a class="headerlink" href="#module-nodestimation.processing.connectivity" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nodestimation.processing.connectivity.pearson_ts">
+<code class="descclassname">nodestimation.processing.connectivity.</code><code class="descname">pearson_ts</code><span class="sig-paren">(</span><em>label_ts: List[T]</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/connectivity.html#pearson_ts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.connectivity.pearson_ts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nodestimation.processing.features">
+<span id="nodestimation-processing-features-module"></span><h2>nodestimation.processing.features module<a class="headerlink" href="#module-nodestimation.processing.features" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nodestimation.processing.features.iterp_for_psd">
+<code class="descclassname">nodestimation.processing.features.</code><code class="descname">iterp_for_psd</code><span class="sig-paren">(</span><em>psd: numpy.ndarray</em>, <em>n_samples: int</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/features.html#iterp_for_psd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.iterp_for_psd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.features.prepare_features">
+<code class="descclassname">nodestimation.processing.features.</code><code class="descname">prepare_features</code><span class="sig-paren">(</span><em>label_names: List[str], features: Dict[str, Dict[str, numpy.ndarray]]</em><span class="sig-paren">)</span> &#x2192; Dict[str, Dict[str, Dict[str, float]]]<a class="reference internal" href="_modules/nodestimation/processing/features.html#prepare_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.prepare_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nodestimation.processing.mneraw">
+<span id="nodestimation-processing-mneraw-module"></span><h2>nodestimation.processing.mneraw module<a class="headerlink" href="#module-nodestimation.processing.mneraw" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.artifacts_clean">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">artifacts_clean</code><span class="sig-paren">(</span><em>raw: mne.io.fiff.raw.Raw</em>, <em>n_components: Optional[int] = 15</em>, <em>method: Optional[str] = 'correlation'</em>, <em>threshold: Optional[float] = 3.0</em><span class="sig-paren">)</span> &#x2192; mne.io.fiff.raw.Raw<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#artifacts_clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.artifacts_clean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.notchfir">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">notchfir</code><span class="sig-paren">(</span><em>raw: mne.io.fiff.raw.Raw</em>, <em>lfreq: int</em>, <em>nfreq: int</em>, <em>hfreq: int</em><span class="sig-paren">)</span> &#x2192; mne.io.fiff.raw.Raw<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#notchfir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.notchfir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nodestimation.processing.timewindow">
+<span id="nodestimation-processing-timewindow-module"></span><h2>nodestimation.processing.timewindow module<a class="headerlink" href="#module-nodestimation.processing.timewindow" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nodestimation.processing.timewindow.TimeWindow">
+<em class="property">class </em><code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">TimeWindow</code><span class="sig-paren">(</span><em>data: numpy.ndarray, start: Union[int, float], end: Union[int, float]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#TimeWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.TimeWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="attribute">
+<dt id="nodestimation.processing.timewindow.TimeWindow.data">
+<code class="descname">data</code><a class="headerlink" href="#nodestimation.processing.timewindow.TimeWindow.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.processing.timewindow.TimeWindow.end">
+<code class="descname">end</code><a class="headerlink" href="#nodestimation.processing.timewindow.TimeWindow.end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.processing.timewindow.TimeWindow.start">
+<code class="descname">start</code><a class="headerlink" href="#nodestimation.processing.timewindow.TimeWindow.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.timewindow.mean_across_tw">
+<code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">mean_across_tw</code><span class="sig-paren">(</span><em>twlist: List[nodestimation.processing.timewindow.TimeWindow]</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#mean_across_tw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.mean_across_tw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.timewindow.sliding_window">
+<code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">sliding_window</code><span class="sig-paren">(</span><em>size: int</em>, <em>overlap: float</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#sliding_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.sliding_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.timewindow.voxel_from_tw">
+<code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">voxel_from_tw</code><span class="sig-paren">(</span><em>twlist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#voxel_from_tw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.voxel_from_tw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nodestimation.processing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nodestimation.processing" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nodestimation.processing.by_default">
+<code class="descclassname">nodestimation.processing.</code><code class="descname">by_default</code><span class="sig-paren">(</span><em>default_values: tuple</em>, <em>default_result: Union[tuple</em>, <em>Any</em>, <em>None] = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="_modules/nodestimation/processing.html#by_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.by_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.get_ith">
+<code class="descclassname">nodestimation.processing.</code><code class="descname">get_ith</code><span class="sig-paren">(</span><em>func: Callable</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="_modules/nodestimation/processing.html#get_ith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.get_ith" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">NodesEstimation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">NodesEstimation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nodestimation.html">nodestimation package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="nodestimation.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">nodestimation.processing package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.processing.connectivity">nodestimation.processing.connectivity module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.processing.features">nodestimation.processing.features module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.processing.mneraw">nodestimation.processing.mneraw module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.processing.timewindow">nodestimation.processing.timewindow module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.processing">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nodestimation.project.html">nodestimation.project package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">NodesEstimation</a><ul>
+  <li><a href="nodestimation.html">nodestimation package</a><ul>
+      <li>Previous: <a href="nodestimation.learning.html" title="previous chapter">nodestimation.learning package</a></li>
+      <li>Next: <a href="nodestimation.project.html" title="next chapter">nodestimation.project package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alexey Zabolotniy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/nodestimation.processing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
