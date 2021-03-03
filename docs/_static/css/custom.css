@@ -28,18 +28,6 @@ div.document {
     }
 }
 
-
-div.footer{
-    margin: 0 auto 30px auto;
-    width: 940px;
-    padding: 10px;
-    background-color: #3E4349;
-    color: #EAEAEA;
-}
-
-div.footer a{
-    color: #cccccc;
-}
 .class{
     padding: 50px 10px 10px;
     margin: 10px;
@@ -50,6 +38,26 @@ div.footer a{
     padding: 50px 10px 10px;
     margin: 10px;
     border-top: #cccccc solid 2px;
+}
+
+dd p {
+    margin-top: 10px;
+}
+
+dl.function > dd > p{
+    margin-top: 15px;
+}
+
+dl.class > dd > p {
+    margin-top: 15px;
+}
+
+dl dt code {
+    font-size: 1.1rem !important;
+}
+
+dl dt em.property{
+    font-size: 1.1rem;
 }
 
 .section{
@@ -66,12 +74,6 @@ table.field-list th{
     padding: 10px 20px 10px 10px;
     border-right: #cccccc solid 1px !important;
 }
-
-/*table.field-list th.field-name{*/
-/*    padding: 10px 20px 10px 10px;*/
-/*    background-color: red;*/
-/*    border: #cccccc solid 10px;*/
-/*}*/
 
 table.field-list td{
     padding: 10px 10px 10px 20px;

@@ -105,7 +105,7 @@ html_static_path = ['_static']
 
 # Custom styles
 html_css_files = [
-    'css/custom.css',
+    'css/custom.css',''
 ]
 
 # -- Options for HTMLHelp output ---------------------------------------------
