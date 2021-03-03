@@ -9,6 +9,7 @@
     <title>nodestimation.pipeline &#8212; NodesEstimation  documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
@@ -90,7 +91,7 @@
 <span class="sd">        :param path: path to write</span>
 <span class="sd">        :type path: str</span>
 <span class="sd">        :param subject: :class:`nodestimation.project.subject.Subject` object</span>
-<span class="sd">        :type subject: :class:`nodestimation.project.subject.Subject` object</span>
+<span class="sd">        :type subject: :class:`nodestimation.project.subject.Subject`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">))</span></div>
@@ -100,8 +101,7 @@
     <span class="sd">&quot;&quot;&quot;Reads one :class:`nodestimation.project.subject.Subject` object</span>
 
 <span class="sd">            :param path: path to read</span>
-<span class="sd">            :return: :class:`nodestimation.project.subject.Subject` object</span>
-<span class="sd">            :rtype: :class:`nodestimation.project.subject.Subject` object</span>
+<span class="sd">            :rtype: :class:`nodestimation.project.subject.Subject`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span></div>
@@ -110,8 +110,8 @@
 <div class="viewcode-block" id="pipeline"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.pipeline">[docs]</a><span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span>
         <span class="n">crop_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">120</span><span class="p">,</span>
         <span class="n">snr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">epochs_tmin</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">epochs_tmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">epochs_tmin</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">epochs_tmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">conductivity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.3</span><span class="p">,),</span>
         <span class="n">se_method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sLORETA&quot;</span><span class="p">,</span>
         <span class="n">methods</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="s1">&#39;plv&#39;</span><span class="p">,</span>
@@ -123,10 +123,44 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Pipeline for brain data transformation</span>
 
-<span class="sd">        :param crop_time: what time of brain data be read</span>
+<span class="sd">        :param methods: set of metrics to be computed (see `list of metrics`_), default ``&quot;plv&quot;``</span>
+<span class="sd">        :type methods: list of str or str, optional</span>
+<span class="sd">        :param se_method: MNE solution for inverse computations (see `list of MNE solutions`_), default ``&quot;sLORETA&quot;``</span>
+<span class="sd">        :type se_method: str, optional</span>
+<span class="sd">        :param conductivity: suggested tissues conductivity, default (0.3,)</span>
+<span class="sd">        :type conductivity: tuple of float, optional</span>
+<span class="sd">        :param epochs_tmin: start time (s) before event, default -1</span>
+<span class="sd">        :type epochs_tmin: int or float, optional</span>
+<span class="sd">        :param epochs_tmax: end time (s) after event, default 1</span>
+<span class="sd">        :type epochs_tmax: int or float, optional</span>
+<span class="sd">        :param rfreq: resampling frequency (Hz), default 200</span>
+<span class="sd">        :type rfreq: int, optional</span>
+<span class="sd">        :param nfreq: frequency (Hz) for notch-filtering, default 50</span>
+<span class="sd">        :type nfreq: int, optional</span>
+<span class="sd">        :param lfreq: frequency (Hz) for low-pass-filtering, default 1</span>
+<span class="sd">        :type lfreq: int, optional</span>
+<span class="sd">        :param hfreq: frequency (Hz) for high-pass-filtering, default 70</span>
+<span class="sd">        :type hfreq: int, optional</span>
+<span class="sd">        :param freq_bands: in what frequency (Hz) diapasons are the calculations performed, default (0.5, 4)</span>
+<span class="sd">        :type freq_bands: tuple of float or list of tuple of float</span>
+<span class="sd">        :param crop_time: what time (s) of brain data be read, default 200</span>
 <span class="sd">        :type crop_time: int, optional</span>
-<span class="sd">        :param snr: regularization parameter</span>
+<span class="sd">        :param snr: regularization parameter, default 0.5</span>
 <span class="sd">        :type snr: float, optional</span>
+<span class="sd">        :return: subjects information, computed according to given parameters</span>
+<span class="sd">        :rtype: list of :class:`nodestimation.project.subject.Subject` objects</span>
+<span class="sd">        :raise ValueError: if freq_bands given in wrong format</span>
+
+<span class="sd">        .. _`list of metrics`:</span>
+<span class="sd">        .. note:: metrics that can be calculated:</span>
+<span class="sd">            `psd, coh, cohy, imcoh, plv, ciplv, ppc, pli, pli2_unbiased, wpli,</span>
+<span class="sd">            wpli2_debiased &lt;https://mne.tools/stable/generated/mne.connectivity.spectral_connectivity.html&gt;`_,</span>
+<span class="sd">            `pearson &lt;https://www.researchgate.net/figure/nferring-of-Pearson-correlation-based-functional-connectivity-map-including-the-Fishers_fig1_235882165&gt;`_,</span>
+<span class="sd">            `envelope &lt;https://mne.tools/stable/auto_examples/connectivity/plot_mne_inverse_envelope_correlation.html&gt;`_</span>
+
+<span class="sd">        .. _`list of MNE solutions`:</span>
+<span class="sd">        .. note:: MNE solutions that can be applied:</span>
+<span class="sd">            `MNE, dSPM, sLORETA, eLORETA &lt;https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse&gt;`_</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 

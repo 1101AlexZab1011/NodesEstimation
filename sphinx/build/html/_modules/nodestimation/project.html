@@ -9,6 +9,7 @@
     <title>nodestimation.project &#8212; NodesEstimation  documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
@@ -124,12 +125,12 @@
                     <span class="n">add_file_to_tree</span><span class="p">(</span><span class="n">file_search_regexps</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">file</span><span class="p">,</span> <span class="n">subject_tree</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">walk</span><span class="p">)</span>
 
         <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s1">&#39;subject&#39;</span><span class="p">:</span> <span class="n">subject</span><span class="p">,</span>
-                <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
-                <span class="s1">&#39;directories&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">subdirs</span><span class="p">),</span>
-                <span class="s1">&#39;files&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">files</span><span class="p">),</span>
-                <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">get_size</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-                <span class="p">}</span>
+            <span class="s1">&#39;subject&#39;</span><span class="p">:</span> <span class="n">subject</span><span class="p">,</span>
+            <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+            <span class="s1">&#39;directories&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">subdirs</span><span class="p">),</span>
+            <span class="s1">&#39;files&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">files</span><span class="p">),</span>
+            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">get_size</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="p">}</span>
         <span class="n">tree</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">subject</span><span class="p">:</span> <span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">subject_tree</span><span class="p">)})</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Files structure for </span><span class="si">{}</span><span class="s1"> has been analysed. Files tree is built&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subject</span><span class="p">))</span>
 
@@ -166,15 +167,22 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Incorrect conditions; type of read files: </span><span class="si">{}</span><span class="s1">, found </span><span class="si">{}</span><span class="s1"> files of this type, paths to these files: </span><span class="si">{}</span><span class="s1"> and are going to be read: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">),</span> <span class="n">paths</span><span class="p">,</span> <span class="n">priority</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="target_exists"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.target_exists">[docs]</a><span class="k">def</span> <span class="nf">target_exists</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_allowed_type"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.is_allowed_type">[docs]</a><span class="k">def</span> <span class="nf">is_allowed_type</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">conditions</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;node_estimation_pipeline_file&#39;</span> <span class="ow">in</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">conditions</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="target_exists"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.target_exists">[docs]</a><span class="k">def</span> <span class="nf">target_exists</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="c1"># determines if a file suitable to the search_target of a search exists</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">paths</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;any&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;nepf&#39;</span><span class="p">:</span> <span class="nb">any</span><span class="p">([</span><span class="s1">&#39;node_estimation_pipeline_file&#39;</span> <span class="ow">in</span> <span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]),</span>
+            <span class="s1">&#39;any&#39;</span><span class="p">:</span> <span class="nb">any</span><span class="p">([</span><span class="n">is_allowed_type</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]),</span>
+            <span class="s1">&#39;nepf&#39;</span><span class="p">:</span> <span class="nb">any</span><span class="p">([</span><span class="s1">&#39;node_estimation_pipeline_file&#39;</span> <span class="ow">in</span> <span class="n">file</span> <span class="ow">and</span> <span class="n">is_allowed_type</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]),</span>
             <span class="s1">&#39;original&#39;</span><span class="p">:</span> <span class="nb">any</span><span class="p">([</span><span class="s1">&#39;node_estimation_pipeline_file&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">])</span>
         <span class="p">}[</span><span class="n">target</span><span class="p">]</span>
 
@@ -184,28 +192,28 @@
     <span class="k">return</span> <span class="n">out</span></div>
 
 
-<div class="viewcode-block" id="is_target"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.is_target">[docs]</a><span class="k">def</span> <span class="nf">is_target</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_target"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.is_target">[docs]</a><span class="k">def</span> <span class="nf">is_target</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="c1"># determines if a file is the search_target of a search</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;any&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s1">&#39;nepf&#39;</span><span class="p">:</span> <span class="s1">&#39;node_estimation_pipeline_file&#39;</span> <span class="ow">in</span> <span class="n">path</span><span class="p">,</span>
+        <span class="s1">&#39;any&#39;</span><span class="p">:</span> <span class="n">is_allowed_type</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">conditions</span><span class="p">),</span>
+        <span class="s1">&#39;nepf&#39;</span><span class="p">:</span> <span class="s1">&#39;node_estimation_pipeline_file&#39;</span> <span class="ow">in</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">is_allowed_type</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">conditions</span><span class="p">),</span>
         <span class="s1">&#39;original&#39;</span><span class="p">:</span> <span class="s1">&#39;node_estimation_pipeline_file&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span>
     <span class="p">}[</span><span class="n">target</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="select_suitable_paths"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.select_suitable_paths">[docs]</a><span class="k">def</span> <span class="nf">select_suitable_paths</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<div class="viewcode-block" id="select_suitable_paths"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.select_suitable_paths">[docs]</a><span class="k">def</span> <span class="nf">select_suitable_paths</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Choosing </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> files...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_target</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Required files found&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_target</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">conditions</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Required file found&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">paths</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">path</span>
             <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span>
-            <span class="k">if</span> <span class="n">is_target</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">is_target</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Required files found&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Required file found&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Required files found&#39;</span><span class="p">)</span>
@@ -256,7 +264,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Skipping the reading step&#39;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">tree</span> \
-                    <span class="ow">and</span> <span class="n">target_exists</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">search_target</span><span class="p">)</span> \
+                    <span class="ow">and</span> <span class="n">target_exists</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">search_target</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span> \
                     <span class="ow">and</span> <span class="n">read_file</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> file has been found; trying to read...&#39;</span>
                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_target</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
@@ -264,7 +272,7 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">out</span> <span class="o">=</span> <span class="n">read_files</span><span class="p">(</span>
                         <span class="nb">type</span><span class="p">,</span>
-                        <span class="n">select_suitable_paths</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">tree</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">search_target</span><span class="p">),</span>
+                        <span class="n">select_suitable_paths</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">tree</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">search_target</span><span class="p">,</span> <span class="n">conditions</span><span class="p">),</span>
                         <span class="n">priority</span>
                     <span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Successfully read&#39;</span><span class="p">)</span>
@@ -309,7 +317,6 @@
         <span class="k">return</span> <span class="n">wrapper</span>
 
     <span class="k">return</span> <span class="n">decorator</span></div>
-
 </pre></div>
 
           </div>

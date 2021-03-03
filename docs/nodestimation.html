@@ -9,7 +9,7 @@
     <title>nodestimation package &#8212; NodesEstimation  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -41,7 +41,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#module-nodestimation.learning.selection">nodestimation.learning.selection module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#nodestimation-learning-selection-module">nodestimation.learning.selection module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#module-nodestimation.learning">Module contents</a></li>
 </ul>
 </li>
@@ -74,20 +74,52 @@
 <p>Module containing pipeline for data transforming and functionality for storing it</p>
 <span class="target" id="module-nodestimation.pipeline"></span><dl class="function">
 <dt id="nodestimation.pipeline.pipeline">
-<code class="descclassname">nodestimation.pipeline.</code><code class="descname">pipeline</code><span class="sig-paren">(</span><em>crop_time: Optional[int] = 120, snr: Optional[float] = 0.5, epochs_tmin: Optional[int] = -1, epochs_tmax: Optional[int] = 1, conductivity: Optional[tuple] = (0.3,), se_method: Optional[str] = 'sLORETA', methods: Union[str, List[str], None] = 'plv', rfreq: Optional[int] = 200, nfreq: Optional[int] = 50, lfreq: Optional[int] = 1, hfreq: Optional[int] = 70, freq_bands: Union[tuple, List[tuple], None] = (0.5, 4)</em><span class="sig-paren">)</span> &#x2192; List[nodestimation.project.subject.Subject]<a class="reference internal" href="_modules/nodestimation/pipeline.html#pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.pipeline.pipeline" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nodestimation.pipeline.</code><code class="descname">pipeline</code><span class="sig-paren">(</span><em>crop_time: Optional[int] = 120, snr: Optional[float] = 0.5, epochs_tmin: Union[int, float, None] = -1, epochs_tmax: Union[int, float, None] = 1, conductivity: Optional[tuple] = (0.3,), se_method: Optional[str] = 'sLORETA', methods: Union[str, List[str], None] = 'plv', rfreq: Optional[int] = 200, nfreq: Optional[int] = 50, lfreq: Optional[int] = 1, hfreq: Optional[int] = 70, freq_bands: Union[tuple, List[tuple], None] = (0.5, 4)</em><span class="sig-paren">)</span> &#x2192; List[nodestimation.project.subject.Subject]<a class="reference internal" href="_modules/nodestimation/pipeline.html#pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.pipeline.pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline for brain data transformation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>crop_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – what time of brain data be read</li>
-<li><strong>snr</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – regularization parameter</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>methods</strong> (<em>list of str</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – set of metrics to be computed (see <a class="reference internal" href="#list-of-metrics">list of metrics</a>), default <code class="docutils literal notranslate"><span class="pre">&quot;plv&quot;</span></code></li>
+<li><strong>se_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – MNE solution for inverse computations (see <a class="reference internal" href="#list-of-mne-solutions">list of MNE solutions</a>), default <code class="docutils literal notranslate"><span class="pre">&quot;sLORETA&quot;</span></code></li>
+<li><strong>conductivity</strong> (<em>tuple of float</em><em>, </em><em>optional</em>) – suggested tissues conductivity, default (0.3,)</li>
+<li><strong>epochs_tmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – start time (s) before event, default -1</li>
+<li><strong>epochs_tmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – end time (s) after event, default 1</li>
+<li><strong>rfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – resampling frequency (Hz), default 200</li>
+<li><strong>nfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – frequency (Hz) for notch-filtering, default 50</li>
+<li><strong>lfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – frequency (Hz) for low-pass-filtering, default 1</li>
+<li><strong>hfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – frequency (Hz) for high-pass-filtering, default 70</li>
+<li><strong>freq_bands</strong> (<em>tuple of float</em><em> or </em><em>list of tuple of float</em>) – in what frequency (Hz) diapasons are the calculations performed, default (0.5, 4)</li>
+<li><strong>crop_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – what time (s) of brain data be read, default 200</li>
+<li><strong>snr</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – regularization parameter, default 0.5</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">subjects information, computed according to given parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list of <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> objects</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if freq_bands given in wrong format</p>
 </td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note" id="list-of-metrics">
+<p class="first admonition-title">Note</p>
+<p class="last">metrics that can be calculated:
+<a class="reference external" href="https://mne.tools/stable/generated/mne.connectivity.spectral_connectivity.html">psd, coh, cohy, imcoh, plv, ciplv, ppc, pli, pli2_unbiased, wpli,
+wpli2_debiased</a>,
+<a class="reference external" href="https://www.researchgate.net/figure/nferring-of-Pearson-correlation-based-functional-connectivity-map-including-the-Fishers_fig1_235882165">pearson</a>,
+<a class="reference external" href="https://mne.tools/stable/auto_examples/connectivity/plot_mne_inverse_envelope_correlation.html">envelope</a></p>
+</div>
+<div class="admonition note" id="list-of-mne-solutions">
+<p class="first admonition-title">Note</p>
+<p class="last">MNE solutions that can be applied:
+<a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse">MNE, dSPM, sLORETA, eLORETA</a></p>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -100,9 +132,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to read</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> object</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> object</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -136,7 +166,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to write</li>
-<li><strong>subject</strong> (<a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> object) – <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> object</li>
+<li><strong>subject</strong> (<a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a>) – <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> object</li>
 </ul>
 </td>
 </tr>
