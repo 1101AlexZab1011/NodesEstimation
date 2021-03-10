@@ -1,260 +1,510 @@
+import time
 from typing import *
-
+from abc import *
 import pandas as pd
 import numpy as np
+from scipy.stats import wilcoxon, mannwhitneyu
+from nodestimation.learning.modification import append_series, choose_items, choose_indices, rm, binarize, suppress, promote, clusterize
+from nodestimation.project.subject import Subject
 
 
-def collect_statistic(data: pd.DataFrame) -> pd.DataFrame:
-    means = pd.Series([data[feat].mean() for feat in data.columns], index=data.columns)
-    stds = pd.Series([data[feat].std() for feat in data.columns], index=data.columns)
-    upper_bound = pd.Series([mean + std for mean, std in zip(means, stds)], index=data.columns)
-    lower_bound = pd.Series([mean - std for mean, std in zip(means, stds)], index=data.columns)
+class Test(ABC):
+    """Abstract test providing `statistical tests <https://en.wikipedia.org/wiki/Statistical_hypothesis_testing>`_ for given `true data`_ and `false data`_
 
-    return pd.DataFrame([means, stds, upper_bound, lower_bound],
-                        index=['mean', 'stdev', 'm+std', 'm-std'])
+        :param class1: `false data`_
+        :type class1: |ipd.DataFrame|_
+        :param class2: `true data`_
+        :type class2: |ipd.DataFrame|_
+        :param name: some information to describe analyzed datasets
+        :type name: str
 
+    """
 
-def append_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[int] = None) -> pd.DataFrame:
+    def __init__(self, class1, class2, name):
+        self.result = class1, class2
+        self.name = name
 
-    if not isinstance(series, list):
-        series = [series]
+    def __str__(self):
+        return '{} test object for {} data'.format(self.type, self.name)
 
-    if index is not None:
+    @property
+    def result(self):
+        return self
 
-        if not isinstance(index, list):
-            index = [index]
+    @result.setter
+    def result(self, classes: Tuple[pd.DataFrame, pd.DataFrame]):
+        self._result = self.run_test(classes[0], classes[1])
 
-        index = np.concatenate(df.columns, np.array(index), axis=0)
+    @result.getter
+    def result(self):
+        """dictionary with features as keys and with statistics and p_values as values"""
+        return self._result
 
-    df_series = [df.iloc[i] for i in range(df.shape[0])]
+    @property
+    def name(self):
+        return self
 
-    for s in series:
-        df_series.append(s)
+    @name.setter
+    def name(self, value):
+        self._name = value
 
-    return pd.DataFrame(df_series, index=index)
+    @name.getter
+    def name(self):
+        """some information to describe analyzed datasets"""
+        return self._name
 
+    @property
+    @abstractmethod
+    def type(self):
+        """Key word to describe statistical test"""
+        return 'Abstract'
 
-def appstart_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[int] = None) -> pd.DataFrame:
+    @staticmethod
+    @abstractmethod
+    def run_test(class1: pd.DataFrame, class2: pd.DataFrame) -> Dict[Union[str, int], Tuple[float, float]]:
+        """computes statistic and p-value
+            for given datasets
 
-    if not isinstance(series, list):
-        series = [series]
+            :param class1: `false data`_
+            :type class1: |ipd.DataFrame|_
+            :param class2: `true data`_
+            :type class2: |ipd.DataFrame|_
+            :return: dictionary with features as keys and with statistics and p_values as values
+            :rtype: dict_ of str_ or int_ to tuple_ of float_
 
-    if index is not None:
+        """
+        pass
 
-        if not isinstance(index, list):
-            index = [index]
+    def show_result(self):
+        """prints test results for each feature
 
-        index = np.concatenate(np.array(index), df.columns, axis=0)
+        """
 
-    df_series = [df.iloc[i] for i in range(df.shape[0])]
-
-    for s in df_series:
-        series.append(s)
-
-    return pd.DataFrame(series, index=index)
-
-
-def compute_importance(data: pd.DataFrame, statistic: pd.DataFrame) -> pd.Series:
-
-    sample_statistics = list()
-
-    for i in range(data.shape[0]):
-        sample_data = data.iloc[i]
-        local_statistic = statistic
-        sample_statistics.append(appstart_series(local_statistic, sample_data))
-
-    feature_imp_statistics = pd.DataFrame()
-
-    for sample_statistic in sample_statistics:
-        outbounds = pd.Series([
-            {
-                True: sample_statistic.iloc[0][feat] - sample_statistic.loc['m+std'][feat],
-                False: sample_statistic.loc['m-std'][feat] - sample_statistic.iloc[0][feat]
-            }[sample_statistic.iloc[0][feat] > sample_statistic.loc['mean'][feat]]
-            for feat in sample_statistic.columns
-        ], index=sample_statistic.columns)
-
-        importances = pd.Series([(sample_statistic.loc['stdev'][feat] + outbounds[feat])
-                                 / sample_statistic.loc['stdev'][feat]
-                                 for feat in sample_statistic.columns], index=sample_statistic.columns)
-
-        feature_imp_statistics = append_series(feature_imp_statistics, importances)
-
-    return pd.Series([
-        feature_imp_statistics[feat].mean()
-        for feat in feature_imp_statistics.columns
-    ], index=feature_imp_statistics.columns)
-
-
-def separate_datasets(datasets: Union[pd.DataFrame, List[pd.DataFrame]], target: str) -> Tuple[List[pd.DataFrame], List[pd.DataFrame], List[pd.DataFrame]]:
-    if not isinstance(datasets, list):
-        datasets = [datasets]
-    data = [dataset.drop([dataset.columns[0], target], axis=1) for dataset in datasets]
-    true_cases = [
-        pd.DataFrame([
-            sample.iloc[i]
-            for i in range(sample.shape[0])
-            if dataset.iloc[i][target]
-        ]) for sample, dataset in zip(data, datasets)
-    ]
-    false_cases = [
-        pd.DataFrame([
-            sample.iloc[i]
-            for i in range(sample.shape[0])
-            if not dataset.iloc[i][target]
-        ]) for sample, dataset in zip(data, datasets)
-    ]
-    return data, true_cases, false_cases
+        for feature in self.result:
+            print(
+                '{} test, {}:\n'
+                '\tFeature: {}\n'
+                '\tStatistic: {}\n'
+                '\tP-value: {}\n'
+                    .format(
+                    self.type,
+                    self.name,
+                    feature,
+                    self.result[feature][0],
+                    self.result[feature][1]
+                )
+            )
 
 
-def collect_cross_statistic(data: List[pd.DataFrame], true_cases: List[pd.DataFrame], false_cases: List[pd.DataFrame]) -> pd.DataFrame:
-    statistics = [collect_statistic(sample) for sample in data]
-    mean_values = pd.DataFrame([statistic.loc['mean'] for statistic in statistics])
-    true_importance = pd.DataFrame([compute_importance(true_case, statistic) for true_case, statistic in zip(true_cases, statistics)])
-    false_importance = pd.DataFrame([compute_importance(false_case, statistic) for false_case, statistic in zip(false_cases, statistics)])
+class Wilcoxon(Test):
+    """`Wilcoxon <https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html>`_ test for given `true data`_ and `false data`_,
+        inherits from :class:`nodestimation.learning.selection.Test`
 
-    return pd.DataFrame([
-        pd.Series([mean_values[feat].std() / mean_values[feat].mean() for feat in mean_values.columns], index=mean_values.columns),
-        pd.Series([true_importance[feat].mean() for feat in true_importance.columns], index=true_importance.columns),
-        pd.Series([true_importance[feat].std() for feat in true_importance.columns], index=true_importance.columns),
-        pd.Series([false_importance[feat].mean() for feat in false_importance.columns], index=false_importance.columns),
-        pd.Series([false_importance[feat].std() for feat in false_importance.columns], index=false_importance.columns)
-    ], index=[
-        'mean, std / mean, averaged', 'true importance, averaged', 'true importance, std', 'false importance, averaged', 'false importance, std'
-    ])
+        :param class1: `false data`_
+        :type class1: |ipd.DataFrame|_
+        :param class2: `true data`_
+        :type class2: |ipd.DataFrame|_
+        :param name: some information to describe analyzed datasets
+        :type name: str
 
+    """
 
-def make_selection_map(cross_statistic: pd.DataFrame) -> pd.DataFrame:
-    criteria = pd.Series([
-        cross_statistic.loc['mean, std / mean, averaged'].mean(),
-        cross_statistic.loc['true importance, averaged'].mean(),
-        cross_statistic.loc['true importance, std'].mean(),
-        cross_statistic.loc['false importance, averaged'].mean(),
-        cross_statistic.loc['false importance, std'].mean()
-    ], index=[
-        'criterion universal',
-        'criterion true 1',
-        'criterion true 2',
-        'criterion false 1',
-        'criterion false 2'
-    ])
+    def __init__(self, class1, class2, name):
+        super().__init__(class1, class2, name)
 
-    return pd.DataFrame([
-        pd.Series([
-            cross_statistic.iloc[0][feat] < criteria['criterion universal'] and
-            cross_statistic.iloc[1][feat] > criteria['criterion true 1'] and
-            cross_statistic.iloc[2][feat] < criteria['criterion true 2']
-            for feat in cross_statistic.columns
-        ], index=cross_statistic.columns),
-        pd.Series([
-            cross_statistic.iloc[0][feat] < criteria['criterion universal'] and
-            cross_statistic.iloc[3][feat] > criteria['criterion false 1'] and
-            cross_statistic.iloc[4][feat] < criteria['criterion false 2']
-            for feat in cross_statistic.columns
-        ], index=cross_statistic.columns)
-    ], index=['for true cases', 'for false cases'])
+    @property
+    def type(self):
+        return 'Wilcoxon'
 
+    @staticmethod
+    def run_test(class1: pd.DataFrame, class2: pd.DataFrame) -> Dict[Union[str, int], Tuple[float, float]]:
+        """computes statistic and p-value
+            for given datasets
 
-def select(data: Union[pd.DataFrame, List[pd.DataFrame]], droplist: List[str]) -> Union[pd.DataFrame, List[pd.DataFrame]]:
-    if isinstance(data, list):
-        return [
-            sample.drop(droplist, axis=1) for sample in data
-        ]
-    else:
-        return data.drop(droplist, axis=1)
+            :param class1: `false data`_
+            :type class1: |ipd.DataFrame|_
+            :param class2: `true data`_
+            :type class2: |ipd.DataFrame|_
+            :return: dictionary with features as keys and with statistics and p_values as values
+            :rtype: dict_ of str_ or int_ to tuple_ of float_
+
+        """
+
+        columns = class1.columns.tolist()
+        false_dataset = class1.to_numpy()
+        true_dataset = class2.to_numpy()
+
+        out = dict()
+
+        for i in range(len(columns)):
+            w, p = wilcoxon(false_dataset[:, i], true_dataset[:, i])
+            out.update(
+                {
+                    columns[i]:
+                        (
+                            w,
+                            p
+                        )
+                }
+            )
+
+        return out
 
 
-def selected_data(data: Union[pd.DataFrame, List[pd.DataFrame]], selection_map: pd.DataFrame) -> Tuple[Union[pd.DataFrame, List[pd.DataFrame]], Union[pd.DataFrame, List[pd.DataFrame]]]:
-    droplist_true = [feat for feat in data[0].columns if not selection_map.loc['for true cases'][feat]]
-    droplist_false = [feat for feat in data[0].columns if not selection_map.loc['for false cases'][feat]]
+class Mannwhitneyu(Test):
+    """`Mannwhitneyu <https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test>`_ test for given `true data`_ and `false data`_,
+        inherits from :class:`nodestimation.learning.selection.Test`
 
-    return (
-        select(data, droplist_true),
-        select(data, droplist_false)
-    )
+        :param class1: `false data`_
+        :type class1: |ipd.DataFrame|_
+        :param class2: `true data`_
+        :type class2: |ipd.DataFrame|_
+        :param name: some information to describe analyzed datasets
+        :type name: str
+
+    """
+
+    def __init__(self, class1, class2, name):
+        super().__init__(class1, class2, name)
+
+    @property
+    def type(self):
+        return 'Mannwhitneyu'
+
+    @staticmethod
+    def run_test(class1: pd.DataFrame, class2: pd.DataFrame) -> Dict[Union[str, int], Tuple[float, float]]:
+        """computes statistic and p-value
+            for given datasets
+
+            :param class1: `false data`_
+            :type class1: |ipd.DataFrame|_
+            :param class2: `true data`_
+            :type class2: |ipd.DataFrame|_
+            :return: dictionary with features as keys and with statistics and p_values as values
+            :rtype: dict_ of str_ or int_ to tuple_ of float_
+
+        """
+
+        columns = class1.columns.tolist()
+        false_dataset = class1.to_numpy()
+        true_dataset = class2.to_numpy()
+
+        out = dict()
+
+        for i in range(len(columns)):
+            u, p = mannwhitneyu(false_dataset[:, i], true_dataset[:, i])
+            out.update(
+                {
+                    columns[i]:
+                        (
+                            u,
+                            p
+                        )
+                }
+            )
+
+        return out
 
 
-def selected_statistic(cross_statistic: pd.DataFrame, selection_map: pd.DataFrame) -> Union[pd.DataFrame, List[pd.DataFrame]]:
-    droplist = [feat for feat in cross_statistic.columns if not selection_map.loc['for true cases'][feat] and not selection_map.loc['for false cases'][feat]]
+class SubjectsStatistic(object):
+    """Provides statistical information about a list of subjects
 
-    return select(cross_statistic, droplist)
+        :param subjects: list of subjects
+        :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`
+        :param target: `target feature`_
+        :type target: str
+        :param convert: what type of conversion_ to apply to the given data, if None, does not convert, default None
+        :type convert: str, oprional
 
+        .. _conversion:
+        .. note:: Available data conversions
 
-def choose_best(data: List[pd.DataFrame], cross_statistic: pd.DataFrame, for_: str, corr_thresholds: float = 0.9) -> pd.Index:
-    def worst_feature(feat1: str, feat2: str, for_: str, cross_statistic: pd.DataFrame) -> str:
+            :None: does not convert given data
+            :binarize: binarizes given data, provided by :func:`nodestimation.learning.modification.binarize`
+            :suppress: suppresses given data with optimal value equated to minimum value, provided by :func:`nodestimation.learning.modification.suppress`
+            :promote: promotes given data with optimal value equated to maximum value, provided by :func:`nodestimation.learning.modification.promote`
+            :clusterize: clusterizes given data into 5 clusters with optimal value equated to the cluster ordinal number, provided by: :func:`nodestimation.learning.modification.clusterize`
+    """
 
-        if for_ == 'both':
-            if (cross_statistic.loc['true importance, averaged'][feat1] /
-                (cross_statistic.loc['mean, std / mean, averaged'][feat1] *
-                 cross_statistic.loc['true importance, std'][feat1])) * \
-                    (cross_statistic.loc['false importance, averaged'][feat1] /
-                     cross_statistic.loc['false importance, std'][feat1]) > \
-                    (cross_statistic.loc['true importance, averaged'][feat2] /
-                     (cross_statistic.loc['mean, std / mean, averaged'][feat2] *
-                      cross_statistic.loc['true importance, std'][feat2])) * \
-                    (cross_statistic.loc['false importance, averaged'][feat2] /
-                     cross_statistic.loc['false importance, std'][feat2]):
-                return feat2
+    def __init__(self, subjects: List[Subject], target: str, convert: Optional[str] = None):
+        self.__convert = convert
+        self.subjects = subjects
+        self.datasets = subjects
+        self.target = target
+
+    def __str__(self):
+        return 'SubjectsStatistic for: {}\n\t target feature: {}\n\t data transformation: {}'.format([subject.name for subject in self.subjects], self.target, self.__convert)
+
+    @property
+    def subjects(self):
+        return self
+
+    @subjects.getter
+    def subjects(self) -> List[Subject]:
+        """list of :class:`nodestimation.project.subject.Subject` objects
+        """
+
+        return self._subjects
+
+    @subjects.setter
+    def subjects(self, subjects):
+        self._subjects = subjects
+
+    @property
+    def datasets(self):
+        return self
+
+    @datasets.setter
+    def datasets(self, subjects: List[Subject]):
+
+        full = self.subjects_to_dataframe(subjects)
+        full = {
+            None: full,
+            'binarize': binarize(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected']),
+            'suppress': suppress(full.drop(['resected'], axis=1), axis=1, optimal='max').assign(resected=full['resected']),
+            'promote': promote(full.drop(['resected'], axis=1), axis=1, optimal='max').assign(resected=full['resected']),
+            'clusterize': clusterize(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected'])
+        }[self.__convert]
+        true, false = self.true_false_division(full)
+        false_mirror = self.reflect_true(true, false, subjects)
+        self._datasets = {
+            'full': full,
+            'true': true,
+            'false': false,
+            'false_mirror': false_mirror,
+            'false_res': self.resample_false(true, false)
+        }
+
+    @datasets.getter
+    def datasets(self):
+        """dictionary of `required datasets`_
+
+            .. _`provided datasets`:
+            .. _`required dataset`:
+            .. _`required datasets`:
+            .. note:: Provided datasets:
+
+                :full: concatenated datasets from each :class:`nodestimation.project.subject.Subject` object
+                :true: all `true data`_ from full dataset
+                :false: all `false data`_ from full dataset
+                :false_mirror: dataset from data symmetric_ to `true data`_
+                :false_res: dataset with `false data`_ resampled to the shape of dataset with `true data`_
+
+            .. _symmetric:
+            .. note:: Each data sample_ represents :class:`nodestimation.Node` that refers to one of brain regions. Brain regions are
+                `named <http://www.cis.jhu.edu/~parky/MRN/Desikan%20Region%20Labels%20and%20Descriptions.pdf>`_ according
+                to `parcellation type <https://surfer.nmr.mgh.harvard.edu/fswiki/CorticalParcellation>`_.
+                If two brain regions have the same name and different hemisphere markers ("-lh" and "-rh"), they are symmetrical
+
+        """
+        return self._datasets
+
+    @property
+    def target(self):
+        return self
+
+    @target.setter
+    def target(self, new_target):
+        self._target = new_target
+
+    @target.getter
+    def target(self):
+        """a `target feature`_
+        """
+
+        return self._target
+
+    @staticmethod
+    def subjects_to_dataframe(subjects: List[Subject]) -> pd.DataFrame:
+        """Concatenates all subjects datasets in one dataset and adds subject name to its sample_ names
+
+        :param subjects: list of subjects
+        :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`
+        :return: concatenated dataset
+        :rtype: pd.DataFrame_
+        """
+
+        dataset = pd.concat(
+            [subject.dataset
+             for subject in subjects],
+            axis=0,
+        )
+
+        new_indexes = list()
+
+        for subject in subjects:
+            for index in subject.dataset.index:
+                new_indexes.append('_'.join([subject.name, index]))
+
+        return pd.DataFrame(dataset.to_numpy(), columns=dataset.columns, index=new_indexes)
+
+    @staticmethod
+    def true_false_division(dataset: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """divides dataset into `true data`_ and `false data`_
+
+        :param dataset: dataset to divide
+        :type dataset: |ipd.DataFrame|_
+        :return: dataset with `true data`_ and `false data`_
+        :rtype: tuple_ of pd.DataFrame_
+
+        """
+
+        true_cases, false_cases = pd.DataFrame(), pd.DataFrame()
+
+        for index in dataset.index:
+
+            if dataset.loc[index]['resected']:
+                true_cases = append_series(true_cases, dataset.loc[index], index=[index])
+
             else:
-                return feat1
+
+                false_cases = append_series(false_cases, dataset.loc[index], index=[index])
+
+        return true_cases.drop(['resected'], axis=1), false_cases.drop(['resected'], axis=1)
+
+    @staticmethod
+    def reflect_true(true_dataset: pd.DataFrame, false_dataset: pd.DataFrame, subjects: List[Subject]) -> pd.DataFrame:
+        """finds samples_ symmetric_ to given dataset with `true data`_
+
+        :param true_dataset: dataset with `true data`_
+        :type true_dataset: |ipd.DataFrame|_
+        :param false_dataset: dataset with `false data`_
+        :type false_dataset: |ipd.DataFrame|_
+        :param subjects: list of subjects
+        :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`
+        :return: symmetric_ dataset
+        :rtype: pd.DataFrame_
+        :raise ValueError: if required sample_ is not found or hemisphere marker different from "rh" or "lh"
+        """
+
+        def postfix(name: str) -> str:
+            if name[-2:] == 'rh':
+                return 'lh'
+            elif name[-2:] == 'lh':
+                return 'rh'
+            else:
+                raise ValueError(name[-2:])
+
+        def prefix(name: str, subjects: List[Subject]) -> str:
+            label_name = name[5:-2] + postfix(name)
+            for subject in subjects:
+                if subject.dataset.loc[label_name]['resected']:
+                    continue
+                else:
+                    return subject.name
+            raise ValueError('label' + name[4:] + ' not found')
+
+        false_dataset_symmetric = pd.DataFrame()
+
+        for index in true_dataset.index:
+            try:
+                false_dataset_symmetric = pd.concat(
+                    [
+                        false_dataset_symmetric,
+                        false_dataset.loc[index[0:-2] + postfix(index)]
+                    ],
+                    axis=1
+                )
+            except KeyError:
+                false_dataset_symmetric = pd.concat(
+                    [
+                        false_dataset_symmetric,
+                        false_dataset.loc[prefix(index, subjects) + index[4:-2] + postfix(index)]
+                    ],
+                    axis=1
+                )
+
+        return false_dataset_symmetric.T
+
+    @staticmethod
+    def resample_false(true_dataset: pd.DataFrame, false_dataset: pd.DataFrame) -> pd.DataFrame:
+        """resample `false data`_ to the same shape as `true data`_
+
+        :param true_dataset: dataset with `true data`_
+        :type true_dataset: |ipd.DataFrame|_
+        :param false_dataset: dataset with `false data`_
+        :type false_dataset: |ipd.DataFrame|_
+        :return: resampled dataset with `false data`_
+        :rtype: |ipd.DataFrame|_
+        """
+
+        false_data_np, \
+        true_data_np \
+            = \
+            false_dataset.to_numpy().T, \
+            true_dataset.to_numpy().T
+
+        data_for_resampling = false_data_np.copy()
+
+        bands = list()
+
+        for i in range(false_data_np.shape[1] // true_data_np.shape[1]):
+            indices = choose_indices(data_for_resampling, number=true_data_np.shape[1], axis=1)
+            bands.append(choose_items(data_for_resampling, indices=indices, axis=1))
+            data_for_resampling = rm(data_for_resampling, indices=indices, axis=1)
+
+        return pd.DataFrame(np.mean(np.array(bands), axis=0).T, columns=true_dataset.columns)
+
+    def random_samples(self, data: str = 'false', number: int = None):
+        """creates dataset with randomly chosen `samples`_
+
+            :param data: data to use, can be any of `provided datasets`_ , default "false"
+            :type data: str, optional
+            :param number: number of samples to choose, if None, number equated to number of samples for `true data`_ will be chosen, default None
+            :type number: int, optional
+            :return: dataset with randomly chosen `samples`_
+            :rtype: pd.DataFrame_
+        """
+
+        data_np = {
+            'true': self.datasets['true'].to_numpy(),
+            'false': self.datasets['false'].to_numpy(),
+            'full': self.datasets['full'].to_numpy(),
+            'false_mirror': self.datasets['false_mirror'].to_numpy(),
+            'false_res': self.datasets['false_res'].to_numpy()
+        }[data]
+
+        if number is None:
+            number = self.datasets['true'].shape[0]
+
+        samples = choose_items(data_np, number)
+
+        return pd.DataFrame(samples, columns=self.datasets['true'].columns)
+
+    def test(self, state: str = 'resampled', test: str = 'wilcoxon') -> Test:
+        """computes required `statistical tests <https://en.wikipedia.org/wiki/Statistical_hypothesis_testing>`_
+            for `required dataset`_: either "false_res" or "false_mirror"
+
+            :param state: dataset to analyze: either "resampled" for "false_res" or "reflected" for "false_mirror", default "resampled"
+            :type state: str, optional
+            :param test: what `test`_ to compute, default "wilcoxon"
+            :type test: str, optional
+            :return: computed test
+            :rtype: :class:`nodestimation.learning.selection.Test`
+            :raise ValueError: if specified state incorrect
+
+            .. _dict: https://docs.python.org/3/library/stdtypes.html#dict
+            .. _str: https://docs.python.org/3/library/stdtypes.html#str
+            .. _float: https://docs.python.org/3/library/functions.html#float
+
+            .. _`test`:
+            .. note:: Available tests:
+
+                :mannwhitneyu: `Mann–Whitney U test <https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test>`_
+                :wilcoxon: `Wilcoxon signed-rank test <https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test>`_
+        """
+
+        if state == 'resampled':
+            true_data = self.datasets['true']
+            false_data = self.datasets['false_res']
+
+        elif state == 'reflected':
+            true_data = self.datasets['true']
+            false_data = self.datasets['false_mirror']
         else:
-            if cross_statistic.loc[for_ + ' importance, averaged'][feat1] / \
-                    (cross_statistic.loc['mean, std / mean, averaged'][feat1] *
-                     cross_statistic.loc[for_ + ' importance, std'][feat1]) > \
-                    cross_statistic.loc[for_ + ' importance, averaged'][feat2] / \
-                    (cross_statistic.loc['mean, std / mean, averaged'][feat2] *
-                     cross_statistic.loc[for_ + ' importance, std'][feat2]):
-                return feat2
-            else:
-                return feat1
+            raise ValueError('parameter state can be "resampled" or "reflected"')
 
-    def choose(corrmap: pd.DataFrame, from_: Optional[int] = None) -> pd.Index:
-
-        if from_ is None:
-            from_ = corrmap.columns.tolist()[0]
-
-        for column in corrmap.columns.tolist()[corrmap.columns.tolist().index(from_)::]:
-            for row in corrmap.index.tolist()[corrmap.index.tolist().index(from_)::]:
-                if row != column \
-                        and (corrmap.loc[row][column] > corr_thresholds
-                             or corrmap.loc[row][column] < -corr_thresholds):
-                    worst = worst_feature(column, row, for_, cross_statistic)
-                    from_ = corrmap.columns.tolist()[corrmap.columns.tolist().index(worst) + 1]
-                    corrmap = corrmap.drop([worst], axis=0).drop([worst], axis=1)
-                    return choose(corrmap, from_=from_)
-        return corrmap.columns
-
-    corrmap = pd.DataFrame(
-        np.array([
-            sample.corr().to_numpy() for sample in data
-        ]).mean(axis=0),
-        index=data[0].columns,
-        columns=data[0].columns
-    )
-
-    return choose(corrmap)
-
-
-def make_feature_selection(datasets: List[pd.DataFrame], target: str) -> List[pd.DataFrame]:
-    data, true_cases, false_cases = separate_datasets(datasets, target)
-    cross_statistic = collect_cross_statistic(data, true_cases, false_cases)
-    selection_map = make_selection_map(cross_statistic)
-    data_for_true, data_for_false = selected_data(data, selection_map)
-    best_true = choose_best(data_for_true, cross_statistic, 'true')
-    best_false = choose_best(data_for_false, cross_statistic, 'false')
-    best_raw = best_true.append(best_false).drop_duplicates()
-    drop = [column for column in data[0].columns if column not in best_raw]
-    best_data_common = select(data, drop)
-    best = choose_best(best_data_common, cross_statistic, 'both')
-    drop_ = [column for column in best_data_common[0].columns if column not in best]
-    best_data = select(best_data_common, drop_)
-    best_data = [
-        pd.DataFrame(best_sample.to_numpy(), columns=best_sample.columns, index=sample[
-            sample.columns[0]
-        ].tolist())
-        for best_sample, sample in zip(best_data, datasets)
-    ]
-    for best_sample, sample in zip(best_data, datasets):
-        best_sample[target] = sample[target].tolist()
-
-    return best_data
+        return {
+            'wilcoxon': Wilcoxon,
+            'mannwhitneyu': Mannwhitneyu
+        }[test](true_data, false_data, state + '/true')

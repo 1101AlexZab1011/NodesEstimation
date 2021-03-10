@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -39,6 +38,54 @@
 
 
 <div class="viewcode-block" id="Subject"><a class="viewcode-back" href="../../../nodestimation.project.html#nodestimation.project.subject.Subject">[docs]</a><span class="k">class</span> <span class="nc">Subject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class containing all the necessary information about the patient</span>
+
+<span class="sd">    :param name: patient`s ID</span>
+<span class="sd">    :type name: str</span>
+<span class="sd">    :param data: a dictionary containing paths to patient data files used in calculations.</span>
+<span class="sd">        Keys are `data types`_, values are paths to files with this data (or None if they do not exist)</span>
+<span class="sd">    :type data: |idict|_ *of* |istr|_ *for* |istr|_</span>
+<span class="sd">    :param nodes: list of :class:`nodestimation.Node` objects related to this patient</span>
+<span class="sd">    :type nodes: |ilist|_ *of* |Node|</span>
+<span class="sd">    :param directory: patient home directory (must start with ``&#39;./Source/Subjects/&#39;``)</span>
+<span class="sd">    :type directory: str</span>
+<span class="sd">    :param dataset: dataset with all features and frequencies to all nodes</span>
+<span class="sd">    :type dataset: |pandas.DataFrame|_</span>
+
+<span class="sd">    .. _ilist: https://docs.python.org/3/library/stdtypes.html#list</span>
+<span class="sd">    .. _idict: https://docs.python.org/3/library/stdtypes.html#dict</span>
+<span class="sd">    .. _istr: https://docs.python.org/3/library/stdtypes.html#str</span>
+<span class="sd">    .. _pandas.DataFrame: &lt;https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html&gt;</span>
+
+<span class="sd">    .. |ilist| replace:: *list*</span>
+<span class="sd">    .. |idict| replace:: *dict*</span>
+<span class="sd">    .. |istr| replace:: *str*</span>
+<span class="sd">    .. |Node| replace:: :py:class:`nodestimation.Node`</span>
+<span class="sd">    .. |pandas.DataFrame| replace:: *pandas.DataFrame*</span>
+
+<span class="sd">    .. _`data types`:</span>
+<span class="sd">    .. note:: Used types:</span>
+
+<span class="sd">        :raw: `Raw &lt;https://mne.tools/stable/generated/mne.io.Raw.html&gt;`_ object</span>
+<span class="sd">        :raw_fp: `Raw &lt;https://mne.tools/stable/generated/mne.io.Raw.html&gt;`_ object after processing (cropping, filtering and so on)</span>
+<span class="sd">        :bem: `ConductorModel &lt;https://mne.tools/stable/generated/mne.bem.ConductorModel.html#mne.bem.ConductorModel&gt;`_ object</span>
+<span class="sd">        :src: `SourceSpaces &lt;https://mne.tools/stable/generated/mne.SourceSpaces.html&gt;`_</span>
+<span class="sd">        :trans: `Transform &lt;https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform&gt;`_</span>
+<span class="sd">        :fwd: `Forward &lt;https://mne.tools/stable/generated/mne.Forward.html#mne.Forward&gt;`_</span>
+<span class="sd">        :eve: `Events &lt;https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray&gt;`_</span>
+<span class="sd">        :epo: `Epochs &lt;https://mne.tools/stable/generated/mne.Epochs.html#mne.Epochs&gt;`_</span>
+<span class="sd">        :cov: `Covariance &lt;https://mne.tools/stable/generated/mne.Covariance.html?highlight=covariance#mne.Covariance&gt;`_</span>
+<span class="sd">        :ave: `Evoked &lt;https://mne.tools/stable/generated/mne.Evoked.html?highlight=evoked#mne.Evoked&gt;`_</span>
+<span class="sd">        :inv: `InverseOperator &lt;https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator&gt;`_,</span>
+<span class="sd">        :stc: `SourceEstimate &lt;https://mne.tools/stable/generated/mne.SourceEstimate.html#mne.SourceEstimate&gt;`_</span>
+<span class="sd">        :resec: Resection in `&quot;.nii&quot; &lt;https://nipy.org/nibabel/gettingstarted.html&gt;`_ format</span>
+<span class="sd">        :resec_txt: Resection in `&quot;.txt&quot; &lt;https://en.wikipedia.org/wiki/Text_file&gt;`_ format</span>
+<span class="sd">        :resec_mni: Resection in `mni &lt;https://brainmap.org/training/BrettTransform.html&gt;`_ coordinates</span>
+<span class="sd">        :coords: centers coordinates of `cortical parcellation &lt;https://surfer.nmr.mgh.harvard.edu/fswiki/CorticalParcellation&gt;`_ in `mni &lt;https://brainmap.org/training/BrettTransform.html&gt;`_ coordinates</span>
+<span class="sd">        :feat: dictionary for all metrics values to all frequency bands to all methods,</span>
+<span class="sd">        :nodes: list of :class:`nodestimation.Node` objects</span>
+<span class="sd">        :dataset: dataset for all features and frequencies to all nodes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">],</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
@@ -52,53 +99,78 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@data</span><span class="o">.</span><span class="n">getter</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;a dictionary containing paths to patient data files used in calculations.</span>
+<span class="sd">            Keys are `data types`_, values are paths to files with this data (or None if they do not exist).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
 
     <span class="nd">@nodes</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@nodes</span><span class="o">.</span><span class="n">getter</span>
     <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;list of :class:`nodestimation.Node` objects related to this patient</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span>
 
     <span class="nd">@dir</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@dir</span><span class="o">.</span><span class="n">getter</span>
     <span class="k">def</span> <span class="nf">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;patient home directory (must start with ``&#39;./Source/Subjects/&#39;``)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span>
 
     <span class="nd">@dataset</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@dataset</span><span class="o">.</span><span class="n">getter</span>
     <span class="k">def</span> <span class="nf">dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;dataset with all features and frequencies to all nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span>
 
-<div class="viewcode-block" id="Subject.data_description"><a class="viewcode-back" href="../../../nodestimation.project.html#nodestimation.project.subject.Subject.data_description">[docs]</a>    <span class="k">def</span> <span class="nf">data_description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Subject.data_description"><a class="viewcode-back" href="../../../nodestimation.project.html#nodestimation.project.subject.Subject.data_description">[docs]</a>    <span class="k">def</span> <span class="nf">data_description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;makes description of subject data structure</span>
+
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;{</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">for</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">description</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
@@ -122,7 +194,7 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">NodesEstimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nodestimation.html">nodestimation package</a></li>
 </ul>
 
 <div class="relations">

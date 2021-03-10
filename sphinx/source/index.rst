@@ -7,12 +7,9 @@ Welcome to NodesEstimation's documentation!
 ===========================================
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 4
    :caption: Contents:
 
-   modules
-
-Indices and tables
-==================
+   nodestimation
 
 * :ref:`search`

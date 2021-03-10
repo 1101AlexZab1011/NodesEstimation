@@ -6,12 +6,31 @@ import numpy as np
 
 @sliding_window(size=400, overlap=0.5)
 def do_nothing(sig):
+    """does exactly what its name says
+
+    :param sig: signal or set of signals
+    :type sig: |inp.ndarray|_
+    :return: the given signal/set of signals
+    :rtype: np.ndarray_
+
+    .. _np.ndarray:
+    .. _inp.ndarray: https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html
+
+    .. |inp.ndarray| replace:: *np.ndarray*
+    """
     return sig
 
 
 @sliding_window(400, 0.5)
 def pearson(signals: np.ndarray) -> np.ndarray:
-    # computes Pearson's correlation coefficients map for 400-dots time windows with 50% overlapping
+    """computes `Pearson's correlation coefficients <https://en.wikipedia.org/wiki/Pearson_correlation_coefficient>`_ map used in
+        :func:`nodestimation.processing.timewindow.sliding_window` for 400-dots with 50% overlapping
+
+    :param signals: set of signals
+    :type signals: |inp.ndarray|_
+    :return: signal-to-signal pearson`s correlations map
+    :rtype: np.ndarray_
+    """
 
     nsigmals, lsignals = signals.shape
     out = np.zeros((nsigmals, nsigmals))
@@ -28,8 +47,18 @@ def pearson(signals: np.ndarray) -> np.ndarray:
     return out
 
 
-def pearson_ts(label_ts: List) -> np.ndarray:
-    # computes Pearson's correlation coefficients map for list of data
+def pearson_ts(label_ts: List[np.ndarray]) -> np.ndarray:
+    """computes `Pearson's correlation coefficients <https://en.wikipedia.org/wiki/Pearson_correlation_coefficient>`_ map for list of signals
+
+    :param label_ts: list of signals
+    :type label_ts: |ilist|_ *of* |inp.ndarray|_
+    :return: signal-to-signal pearson`s correlations map
+    :rtype: np.ndarray_
+
+    .. _ilist: https://docs.python.org/3/library/stdtypes.html#list
+
+    .. |ilist| replace:: *list*
+    """
 
     out = list()
     for signals in label_ts:
@@ -46,7 +75,14 @@ def pearson_ts(label_ts: List) -> np.ndarray:
 
 @sliding_window(400, 0.5)
 def phase_locking_value(signals: np.ndarray) -> np.ndarray:
-    # computes Phase Locking Value coefficients map for 400-dots time windows with 50% overlapping
+    """computes `Phase Locking Value coefficients <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3674231/>`_ map used in
+        :func:`nodestimation.processing.timewindow.sliding_window` for 400-dots with 50% overlapping
+
+    :param signals: set of signals
+    :type signals: |inp.ndarray|_
+    :return: signal-to-signal pearson`s correlations map
+    :rtype: np.ndarray_
+    """
 
     nsigmals, lsignals = signals.shape
     out = np.zeros((nsigmals, nsigmals, lsignals))

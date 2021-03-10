@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
@@ -57,11 +56,11 @@
     <span class="n">inverse_computation</span><span class="p">,</span> \
     <span class="n">source_estimation</span><span class="p">,</span> \
     <span class="n">coordinates_computation</span><span class="p">,</span> \
-    <span class="n">parcellation_creating</span><span class="p">,</span> \
     <span class="n">read_original_resec</span><span class="p">,</span> \
     <span class="n">resection_area_computation</span><span class="p">,</span> \
     <span class="n">features_computation</span><span class="p">,</span> \
-    <span class="n">nodes_creation</span><span class="p">,</span> <span class="n">read_original_resec_txt</span>
+    <span class="n">nodes_creation</span><span class="p">,</span> \
+    <span class="n">read_original_resec_txt</span>
 
 
 <div class="viewcode-block" id="write_subjects"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.write_subjects">[docs]</a><span class="k">def</span> <span class="nf">write_subjects</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -79,6 +78,7 @@
     <span class="sd">&quot;&quot;&quot;Reads set of :class:`nodestimation.project.subject.Subject` objects</span>
 
 <span class="sd">        :param path: path to read</span>
+<span class="sd">        :type path: str</span>
 <span class="sd">        :return: list of :class:`nodestimation.project.subject.Subject` objects</span>
 <span class="sd">        :rtype: list</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -102,6 +102,7 @@
     <span class="sd">&quot;&quot;&quot;Reads one :class:`nodestimation.project.subject.Subject` object</span>
 
 <span class="sd">            :param path: path to read</span>
+<span class="sd">            :type path: str</span>
 <span class="sd">            :rtype: :class:`nodestimation.project.subject.Subject`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -123,13 +124,20 @@
         <span class="n">freq_bands</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Pipeline for brain data transformation</span>
+<span class="sd">            **includes:**</span>
+
+<span class="sd">        #. notch and bandpass `raw &lt;https://mne.tools/stable/generated/mne.io.Raw.html&gt;`_ filtering</span>
+<span class="sd">        #. sources signal reconstruction with specified `MNE solution`_</span>
+<span class="sd">        #. applying specified `processing metric`_</span>
+<span class="sd">        #. eigencentrality (or integral) computation</span>
+<span class="sd">        #. results saving</span>
 
 <span class="sd">        :param methods: set of metrics to be computed (see `list of metrics`_), default ``&quot;plv&quot;``</span>
-<span class="sd">        :type methods: list of str or str, optional</span>
+<span class="sd">        :type methods: |ilist|_ *of* |istr|_ *or* |istr|_, *optional*</span>
 <span class="sd">        :param se_method: MNE solution for inverse computations (see `list of MNE solutions`_), default ``&quot;sLORETA&quot;``</span>
 <span class="sd">        :type se_method: str, optional</span>
 <span class="sd">        :param conductivity: suggested tissues conductivity, default (0.3,)</span>
-<span class="sd">        :type conductivity: tuple of float, optional</span>
+<span class="sd">        :type conductivity: |ituple|_ *of* |ifloat|_, *optional*</span>
 <span class="sd">        :param epochs_tmin: start time (s) before event, default -1</span>
 <span class="sd">        :type epochs_tmin: int or float, optional</span>
 <span class="sd">        :param epochs_tmax: end time (s) after event, default 1</span>
@@ -143,15 +151,16 @@
 <span class="sd">        :param hfreq: frequency (Hz) for high-pass-filtering, default 70</span>
 <span class="sd">        :type hfreq: int, optional</span>
 <span class="sd">        :param freq_bands: in what frequency (Hz) diapasons are the calculations performed, default (0.5, 4)</span>
-<span class="sd">        :type freq_bands: tuple of float or list of tuple of float</span>
+<span class="sd">        :type freq_bands: |ituple|_ *of* |ifloat|_ *or* |ilist|_ *of* |ituple|_ *of* |ifloat|_</span>
 <span class="sd">        :param crop_time: what time (s) of brain data be read, default 200</span>
 <span class="sd">        :type crop_time: int, optional</span>
 <span class="sd">        :param snr: regularization parameter, default 0.5</span>
 <span class="sd">        :type snr: float, optional</span>
 <span class="sd">        :return: subjects information, computed according to given parameters</span>
-<span class="sd">        :rtype: list of :class:`nodestimation.project.subject.Subject` objects</span>
+<span class="sd">        :rtype: list_ of :class:`nodestimation.project.subject.Subject` objects</span>
 <span class="sd">        :raise ValueError: if freq_bands given in wrong format</span>
 
+<span class="sd">        .. _`processing metric`:</span>
 <span class="sd">        .. _`list of metrics`:</span>
 <span class="sd">        .. note:: metrics that can be calculated:</span>
 <span class="sd">            `psd, coh, cohy, imcoh, plv, ciplv, ppc, pli, pli2_unbiased, wpli,</span>
@@ -159,9 +168,21 @@
 <span class="sd">            `pearson &lt;https://www.researchgate.net/figure/nferring-of-Pearson-correlation-based-functional-connectivity-map-including-the-Fishers_fig1_235882165&gt;`_,</span>
 <span class="sd">            `envelope &lt;https://mne.tools/stable/auto_examples/connectivity/plot_mne_inverse_envelope_correlation.html&gt;`_</span>
 
+<span class="sd">        .. _`MNE solution`:</span>
 <span class="sd">        .. _`list of MNE solutions`:</span>
 <span class="sd">        .. note:: MNE solutions that can be applied:</span>
 <span class="sd">            `MNE, dSPM, sLORETA, eLORETA &lt;https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse&gt;`_</span>
+
+<span class="sd">        .. _ifloat: https://docs.python.org/3/library/functions.html#float</span>
+<span class="sd">        .. _ilist:</span>
+<span class="sd">        .. _list: https://docs.python.org/3/library/stdtypes.html#list</span>
+<span class="sd">        .. _ituple: https://docs.python.org/3/library/stdtypes.html#tuple</span>
+<span class="sd">        .. _istr: https://docs.python.org/3/library/stdtypes.html#str</span>
+
+<span class="sd">        .. |ifloat| replace:: *float*</span>
+<span class="sd">        .. |ilist| replace:: *list*</span>
+<span class="sd">        .. |ituple| replace:: *tuple*</span>
+<span class="sd">        .. |istr| replace:: *str*</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -287,12 +308,6 @@
                 <span class="n">labels_aseg</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">get_volume_labels_from_src</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">subject_name</span><span class="p">,</span>
                                                              <span class="n">subjects_dir</span><span class="p">)</span>
                 <span class="n">labels</span> <span class="o">=</span> <span class="n">labels_parc</span> <span class="o">+</span> <span class="n">labels_aseg</span>
-                <span class="n">parc</span><span class="p">,</span> <span class="n">parc_path</span> <span class="o">=</span> <span class="n">parcellation_creating</span><span class="p">(</span><span class="n">subject_name</span><span class="p">,</span>
-                                                        <span class="n">subjects_dir</span><span class="p">,</span>
-                                                        <span class="n">labels</span><span class="p">,</span>
-                                                        <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
-                                                        <span class="n">_conditions</span><span class="o">=</span><span class="n">conditions_code</span><span class="p">,</span>
-                                                        <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                 <span class="n">coords</span><span class="p">,</span> <span class="n">coords_path</span> <span class="o">=</span> <span class="n">coordinates_computation</span><span class="p">(</span><span class="n">subject_name</span><span class="p">,</span>
                                                               <span class="n">subjects_dir</span><span class="p">,</span>
                                                               <span class="n">labels</span><span class="p">,</span>
@@ -354,7 +369,6 @@
                                 <span class="n">resec_path</span><span class="p">,</span>
                                 <span class="n">resec_txt_path</span><span class="p">,</span>
                                 <span class="n">resec_mni_path</span><span class="p">,</span>
-                                <span class="n">parc_path</span><span class="p">,</span>
                                 <span class="n">coords_path</span><span class="p">,</span>
                                 <span class="n">feat_path</span><span class="p">,</span>
                                 <span class="n">nodes_path</span><span class="p">,</span>
@@ -398,7 +412,7 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">NodesEstimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodestimation.html">nodestimation package</a></li>
 </ul>
 
 <div class="relations">

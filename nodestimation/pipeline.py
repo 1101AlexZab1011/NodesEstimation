@@ -23,11 +23,11 @@ from nodestimation.processing.mneraw import \
     inverse_computation, \
     source_estimation, \
     coordinates_computation, \
-    parcellation_creating, \
     read_original_resec, \
     resection_area_computation, \
     features_computation, \
-    nodes_creation, read_original_resec_txt
+    nodes_creation, \
+    read_original_resec_txt
 
 
 def write_subjects(path: str, subjects: List[Subject]) -> None:
@@ -45,6 +45,7 @@ def read_subjects(path: str) -> List[Subject]:
     """Reads set of :class:`nodestimation.project.subject.Subject` objects
 
         :param path: path to read
+        :type path: str
         :return: list of :class:`nodestimation.project.subject.Subject` objects
         :rtype: list
     """
@@ -68,6 +69,7 @@ def read_subject(path: str):
     """Reads one :class:`nodestimation.project.subject.Subject` object
 
             :param path: path to read
+            :type path: str
             :rtype: :class:`nodestimation.project.subject.Subject`
         """
 
@@ -89,13 +91,20 @@ def pipeline(
         freq_bands: Optional[Union[tuple, List[tuple]]] = (0.5, 4),
 ) -> List[Subject]:
     """Pipeline for brain data transformation
+            **includes:**
+
+        #. notch and bandpass `raw <https://mne.tools/stable/generated/mne.io.Raw.html>`_ filtering
+        #. sources signal reconstruction with specified `MNE solution`_
+        #. applying specified `processing metric`_
+        #. eigencentrality (or integral) computation
+        #. results saving
 
         :param methods: set of metrics to be computed (see `list of metrics`_), default ``"plv"``
-        :type methods: list of str or str, optional
+        :type methods: |ilist|_ *of* |istr|_ *or* |istr|_, *optional*
         :param se_method: MNE solution for inverse computations (see `list of MNE solutions`_), default ``"sLORETA"``
         :type se_method: str, optional
         :param conductivity: suggested tissues conductivity, default (0.3,)
-        :type conductivity: tuple of float, optional
+        :type conductivity: |ituple|_ *of* |ifloat|_, *optional*
         :param epochs_tmin: start time (s) before event, default -1
         :type epochs_tmin: int or float, optional
         :param epochs_tmax: end time (s) after event, default 1
@@ -109,15 +118,16 @@ def pipeline(
         :param hfreq: frequency (Hz) for high-pass-filtering, default 70
         :type hfreq: int, optional
         :param freq_bands: in what frequency (Hz) diapasons are the calculations performed, default (0.5, 4)
-        :type freq_bands: tuple of float or list of tuple of float
+        :type freq_bands: |ituple|_ *of* |ifloat|_ *or* |ilist|_ *of* |ituple|_ *of* |ifloat|_
         :param crop_time: what time (s) of brain data be read, default 200
         :type crop_time: int, optional
         :param snr: regularization parameter, default 0.5
         :type snr: float, optional
         :return: subjects information, computed according to given parameters
-        :rtype: list of :class:`nodestimation.project.subject.Subject` objects
+        :rtype: list_ of :class:`nodestimation.project.subject.Subject` objects
         :raise ValueError: if freq_bands given in wrong format
 
+        .. _`processing metric`:
         .. _`list of metrics`:
         .. note:: metrics that can be calculated:
             `psd, coh, cohy, imcoh, plv, ciplv, ppc, pli, pli2_unbiased, wpli,
@@ -125,9 +135,21 @@ def pipeline(
             `pearson <https://www.researchgate.net/figure/nferring-of-Pearson-correlation-based-functional-connectivity-map-including-the-Fishers_fig1_235882165>`_,
             `envelope <https://mne.tools/stable/auto_examples/connectivity/plot_mne_inverse_envelope_correlation.html>`_
 
+        .. _`MNE solution`:
         .. _`list of MNE solutions`:
         .. note:: MNE solutions that can be applied:
             `MNE, dSPM, sLORETA, eLORETA <https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse>`_
+
+        .. _ifloat: https://docs.python.org/3/library/functions.html#float
+        .. _ilist:
+        .. _list: https://docs.python.org/3/library/stdtypes.html#list
+        .. _ituple: https://docs.python.org/3/library/stdtypes.html#tuple
+        .. _istr: https://docs.python.org/3/library/stdtypes.html#str
+
+        .. |ifloat| replace:: *float*
+        .. |ilist| replace:: *list*
+        .. |ituple| replace:: *tuple*
+        .. |istr| replace:: *str*
 
     """
 
@@ -253,12 +275,6 @@ def pipeline(
                 labels_aseg = mne.get_volume_labels_from_src(src, subject_name,
                                                              subjects_dir)
                 labels = labels_parc + labels_aseg
-                parc, parc_path = parcellation_creating(subject_name,
-                                                        subjects_dir,
-                                                        labels,
-                                                        _subject_tree=tree[subject_name],
-                                                        _conditions=conditions_code,
-                                                        _priority=0)
                 coords, coords_path = coordinates_computation(subject_name,
                                                               subjects_dir,
                                                               labels,
@@ -320,7 +336,6 @@ def pipeline(
                                 resec_path,
                                 resec_txt_path,
                                 resec_mni_path,
-                                parc_path,
                                 coords_path,
                                 feat_path,
                                 nodes_path,

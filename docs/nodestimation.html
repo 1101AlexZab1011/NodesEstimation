@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -19,7 +18,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="nodestimation.learning package" href="nodestimation.learning.html" />
-    <link rel="prev" title="NodesEstimation" href="modules.html" />
+    <link rel="prev" title="Welcome to NodesEstimation’s documentation!" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -42,25 +41,26 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#nodestimation-learning-estimation-module">nodestimation.learning.estimation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#nodestimation-learning-modification-module">nodestimation.learning.modification module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#nodestimation-learning-selection-module">nodestimation.learning.selection module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.learning.html#module-nodestimation.learning">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nodestimation.processing.html">nodestimation.processing package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#module-nodestimation.processing.connectivity">nodestimation.processing.connectivity module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#module-nodestimation.processing.features">nodestimation.processing.features module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#module-nodestimation.processing.mneraw">nodestimation.processing.mneraw module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#module-nodestimation.processing.timewindow">nodestimation.processing.timewindow module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#nodestimation-processing-connectivity-module">nodestimation.processing.connectivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#nodestimation-processing-features-module">nodestimation.processing.features module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#nodestimation-processing-mneraw-module">nodestimation.processing.mneraw module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#nodestimation-processing-timewindow-module">nodestimation.processing.timewindow module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodestimation.processing.html#module-nodestimation.processing">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nodestimation.project.html">nodestimation.project package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.actions">nodestimation.project.actions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations">nodestimation.project.annotations module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.structures">nodestimation.project.structures module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.subject">nodestimation.project.subject module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#nodestimation-project-actions-module">nodestimation.project.actions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#nodestimation-project-annotations-module">nodestimation.project.annotations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#nodestimation-project-structures-module">nodestimation.project.structures module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#nodestimation-project-subject-module">nodestimation.project.subject module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodestimation.project.html#module-nodestimation.project">Module contents</a></li>
 </ul>
 </li>
@@ -76,22 +76,32 @@
 <span class="target" id="module-nodestimation.pipeline"></span><dl class="function">
 <dt id="nodestimation.pipeline.pipeline">
 <code class="descclassname">nodestimation.pipeline.</code><code class="descname">pipeline</code><span class="sig-paren">(</span><em>crop_time: Optional[int] = 120, snr: Optional[float] = 0.5, epochs_tmin: Union[int, float, None] = -1, epochs_tmax: Union[int, float, None] = 1, conductivity: Optional[tuple] = (0.3,), se_method: Optional[str] = 'sLORETA', methods: Union[str, List[str], None] = 'plv', rfreq: Optional[int] = 200, nfreq: Optional[int] = 50, lfreq: Optional[int] = 1, hfreq: Optional[int] = 70, freq_bands: Union[tuple, List[tuple], None] = (0.5, 4)</em><span class="sig-paren">)</span> &#x2192; List[nodestimation.project.subject.Subject]<a class="reference internal" href="_modules/nodestimation/pipeline.html#pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.pipeline.pipeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pipeline for brain data transformation</p>
+<dd><dl class="docutils">
+<dt>Pipeline for brain data transformation</dt>
+<dd><strong>includes:</strong></dd>
+</dl>
+<ol class="arabic simple">
+<li>notch and bandpass <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> filtering</li>
+<li>sources signal reconstruction with specified <a class="reference internal" href="#mne-solution">MNE solution</a></li>
+<li>applying specified <a class="reference internal" href="#processing-metric">processing metric</a></li>
+<li>eigencentrality (or integral) computation</li>
+<li>results saving</li>
+</ol>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>methods</strong> (<em>list of str</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – set of metrics to be computed (see <a class="reference internal" href="#list-of-metrics">list of metrics</a>), default <code class="docutils literal notranslate"><span class="pre">&quot;plv&quot;</span></code></li>
+<li><strong>methods</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>, <em>optional</em>) – set of metrics to be computed (see <a class="reference internal" href="#list-of-metrics">list of metrics</a>), default <code class="docutils literal notranslate"><span class="pre">&quot;plv&quot;</span></code></li>
 <li><strong>se_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – MNE solution for inverse computations (see <a class="reference internal" href="#list-of-mne-solutions">list of MNE solutions</a>), default <code class="docutils literal notranslate"><span class="pre">&quot;sLORETA&quot;</span></code></li>
-<li><strong>conductivity</strong> (<em>tuple of float</em><em>, </em><em>optional</em>) – suggested tissues conductivity, default (0.3,)</li>
+<li><strong>conductivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>, <em>optional</em>) – suggested tissues conductivity, default (0.3,)</li>
 <li><strong>epochs_tmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – start time (s) before event, default -1</li>
 <li><strong>epochs_tmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – end time (s) after event, default 1</li>
 <li><strong>rfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – resampling frequency (Hz), default 200</li>
 <li><strong>nfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – frequency (Hz) for notch-filtering, default 50</li>
 <li><strong>lfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – frequency (Hz) for low-pass-filtering, default 1</li>
 <li><strong>hfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – frequency (Hz) for high-pass-filtering, default 70</li>
-<li><strong>freq_bands</strong> (<em>tuple of float</em><em> or </em><em>list of tuple of float</em>) – in what frequency (Hz) diapasons are the calculations performed, default (0.5, 4)</li>
+<li><strong>freq_bands</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>) – in what frequency (Hz) diapasons are the calculations performed, default (0.5, 4)</li>
 <li><strong>crop_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – what time (s) of brain data be read, default 200</li>
 <li><strong>snr</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – regularization parameter, default 0.5</li>
 </ul>
@@ -100,7 +110,7 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">subjects information, computed according to given parameters</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list of <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> objects</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> objects</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if freq_bands given in wrong format</p>
@@ -109,7 +119,7 @@
 </tbody>
 </table>
 <div class="admonition note" id="list-of-metrics">
-<p class="first admonition-title">Note</p>
+<span id="processing-metric"></span><p class="first admonition-title">Note</p>
 <p class="last">metrics that can be calculated:
 <a class="reference external" href="https://mne.tools/stable/generated/mne.connectivity.spectral_connectivity.html">psd, coh, cohy, imcoh, plv, ciplv, ppc, pli, pli2_unbiased, wpli,
 wpli2_debiased</a>,
@@ -117,7 +127,7 @@ wpli2_debiased</a>,
 <a class="reference external" href="https://mne.tools/stable/auto_examples/connectivity/plot_mne_inverse_envelope_correlation.html">envelope</a></p>
 </div>
 <div class="admonition note" id="list-of-mne-solutions">
-<p class="first admonition-title">Note</p>
+<span id="mne-solution"></span><p class="first admonition-title">Note</p>
 <p class="last">MNE solutions that can be applied:
 <a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse">MNE, dSPM, sLORETA, eLORETA</a></p>
 </div>
@@ -131,7 +141,7 @@ wpli2_debiased</a>,
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to read</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to read</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a></td>
 </tr>
@@ -147,7 +157,7 @@ wpli2_debiased</a>,
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to read</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to read</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> objects</td>
 </tr>
@@ -194,22 +204,21 @@ wpli2_debiased</a>,
 </dd></dl>
 
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nodestimation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nodestimation" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="descclassname">nodestimation.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>label: mne.label.Label, features: Dict[str, Dict[str, float]], center_coordinates: numpy.ndarray, type: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation.html#Node"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="nodestimation.Node">
+<em class="property">class </em><code class="descclassname">nodestimation.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>label: mne.label.Label, features: Dict[str, Dict[str, float]], center_coordinates: numpy.ndarray, type: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.Node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Brain unit representing one separated area of the brain
-this is essentially an extension of <a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label">mne.Label</a> class</p>
+<p>Brain unit representing one separated area of the brain</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>label</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label">mne.Label</a>) – label related to node</li>
-<li><strong>features</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – dictionary representing measure value according to frequency</li>
-<li><strong>center_coordinates</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a>) – x, y, and z coordinates of node position (in <a class="reference external" href="https://neuroimage.usc.edu/brainstorm/CoordinateSystems#MNI_coordinates">mni coordinates</a>)</li>
+<li><strong>label</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label"><em>mne.Label</em></a>) – label related to node</li>
+<li><strong>features</strong> (<em>look for NodeFeatures in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a>) – dictionary representing measure value according to frequency</li>
+<li><strong>center_coordinates</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – x, y, and z coordinates of node position (in <a class="reference external" href="https://neuroimage.usc.edu/brainstorm/CoordinateSystems#MNI_coordinates">mni coordinates</a>)</li>
 <li><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – any information allowing distinguish one node (or group of nodes) from others</li>
 </ul>
 </td>
@@ -220,46 +229,46 @@ this is essentially an extension of <a class="reference external" href="https://
 </tbody>
 </table>
 <dl class="attribute">
-<dt>
-<code class="descname">center_coordinates</code></dt>
+<dt id="nodestimation.Node.center_coordinates">
+<code class="descname">center_coordinates</code><a class="headerlink" href="#nodestimation.Node.center_coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>x, y, and z coordinates of node position (in <a class="reference external" href="https://neuroimage.usc.edu/brainstorm/CoordinateSystems#MNI_coordinates">mni coordinates</a>)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">features</code></dt>
+<dt id="nodestimation.Node.features">
+<code class="descname">features</code><a class="headerlink" href="#nodestimation.Node.features" title="Permalink to this definition">¶</a></dt>
 <dd><p>dictionary representing measure value according to frequency</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">label</code></dt>
+<dt id="nodestimation.Node.label">
+<code class="descname">label</code><a class="headerlink" href="#nodestimation.Node.label" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label">label</a> related to node</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt>
-<code class="descname">type</code></dt>
+<dt id="nodestimation.Node.type">
+<code class="descname">type</code><a class="headerlink" href="#nodestimation.Node.type" title="Permalink to this definition">¶</a></dt>
 <dd><p>any information allowing distinguish one node (or group of nodes) from others</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="function">
-<dt>
-<code class="descclassname">nodestimation.</code><code class="descname">eigencentrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#eigencentrality"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="nodestimation.eigencentrality">
+<code class="descclassname">nodestimation.</code><code class="descname">eigencentrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#eigencentrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.eigencentrality" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes eigencentrality for a square matrix</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> – a squared matrix for eigencentrality computations</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for eigencentrality computations</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">matrix with the same size as given containing eigencentrality value for each element</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <p>if matrix have <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html">shape</a> other than (:,2)</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <p>if matrix have <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html">shape</a> other than (:, :)</p>
 </td>
 </tr>
 </tbody>
@@ -287,19 +296,16 @@ this is essentially an extension of <a class="reference external" href="https://
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">NodesEstimation</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">nodestimation package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nodestimation.processing.html">nodestimation.processing package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nodestimation.project.html">nodestimation.project package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">nodestimation package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.processing.html">nodestimation.processing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.project.html">nodestimation.project package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nodestimation">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -308,10 +314,8 @@ this is essentially an extension of <a class="reference external" href="https://
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">NodesEstimation</a><ul>
-      <li>Previous: <a href="modules.html" title="previous chapter">NodesEstimation</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to NodesEstimation’s documentation!</a></li>
       <li>Next: <a href="nodestimation.learning.html" title="next chapter">nodestimation.learning package</a></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>

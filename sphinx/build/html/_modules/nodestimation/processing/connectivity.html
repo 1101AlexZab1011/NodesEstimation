@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -38,14 +37,33 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<span class="nd">@sliding_window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<div class="viewcode-block" id="do_nothing"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.connectivity.do_nothing">[docs]</a><span class="nd">@sliding_window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">do_nothing</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">sig</span>
+    <span class="sd">&quot;&quot;&quot;does exactly what its name says</span>
+
+<span class="sd">    :param sig: signal or set of signals</span>
+<span class="sd">    :type sig: |inp.ndarray|_</span>
+<span class="sd">    :return: the given signal/set of signals</span>
+<span class="sd">    :rtype: np.ndarray_</span>
+
+<span class="sd">    .. _np.ndarray:</span>
+<span class="sd">    .. _inp.ndarray: https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html</span>
+
+<span class="sd">    .. |inp.ndarray| replace:: *np.ndarray*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">sig</span></div>
 
 
-<span class="nd">@sliding_window</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<div class="viewcode-block" id="pearson"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.connectivity.pearson">[docs]</a><span class="nd">@sliding_window</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">pearson</span><span class="p">(</span><span class="n">signals</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="c1"># computes Pearson&#39;s correlation coefficients map for 400-dots time windows with 50% overlapping</span>
+    <span class="sd">&quot;&quot;&quot;computes `Pearson&#39;s correlation coefficients &lt;https://en.wikipedia.org/wiki/Pearson_correlation_coefficient&gt;`_ map used in</span>
+<span class="sd">        :func:`nodestimation.processing.timewindow.sliding_window` for 400-dots with 50% overlapping</span>
+
+<span class="sd">    :param signals: set of signals</span>
+<span class="sd">    :type signals: |inp.ndarray|_</span>
+<span class="sd">    :return: signal-to-signal pearson`s correlations map</span>
+<span class="sd">    :rtype: np.ndarray_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">nsigmals</span><span class="p">,</span> <span class="n">lsignals</span> <span class="o">=</span> <span class="n">signals</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nsigmals</span><span class="p">,</span> <span class="n">nsigmals</span><span class="p">))</span>
@@ -59,11 +77,21 @@
 
             <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">signals</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">signals</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:])[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">out</span>
+    <span class="k">return</span> <span class="n">out</span></div>
 
 
-<div class="viewcode-block" id="pearson_ts"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.connectivity.pearson_ts">[docs]</a><span class="k">def</span> <span class="nf">pearson_ts</span><span class="p">(</span><span class="n">label_ts</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="c1"># computes Pearson&#39;s correlation coefficients map for list of data</span>
+<div class="viewcode-block" id="pearson_ts"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.connectivity.pearson_ts">[docs]</a><span class="k">def</span> <span class="nf">pearson_ts</span><span class="p">(</span><span class="n">label_ts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;computes `Pearson&#39;s correlation coefficients &lt;https://en.wikipedia.org/wiki/Pearson_correlation_coefficient&gt;`_ map for list of signals</span>
+
+<span class="sd">    :param label_ts: list of signals</span>
+<span class="sd">    :type label_ts: |ilist|_ *of* |inp.ndarray|_</span>
+<span class="sd">    :return: signal-to-signal pearson`s correlations map</span>
+<span class="sd">    :rtype: np.ndarray_</span>
+
+<span class="sd">    .. _ilist: https://docs.python.org/3/library/stdtypes.html#list</span>
+
+<span class="sd">    .. |ilist| replace:: *list*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">out</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">signals</span> <span class="ow">in</span> <span class="n">label_ts</span><span class="p">:</span>
@@ -78,9 +106,16 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
 
-<span class="nd">@sliding_window</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<div class="viewcode-block" id="phase_locking_value"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.connectivity.phase_locking_value">[docs]</a><span class="nd">@sliding_window</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">phase_locking_value</span><span class="p">(</span><span class="n">signals</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="c1"># computes Phase Locking Value coefficients map for 400-dots time windows with 50% overlapping</span>
+    <span class="sd">&quot;&quot;&quot;computes `Phase Locking Value coefficients &lt;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3674231/&gt;`_ map used in</span>
+<span class="sd">        :func:`nodestimation.processing.timewindow.sliding_window` for 400-dots with 50% overlapping</span>
+
+<span class="sd">    :param signals: set of signals</span>
+<span class="sd">    :type signals: |inp.ndarray|_</span>
+<span class="sd">    :return: signal-to-signal pearson`s correlations map</span>
+<span class="sd">    :rtype: np.ndarray_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">nsigmals</span><span class="p">,</span> <span class="n">lsignals</span> <span class="o">=</span> <span class="n">signals</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nsigmals</span><span class="p">,</span> <span class="n">nsigmals</span><span class="p">,</span> <span class="n">lsignals</span><span class="p">))</span>
@@ -98,7 +133,7 @@
 
             <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">plv_1_2</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -118,7 +153,7 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">NodesEstimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nodestimation.html">nodestimation package</a></li>
 </ul>
 
 <div class="relations">

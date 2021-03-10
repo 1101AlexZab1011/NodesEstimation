@@ -7,23 +7,33 @@ from nodestimation.processing.connectivity import pearson, phase_locking_value
 from nodestimation.processing.timewindow import mean_across_tw
 from nodestimation.project.annotations import NodeFeatures
 
+
 class Node(object):
-    """
-    Brain unit representing one separated area of the brain
-    this is essentially an extension of `mne.Label <https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label>`_ class
+    """Brain unit representing one separated area of the brain
 
-    :param label: label related to node
-    :type label: mne.Label_
-    :param features: dictionary representing measure value according to frequency
-    :type features: dict
-    :param center_coordinates: x, y, and z coordinates of node position (in `mni coordinates <https://neuroimage.usc.edu/brainstorm/CoordinateSystems#MNI_coordinates>`_)
-    :type center_coordinates: `np.ndarray <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html>`_
-    :param type: any information allowing distinguish one node (or group of nodes) from others
-    :type type: str, optional
-    :raises ValueError: if center_coordinates have `shape <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html>`_ other than (3,)
+        :param label: label related to node
+        :type label: |mne.Label|_
+        :param features: dictionary representing measure value according to frequency
+        :type features: *look for NodeFeatures in* :mod:`nodestimation.project.annotations`
+        :param center_coordinates: x, y, and z coordinates of node position (in `mni coordinates <https://neuroimage.usc.edu/brainstorm/CoordinateSystems#MNI_coordinates>`_)
+        :type center_coordinates: |inp.ndarray|_
+        :param type: any information allowing distinguish one node (or group of nodes) from others
+        :type type: str, optional
+        :raises ValueError: if center_coordinates have `shape <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html>`_ other than (3,)
 
-    .. _mne.Label: https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label
+        .. _mne.Label: https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label
+        .. _inp.ndarray:
+        .. _np.ndarray: https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html
+        .. _idict: https://docs.python.org/3/library/stdtypes.html#dict
+        .. _ifloat: https://docs.python.org/3/library/functions.html#float
+        .. _istr: https://docs.python.org/3/library/stdtypes.html#str
+
+        .. |mne.Label| replace:: *mne.Label*
+        .. |inp.ndarray| replace:: *np.ndarray*
+        .. |idict| replace:: *dict*
+
     """
+
     def __init__(
             self,
             label: mne.label.Label,
@@ -136,10 +146,10 @@ def eigencentrality(matrix: np.ndarray) -> np.ndarray:
     """Computes eigencentrality for a square matrix
 
         :param matrix: a squared matrix for eigencentrality computations
-        :type matrix: `np.ndarray <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html>`_
+        :type matrix: |inp.ndarray|_
         :return: matrix with the same size as given containing eigencentrality value for each element
         :rtype: `np.ndarray <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html>`_
-        :raises ValueError: if matrix have `shape <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html>`_ other than (:,2)
+        :raises ValueError: if matrix have `shape <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html>`_ other than (:, :)
     """
 
     if len(matrix.shape) == 2:

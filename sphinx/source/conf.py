@@ -81,7 +81,6 @@ pygments_style = None
 # a list of builtin themes.
 #
 html_theme = 'alabaster'
-
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -105,7 +104,7 @@ html_static_path = ['_static']
 
 # Custom styles
 html_css_files = [
-    'css/custom.css',''
+    'css/custom.css',
 ]
 
 # -- Options for HTMLHelp output ---------------------------------------------

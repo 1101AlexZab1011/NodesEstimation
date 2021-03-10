@@ -12,7 +12,25 @@ from nodestimation.project.annotations import SubjectTree, Features, LabelsFeatu
 
 
 def notchfir(raw: mne.io.Raw, lfreq: int, nfreq: int, hfreq: int) -> mne.io.Raw:
-    # filters the given raw-object from lfreq to nfreq and from nfreq to hfreq
+    """filters the given raw_ object from lfreq to nfreq and from nfreq to hfreq
+
+        :param raw: raw_ to filter
+        :type raw: |iraw|_
+        :param lfreq: frequency for `low-pass filter <https://en.wikipedia.org/wiki/Low-pass_filter>`_, Hz
+        :type lfreq: int
+        :param nfreq: frequency for `band-stop filter <https://en.wikipedia.org/wiki/Band-stop_filter>`_, Hz
+        :type nfreq: int
+        :param hfreq: frequency for `high-pass filter <https://en.wikipedia.org/wiki/High-pass_filter>`_, Hz
+        :type hfreq: int
+        :return: filtered raw_
+        :rtype: mne.io.raw_
+
+        .. _mne.io.raw:
+        .. _raw:
+        .. _iraw: https://mne.tools/stable/generated/mne.io.Raw.html
+
+        .. |iraw| replace:: *mne.io.raw*
+    """
 
     meg_picks = mne.pick_types(raw.info, meg=True, eeg=False, eog=False)
     raw_filtered = raw \
@@ -23,8 +41,30 @@ def notchfir(raw: mne.io.Raw, lfreq: int, nfreq: int, hfreq: int) -> mne.io.Raw:
     return raw_filtered
 
 
-def artifacts_clean(raw: mne.io.Raw, n_components: Optional[int] = 15, method: Optional[str] = 'correlation', threshold: Optional[float] = 3.0) -> mne.io.Raw:
-    # makes artifacts cleaning of raw-object using ICA
+def artifacts_clean(raw: mne.io.Raw, n_components: Optional[Union[int, float, None]] = 15, method: Optional[str] = 'correlation', threshold: Optional[Union[float, str]] = 3.0) -> mne.io.Raw:
+    """makes `artifacts <https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data>`_ cleaning
+        of raw_ object using `ICA <https://en.wikipedia.org/wiki/Independent_component_analysis>`_
+
+        :param raw: raw_ to filter
+        :type raw: |iraw|_
+        :param n_components: number of principal components (from the pre-whitening PCA step) that are passed to the `ICA algorithm <https://mne.tools/stable/generated/mne.preprocessing.ICA.html>`_ during fitting, default 15
+        :type n_components: |iint|_ *or* |ifloat|_ *or* |iNone|_ *, optional*
+        :param method: The method used in the `algorithm <https://mne.tools/stable/generated/mne.preprocessing.ICA.html?highlight=ica%20find_bads_ecg#mne.preprocessing.ICA.find_bads_ecg>`_
+            for detection `ecg <https://en.wikipedia.org/wiki/Electrocardiography>`_ or `eog <https://en.wikipedia.org/wiki/Electrooculography>`_
+            `ICA <https://en.wikipedia.org/wiki/Independent_component_analysis>`_ components, can be either
+            "ctps" (`cross-trial phase statistics <https://www.researchgate.net/publication/23302818_Integration_of_Amplitude_and_Phase_Statistics_for_Complete_Artifact_Removal_in_Independent_Components_of_Neuromagnetic_Recordings>`_) or
+            `"correlation" <https://en.wikipedia.org/wiki/Pearson_correlation_coefficient>`_
+        :type method: str, optional
+        :param threshold: The value above which a feature is classified as outlier, can be computed automatically if given value is "auto", default depends from method (look for
+            `original function <https://mne.tools/stable/generated/mne.preprocessing.ICA.html?highlight=ica%20find_bads_ecg#mne.preprocessing.ICA.find_bads_ecg>`_)
+        :type threshold: |ifloat|_ *or* |istr|_ *, optional*
+        :return: cleaned raw_ object
+        :rtype: mne.io.raw_
+
+        .. _iNone: https://docs.python.org/3/library/constants.html#None
+
+        .. |iNone| replace:: *None*
+    """
 
     ica = mne.preprocessing.ICA(n_components=n_components)
     ica.fit(raw)
@@ -45,6 +85,19 @@ def read_original_raw(
         _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.io.Raw:
+    """reads not processed raw_ data, uses :func:`nodestimation.project.read_or_write` decorator
+
+        :param path: path to read
+        :type path: str
+        :param _subject_tree: representation of patient`s files structure, default None
+        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
+        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True
+        :type _conditions: str, optional
+        :param _priority: if several files are read, which one to choose, if None, read all of them, default None
+        :type _priority: int, optional
+        :return: read raw_ object
+        :rtype: mne.io.raw_
+    """
     return mne.io.read_raw_fif(path)
 
 
@@ -52,7 +105,7 @@ def read_original_raw(
 def first_processing(
         raw: mne.io.Raw, lfreq: int, nfreq: int, hfreq: int,
         rfreq: Optional[int] = None,
-        crop: Optional[float] = None,
+        crop: Optional[Union[float, List[float], Tuple[float, float]]] = None,
         reconstruct: Optional[bool] = False,
         meg: Optional[bool] = True,
         eeg: Optional[bool] = True,
@@ -60,12 +113,46 @@ def first_processing(
         _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.io.Raw:
+    """processes_ given raw_ object, uses :func:`nodestimation.project.read_or_write` decorator
+
+        :param raw: raw_ to filter
+        :type raw: |iraw|_
+        :param lfreq: frequency for `low-pass filter <https://en.wikipedia.org/wiki/Low-pass_filter>`_, Hz
+        :type lfreq: int
+        :param nfreq: frequency for `band-stop filter <https://en.wikipedia.org/wiki/Band-stop_filter>`_, Hz
+        :type nfreq: int
+        :param hfreq: frequency for `high-pass filter <https://en.wikipedia.org/wiki/High-pass_filter>`_, Hz
+        :type hfreq: int
+        :param crop: end time of the raw data to use (in seconds), if None, does not crop, default None
+        :type crop: |ifloat|_ *or* |ilist|_ *of* |ifloat|_ *or* |ituple|_ *of* |ifloat|_ *, optional*
+        :param reconstruct: whether make `artifacts <https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data>`_ cleaning or not, default False
+        :type reconstruct: bool, optional
+        :param meg: whether pick meg channel or not, default True
+        :type meg: bool, optional
+        :param eeg: whether pick meg channel or not, default True
+        :type eeg: bool, optional
+        :param _subject_tree: representation of patient`s files structure, default None
+        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
+        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
+        :type _conditions: str, optional
+        :param _priority: if several files are read, which one to choose, if None, read all of them, default None
+        :type _priority: int, optional
+        :return: processed raw_ object
+        :rtype: mne.io.raw_
+
+        .. _processes:
+        .. note:: Processing for raw_ data means
+            `band-pass <https://en.wikipedia.org/wiki/Band-pass_filter>`_ and `band-stop <https://en.wikipedia.org/wiki/Band-stop_filter>`_ filtering,
+            `cropping <https://mne.tools/stable/generated/mne.io.Raw.html?highlight=raw%20crop#mne.io.Raw.crop>`_ and `artifacts <https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data>`_ cleaning
+    """
+
     out = raw.copy()
 
     if crop:
-        if not isinstance(crop, list):
+        if not isinstance(crop, list) or not isinstance(crop, tuple):
             out.crop(tmax=crop)
         elif isinstance(crop, list) \
+                or isinstance(crop, tuple) \
                 and len(crop) == 2:
             out.crop(tmin=crop[0], tmax=crop[1])
         else:
@@ -92,6 +179,26 @@ def bem_computation(
         _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.bem.ConductorModel:
+    """Computes bem_ solution, uses :func:`nodestimation.project.read_or_write` decorator
+
+        :param subject: patient`s ID
+        :type subject: str
+        :param subjects_dir: path to directory with patient`s files
+        :type subjects_dir: str
+        :param conductivity: the conductivities to use for each brain tissue shell. Single element for single-layer model or three elements for three-layer model
+        :type conductivity: tuple
+        :param _subject_tree: representation of patient`s files structure, default None
+        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
+        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
+        :type _conditions: str, optional
+        :param _priority: if several files are read, which one to choose, if None, read all of them, default None
+        :type _priority: int, optional
+        :return: bem_ solution
+        :rtype: mne.bem.ConductorModel_
+
+        .. _mne.bem.ConductorModel:
+        .. _bem: https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel
+    """
     model = mne.make_bem_model(subject=subject, conductivity=conductivity, subjects_dir=subjects_dir)
     return mne.make_bem_solution(model)
 
@@ -106,6 +213,32 @@ def src_computation(
         _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> Union[mne.SourceSpaces, List[mne.SourceSpaces]]:
+    """computes `source spaces`_ solution, uses :func:`nodestimation.project.read_or_write` decorator
+
+        :param subject: patient`s ID
+        :type subject: str
+        :param subjects_dir: path to directory with patient`s files
+        :type subjects_dir: str
+        :param bem: bem_ solution
+            to build SourceSpaces_
+        :type bem: mne.bem.ConductorModel_
+        :param volume: if True, computes `volume source spaces <https://mne.tools/stable/generated/mne.setup_volume_source_space.html?highlight=setup_volume_source_space#mne.setup_volume_source_space>`_,
+            default False
+        :type volume: bool, optional
+        :param _subject_tree: representation of patient`s files structure, default None
+        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
+        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
+        :type _conditions: str, optional
+        :param _priority: if several files are read, which one to choose, if None, read all of them, default None
+        :type _priority: int, optional
+        :return: `source spaces`_ solution
+        :rtype: mne.SourceSpaces_
+
+        .. _mne.SourceSpaces:
+        .. _SourceSpaces:
+        .. _`source spaces`: https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces
+    """
+
     src = mne.setup_source_space(subject, spacing='ico5', add_dist='patch', subjects_dir=subjects_dir)
 
     if volume:
@@ -138,6 +271,23 @@ def read_original_trans(
         _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> Union[dict, List[dict]]:
+    """reads given `transformation matrix`_, uses :func:`nodestimation.project.read_or_write` decorator
+
+            :param path: path to read
+            :type path: str
+            :param _subject_tree: representation of patient`s files structure, default None
+            :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
+            :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True
+            :type _conditions: str, optional
+            :param _priority: if several files are read, which one to choose, if None, read all of them, default None
+            :type _priority: int, optional
+            :return: read `transformation matrix`_
+            :rtype: mne.transforms.Transform_
+
+            .. _mne.transforms.Transform:
+            .. _`transformation matrix`: https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform
+        """
+
     return mne.read_trans(path)
 
 
@@ -298,28 +448,6 @@ def read_original_resec_txt(
         _priority: Optional[int] = None
 ) -> str:
     return open(path, 'r').read()
-
-
-@read_or_write('parc')
-def parcellation_creating(
-        subject: str,
-        subjects_dir: str,
-        labels: List[mne.Label],
-        _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
-        _priority: Optional[int] = None
-) -> Dict[str, np.ndarray]:
-    vertexes = [
-        mne.vertex_to_mni(
-            label.vertices,
-            hemis=0 if label.hemi == 'lh' else 1,
-            subject=subject,
-            subjects_dir=subjects_dir
-        ) for label in labels
-    ]
-    return {
-        label.name: np.mean(vertex, axis=0) for label, vertex in zip(labels, vertexes)
-    }
 
 
 @read_or_write('feat')

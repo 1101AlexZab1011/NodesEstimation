@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -34,48 +33,362 @@
             
   <div class="section" id="nodestimation-project-package">
 <h1>nodestimation.project package<a class="headerlink" href="#nodestimation-project-package" title="Permalink to this headline">¶</a></h1>
+<p>Package containing the structural units of the project and providing functionality for their creation and modification</p>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nodestimation.project.actions">
-<span id="nodestimation-project-actions-module"></span><h2>nodestimation.project.actions module<a class="headerlink" href="#module-nodestimation.project.actions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="nodestimation-project-actions-module">
+<h2>nodestimation.project.actions module<a class="headerlink" href="#nodestimation-project-actions-module" title="Permalink to this headline">¶</a></h2>
+<p>Functions for storing and reading required files</p>
+<table border="1" class="colwidths-given docutils" id="id34">
+<caption><span class="caption-text">Actions</span><a class="headerlink" href="#id34" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="23%" />
+<col width="38%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">File type</th>
+<th class="head">Reader</th>
+<th class="head">Writer</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>raw</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.io.read_raw_fif.html">mne.io.read_raw_fif</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, raw: <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html#mne.io.Raw.save">raw.save(path)</a></td>
+</tr>
+<tr class="row-odd"><td>bem</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.read_bem_solution.html?highlight=read_bem#mne.read_bem_solution">mne.read_bem_solution</a></td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.write_bem_solution.html?highlight=write_bem#mne.write_bem_solution">mne.write_bem_solution</a></td>
+</tr>
+<tr class="row-even"><td>src</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.read_source_spaces.html?highlight=read_source#mne.read_source_spaces">mne.read_source_spaces</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, src: <a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces.save">src.save(path)</a></td>
+</tr>
+<tr class="row-odd"><td>trans</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.read_trans.html?highlight=read_trans#mne.read_trans">mne.read_trans</a></td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.write_trans.html?highlight=write_trans#mne.write_trans">mne.write_trans</a></td>
+</tr>
+<tr class="row-even"><td>fwd</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.read_forward_solution.html?highlight=read_forward#mne.read_forward_solution">mne.read_forward_solution</a></td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.write_forward_solution.html?highlight=write_forward#mne.write_forward_solution">mne.write_forward_solution</a></td>
+</tr>
+<tr class="row-odd"><td>eve</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.read_events.html?highlight=read_events">mne.read_events</a></td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.write_events.html?highlight=write_events">mne.write_events</a></td>
+</tr>
+<tr class="row-even"><td>epo</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.read_epochs.html?highlight=read_epochs#mne.read_epochs">mne.read_epochs</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, epochs: <a class="reference external" href="https://mne.tools/stable/generated/mne.Epochs.html?highlight=epochs#mne.Epochs.save">epochs.save(path)</a></td>
+</tr>
+<tr class="row-odd"><td>cov</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.read_cov.html?highlight=read_cov#mne.read_cov">mne.read_cov</a></td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.write_cov.html?highlight=write_cov#mne.write_cov">mne.write_cov</a></td>
+</tr>
+<tr class="row-even"><td>ave</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.read_evokeds.html?highlight=read_evokeds#mne.read_evokeds">mne.read_evokeds</a></td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.write_evokeds.html?highlight=write_evokeds#mne.write_evokeds">mne.write_evokeds</a></td>
+</tr>
+<tr class="row-odd"><td>inv</td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.read_inverse_operator.html?highlight=mne%20minimum_norm%20read_inverse_operator#mne.minimum_norm.read_inverse_operator">mne.minimum_norm.read_inverse_operator</a></td>
+<td><a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.write_inverse_operator.html?highlight=mne%20minimum_norm%20write_inverse_operator#mne.minimum_norm.write_inverse_operator">mne.minimum_norm.write_inverse_operator</a></td>
+</tr>
+<tr class="row-even"><td>stc</td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.load">pickle.load(open(path, ‘rb’))</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, stc: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.dump">pickle.dump(stc, open(path, ‘wb’))</a></td>
+</tr>
+<tr class="row-odd"><td>coords</td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.load">pickle.load(open(path, ‘rb’))</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, coord: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.dump">pickle.dump(coord, open(path, ‘wb’))</a></td>
+</tr>
+<tr class="row-even"><td>resec</td>
+<td><a class="reference external" href="https://nipy.org/nibabel/reference/nibabel.loadsave.html#load">nibabel.load</a></td>
+<td><a class="reference external" href="https://nipy.org/nibabel/reference/nibabel.loadsave.html#save">nibabel.save</a></td>
+</tr>
+<tr class="row-odd"><td>resec_mni</td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.load">pickle.load(open(path, ‘rb’))</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, resec: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.dump">pickle.dump(resec, open(path, ‘wb’))</a></td>
+</tr>
+<tr class="row-even"><td>resec_txt</td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path: <a class="reference external" href="https://docs.python.org/3/library/functions.html#open">open(path, ‘r’).read()</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, resec: <a class="reference external" href="https://docs.python.org/3/library/functions.html#open">open(path, ‘w’).write(resec)</a></td>
+</tr>
+<tr class="row-odd"><td>feat</td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.load">pickle.load(open(path, ‘rb’))</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, feat: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.dump">pickle.dump(feat, open(path, ‘wb’))</a></td>
+</tr>
+<tr class="row-even"><td>nodes</td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.load">pickle.load(open(path, ‘rb’))</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, nodes: <a class="reference external" href="https://docs.python.org/3/library/pickle.html#pickle.dump">pickle.dump(nodes, open(path, ‘wb’))</a></td>
+</tr>
+<tr class="row-odd"><td>dataset</td>
+<td><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html">pandas.read_csv</a></td>
+<td><a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda</a> path, csv: <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_csv.html">csv.to_csv(path)</a></td>
+</tr>
+</tbody>
+</table>
+<span class="target" id="module-nodestimation.project.actions"></span></div>
+<div class="section" id="nodestimation-project-annotations-module">
+<span class="target" id="module-nodestimation.project.annotations"></span>
+<h2>nodestimation.project.annotations module<a class="headerlink" href="#nodestimation-project-annotations-module" title="Permalink to this headline">¶</a></h2>
+<p>This module provides <a class="reference external" href="https://docs.python.org/3/library/typing.html#type-aliases">type aliases</a> used in the NodesEstimation project</p>
+<p>Annotations used in this package:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">SubjectTreeData</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span>
+    <span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="p">]</span>
+<span class="p">]</span>
+
+<span class="n">SubjectTreeMetaData</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span>
+    <span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+<span class="p">]</span>
+
+<span class="n">SubjectTree</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">SubjectTreeMetaData</span><span class="p">,</span>
+    <span class="n">SubjectTreeData</span>
+<span class="p">]</span>
+
+<span class="n">ResourcesTree</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span>
+    <span class="nb">str</span><span class="p">,</span> <span class="n">SubjectTree</span>
+<span class="p">]</span>
+
+<span class="n">Features</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span>
+    <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">]</span>
+<span class="p">]</span>
+
+<span class="n">LabelsFeatures</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span>
+    <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+<span class="p">]</span>
+
+<span class="n">NodeFeatures</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span>
+                <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
+                    <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span>
+                <span class="p">]</span>
+            <span class="p">]</span>
+</pre></div>
 </div>
-<div class="section" id="module-nodestimation.project.annotations">
-<span id="nodestimation-project-annotations-module"></span><h2>nodestimation.project.annotations module<a class="headerlink" href="#module-nodestimation.project.annotations" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Annotations module uses type hints</p>
+<p><a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">Type hinting</a> is a formal solution to statically indicate the type of a value within python code.</p>
+<p>Used type hints:</p>
+<ul class="last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a></li>
+<li><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List">List</a></li>
+<li><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></li>
+<li><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a></li>
+</ul>
 </div>
-<div class="section" id="module-nodestimation.project.structures">
-<span id="nodestimation-project-structures-module"></span><h2>nodestimation.project.structures module<a class="headerlink" href="#module-nodestimation.project.structures" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nodestimation.project.subject">
-<span id="nodestimation-project-subject-module"></span><h2>nodestimation.project.subject module<a class="headerlink" href="#module-nodestimation.project.subject" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<div class="section" id="nodestimation-project-structures-module">
+<h2>nodestimation.project.structures module<a class="headerlink" href="#nodestimation-project-structures-module" title="Permalink to this headline">¶</a></h2>
+<p>This module provides structures to help understand what types of files exist, how to search, distinguish, and in what format to store them</p>
+<table border="1" class="colwidths-given docutils" id="id35">
+<caption><span class="caption-text">Structures</span><a class="headerlink" href="#id35" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="23%" />
+<col width="38%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Data type</th>
+<th class="head"><a class="reference external" href="https://docs.python.org/3/library/re.html">RegExp</a></th>
+<th class="head">File format</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>raw</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*raw.*\.fif'</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-odd"><td>bem</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*bem.*\.fif'</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-even"><td>src</td>
+<td><code class="docutils literal notranslate"><span class="pre">[r'.*src.*\.fif',</span> <span class="pre">r'.*source_space.*\.fif',</span> <span class="pre">r'.*source-space.*\.fif']</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-odd"><td>trans</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*trans.*\.fif'</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-even"><td>fwd</td>
+<td><code class="docutils literal notranslate"><span class="pre">[r'.*fwd.*\.fif',</span> <span class="pre">r'.*forward.*\.fif']</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-odd"><td>eve</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*eve.*'</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-even"><td>epo</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*epo.*'</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-odd"><td>cov</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*cov.*\.fif'</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-even"><td>ave</td>
+<td><code class="docutils literal notranslate"><span class="pre">[r'.*ave.*\.fif',</span> <span class="pre">r'.*evoked.*\.fif']</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-odd"><td>inv</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*inv.*\.fif'</span></code></td>
+<td><a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="row-even"><td>stc</td>
+<td><code class="docutils literal notranslate"><span class="pre">[r'.*stc.*\.fif',</span> <span class="pre">r'.*stc.*\.pkl']</span></code></td>
+<td><a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="row-odd"><td>coords</td>
+<td><code class="docutils literal notranslate"><span class="pre">[r'.*coord.*\.pkl',</span> <span class="pre">r'.*coordinate.*\.pkl']</span></code></td>
+<td><a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="row-even"><td>resec</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*resec.*\.nii.*'</span></code></td>
+<td><a class="reference external" href="https://nipy.org/nibabel/nibabel_images.html#the-image-object">“.nii”</a></td>
+</tr>
+<tr class="row-odd"><td>resec_mni</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*resec.*\.pkl.*'</span></code></td>
+<td><a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="row-even"><td>resec_txt</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*resec.*\.txt.*'</span></code></td>
+<td><a class="reference external" href="https://en.wikipedia.org/wiki/Text_file">“.txt”</a></td>
+</tr>
+<tr class="row-odd"><td>feat</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*feat.*\.pkl.*'</span></code></td>
+<td><a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="row-even"><td>nodes</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*nodes.*\.pkl.*'</span></code></td>
+<td><a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="row-odd"><td>dataset</td>
+<td><code class="docutils literal notranslate"><span class="pre">r'.*dataset.*\.csv.*'</span></code></td>
+<td><a class="reference external" href="https://en.wikipedia.org/wiki/Comma-separated_values">“.csv”</a></td>
+</tr>
+</tbody>
+</table>
+<span class="target" id="module-nodestimation.project.structures"></span></div>
+<div class="section" id="nodestimation-project-subject-module">
+<h2>nodestimation.project.subject module<a class="headerlink" href="#nodestimation-project-subject-module" title="Permalink to this headline">¶</a></h2>
+<p>This module provides the main structural unit of NodesEstimation project. This unit represents a patient</p>
+<span class="target" id="module-nodestimation.project.subject"></span><dl class="class">
 <dt id="nodestimation.project.subject.Subject">
 <em class="property">class </em><code class="descclassname">nodestimation.project.subject.</code><code class="descname">Subject</code><span class="sig-paren">(</span><em>name: str, data: Dict[str, str], nodes: List[nodestimation.Node], directory: str, dataset: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/project/subject.html#Subject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.subject.Subject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class containing all the necessary information about the patient</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – patient`s ID</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict"><em>dict</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>for</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – a dictionary containing paths to patient data files used in calculations.
+Keys are <a class="reference internal" href="#data-types">data types</a>, values are paths to files with this data (or None if they do not exist)</li>
+<li><strong>nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a>) – list of <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a> objects related to this patient</li>
+<li><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – patient home directory (must start with <code class="docutils literal notranslate"><span class="pre">'./Source/Subjects/'</span></code>)</li>
+<li><strong>dataset</strong> (<a class="reference external" href="&lt;https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html&gt;"><em>pandas.DataFrame</em></a>) – dataset with all features and frequencies to all nodes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="data-types">
+<p class="first admonition-title">Note</p>
+<p>Used types:</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">raw:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">Raw</a> object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">raw_fp:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">Raw</a> object after processing (cropping, filtering and so on)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">bem:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html#mne.bem.ConductorModel">ConductorModel</a> object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">src:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html">SourceSpaces</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">trans:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform">Transform</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">fwd:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.Forward.html#mne.Forward">Forward</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">eve:</th><td class="field-body"><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray">Events</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">epo:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.Epochs.html#mne.Epochs">Epochs</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cov:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html?highlight=covariance#mne.Covariance">Covariance</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">ave:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.Evoked.html?highlight=evoked#mne.Evoked">Evoked</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">inv:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator">InverseOperator</a>,</td>
+</tr>
+<tr class="field-even field"><th class="field-name">stc:</th><td class="field-body"><a class="reference external" href="https://mne.tools/stable/generated/mne.SourceEstimate.html#mne.SourceEstimate">SourceEstimate</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">resec:</th><td class="field-body">Resection in <a class="reference external" href="https://nipy.org/nibabel/gettingstarted.html">“.nii”</a> format</td>
+</tr>
+<tr class="field-even field"><th class="field-name">resec_txt:</th><td class="field-body">Resection in <a class="reference external" href="https://en.wikipedia.org/wiki/Text_file">“.txt”</a> format</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">resec_mni:</th><td class="field-body">Resection in <a class="reference external" href="https://brainmap.org/training/BrettTransform.html">mni</a> coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">coords:</th><td class="field-body">centers coordinates of <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/CorticalParcellation">cortical parcellation</a> in <a class="reference external" href="https://brainmap.org/training/BrettTransform.html">mni</a> coordinates</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">feat:</th><td class="field-body">dictionary for all metrics values to all frequency bands to all methods,</td>
+</tr>
+<tr class="field-even field"><th class="field-name">nodes:</th><td class="field-body">list of <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a> objects</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">dataset:</th><td class="field-body">dataset for all features and frequencies to all nodes</td>
+</tr>
+</tbody>
+</table>
+</div>
 <dl class="attribute">
 <dt id="nodestimation.project.subject.Subject.data">
 <code class="descname">data</code><a class="headerlink" href="#nodestimation.project.subject.Subject.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>a dictionary containing paths to patient data files used in calculations.
+Keys are <a class="reference internal" href="#data-types">data types</a>, values are paths to files with this data (or None if they do not exist).</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="nodestimation.project.subject.Subject.data_description">
-<code class="descname">data_description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/project/subject.html#Subject.data_description"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.subject.Subject.data_description" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">data_description</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/nodestimation/project/subject.html#Subject.data_description"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.subject.Subject.data_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>makes description of subject data structure</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="nodestimation.project.subject.Subject.dataset">
 <code class="descname">dataset</code><a class="headerlink" href="#nodestimation.project.subject.Subject.dataset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>dataset with all features and frequencies to all nodes</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="nodestimation.project.subject.Subject.dir">
 <code class="descname">dir</code><a class="headerlink" href="#nodestimation.project.subject.Subject.dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>patient home directory (must start with <code class="docutils literal notranslate"><span class="pre">'./Source/Subjects/'</span></code>)</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="nodestimation.project.subject.Subject.nodes">
 <code class="descname">nodes</code><a class="headerlink" href="#nodestimation.project.subject.Subject.nodes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>list of <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a> objects related to this patient</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -84,63 +397,376 @@
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nodestimation.project" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="nodestimation.project.add_file_to_tree">
-<code class="descclassname">nodestimation.project.</code><code class="descname">add_file_to_tree</code><span class="sig-paren">(</span><em>regexp: str, file: Any, subject_tree: Dict[str, Union[str, List[str]]], type: str, walk: Sequence[T_co]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/nodestimation/project.html#add_file_to_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.add_file_to_tree" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">nodestimation.project.</code><code class="descname">add_file_to_tree</code><span class="sig-paren">(</span><em>regexp: str, file: Union[str, List[str]], subject_tree: Dict[str, Union[str, List[str]]], type: str, walk: tuple</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/nodestimation/project.html#add_file_to_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.add_file_to_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds a file matching the search conditions to the project tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>regexp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – regular expression to find a file path in a list of paths</li>
+<li><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – single path or list of path to build a tree</li>
+<li><strong>subject_tree</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict"><em>dict</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>to</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict"><em>dict</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>to</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – files tree related to subject to which the new file will be added</li>
+<li><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#file-type">file type</a> to add in the tree</li>
+<li><strong>walk</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – output of <a class="reference external" href="https://docs.python.org/3/library/os.html#os.walk">os.walk</a> for current file structure layer</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="file-types">
+<span id="file-type"></span><span id="type"></span><p class="first admonition-title">Note</p>
+<p>File types:</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">raw:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">Raw</a> object, format: <a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">bem:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html#mne.bem.ConductorModel">ConductorModel</a> object, format: <a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">src:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html">SourceSpaces</a>, format: <a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">trans:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform">Transformation</a>, format: <a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">fwd:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.Forward.html#mne.Forward">Forward Model</a>, format: <a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">eve:</th><td class="field-body">path to file with <a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray">Data Events</a>, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">epo:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.Epochs.html#mne.Epochs">Epoched Data</a>, format: <a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin">“.fif”</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">cov:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html?highlight=covariance#mne.Covariance">Covariance Matrix</a>, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">ave:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.Evoked.html?highlight=evoked#mne.Evoked">Evoked Data</a>, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">inv:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator">InverseOperator</a>, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">stc:</th><td class="field-body">path to file with <a class="reference external" href="https://mne.tools/stable/generated/mne.SourceEstimate.html#mne.SourceEstimate">SourceEstimate</a> objects, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a> (because epoched SourceEstimate stored)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">resec:</th><td class="field-body">path to file with resection in <a class="reference external" href="https://nipy.org/nibabel/nibabel_images.html#the-image-object">“.nii”</a> format</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">resec_txt:</th><td class="field-body">path to file with resection in <a class="reference external" href="https://en.wikipedia.org/wiki/Text_file">“.txt”</a> format</td>
+</tr>
+<tr class="field-even field"><th class="field-name">resec_mni:</th><td class="field-body">path to file with resection in <a class="reference external" href="https://brainmap.org/training/BrettTransform.html">mni</a> coordinates, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">coords:</th><td class="field-body">path to file with centers coordinates of <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/CorticalParcellation">cortical parcellation</a> in <a class="reference external" href="https://brainmap.org/training/BrettTransform.html">mni</a> coordinates, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">feat:</th><td class="field-body">path to file with dictionary for all metrics values to all frequency bands to all methods, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">nodes:</th><td class="field-body">path to file with list of <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a> objects, format: <a class="reference external" href="https://docs.python.org/3/library/pickle.html">“.pkl”</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">dataset:</th><td class="field-body">path to file with dataset for all features and frequencies to all nodes, format: <a class="reference external" href="https://en.wikipedia.org/wiki/Comma-separated_values">“.csv”</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.build_resources_tree">
 <code class="descclassname">nodestimation.project.</code><code class="descname">build_resources_tree</code><span class="sig-paren">(</span><em>subject_paths: Dict[str, str]</em><span class="sig-paren">)</span> &#x2192; Dict[str, Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]]<a class="reference internal" href="_modules/nodestimation/project.html#build_resources_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.build_resources_tree" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>builds a project tree describing all the required files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subject_paths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict"><em>dict</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>to</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – dictionary with subject id as a key and path to its home directory a value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">resources tree with paths to all necessary files (look <a class="reference internal" href="#file-types">file types</a>) and with <a class="reference internal" href="#subject-tree-metadata">subject tree metadata</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> to <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> to <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="subject-tree-metadata">
+<p class="first admonition-title">Note</p>
+<p>Subject tree metadata:</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">subject:</th><td class="field-body">patient id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">path:</th><td class="field-body">path to patient`s home directory</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">directories:</th><td class="field-body">paths to all directories inside patient`s home directory</td>
+</tr>
+<tr class="field-even field"><th class="field-name">files:</th><td class="field-body">paths to all files inside patient`s home directory</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">size:</th><td class="field-body">size of patient`s home directory in bytes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.check_path">
 <code class="descclassname">nodestimation.project.</code><code class="descname">check_path</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/nodestimation/project.html#check_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.check_path" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>creates a directory at the specified path if it does not exist</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to check</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.conditions_unique_code">
 <code class="descclassname">nodestimation.project.</code><code class="descname">conditions_unique_code</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/nodestimation/project.html#conditions_unique_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.conditions_unique_code" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>creates code which lets to identify given conditions (whether this condition appears at the first time or computations are already done)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<em>any</em>) – any arguments of function to create code</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">unique code related to given arguments</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.find_subject_dir">
 <code class="descclassname">nodestimation.project.</code><code class="descname">find_subject_dir</code><span class="sig-paren">(</span><em>root: str = './'</em><span class="sig-paren">)</span> &#x2192; Tuple[str, Dict[str, str]]<a class="reference internal" href="_modules/nodestimation/project.html#find_subject_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.find_subject_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Analyses project file structure trying to find a directory containing subjects subdirectories</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – directory where to start searching, default “./”</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">directory containing subjects subdirectories and dictionary with patient`s id as key and path to directory with patient`s information as value</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> and <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> to <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#OSError" title="(in Python v3.9)"><strong>OSError</strong></a> – if subject directory not found</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.get_size">
-<code class="descclassname">nodestimation.project.</code><code class="descname">get_size</code><span class="sig-paren">(</span><em>start_path: str = '.'</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/nodestimation/project.html#get_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.get_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">nodestimation.project.</code><code class="descname">get_size</code><span class="sig-paren">(</span><em>start_path: str = './'</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/nodestimation/project.html#get_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.get_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the size (in bytes) of all contained files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>start_path</strong> – directory where to start computation, default “./”</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">size in bytes</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
-<dt id="nodestimation.project.is_allowed_type">
-<code class="descclassname">nodestimation.project.</code><code class="descname">is_allowed_type</code><span class="sig-paren">(</span><em>path</em>, <em>conditions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/project.html#is_allowed_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.is_allowed_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="nodestimation.project.is_allowed_target">
+<code class="descclassname">nodestimation.project.</code><code class="descname">is_allowed_target</code><span class="sig-paren">(</span><em>path: str</em>, <em>conditions: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/nodestimation/project.html#is_allowed_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.is_allowed_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks if the type is allowed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to checked file</li>
+<li><strong>conditions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#conditions">conditions</a> code for current <a class="reference internal" href="nodestimation.html#nodestimation.pipeline.pipeline" title="nodestimation.pipeline.pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.pipeline.pipeline()</span></code></a> parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True or False for allowed type or not respectively</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="allowed-type">
+<span id="allowed"></span><p class="first admonition-title">Note</p>
+<p class="last">Allowed type means that this file is not generated by this program,
+or created by this program but contains code for the current <a class="reference internal" href="#conditions">conditions</a> in its path</p>
+</div>
+<div class="admonition note" id="conditions">
+<p class="first admonition-title">Note</p>
+<p>Pipeline conditions</p>
+<p class="last">This is a code by which there is possible to determine whether required data already exists or not.
+Code created by <a class="reference internal" href="#nodestimation.project.conditions_unique_code" title="nodestimation.project.conditions_unique_code"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.conditions_unique_code()</span></code></a> for arguments given to <a class="reference internal" href="nodestimation.html#nodestimation.pipeline.pipeline" title="nodestimation.pipeline.pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.pipeline.pipeline()</span></code></a></p>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.is_target">
 <code class="descclassname">nodestimation.project.</code><code class="descname">is_target</code><span class="sig-paren">(</span><em>path: str</em>, <em>target: str</em>, <em>conditions: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/nodestimation/project.html#is_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.is_target" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>determines if a file is a <a class="reference internal" href="#target">target</a> of a search</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to checked file</li>
+<li><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#target">target</a> of a search</li>
+<li><strong>conditions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – conditions code for current <a class="reference internal" href="nodestimation.html#nodestimation.pipeline.pipeline" title="nodestimation.pipeline.pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.pipeline.pipeline()</span></code></a> parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True or False whether current file is a target of search or not respectively</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="target">
+<span id="search-target"></span><p class="first admonition-title">Note</p>
+<p>Target related to a way file was created</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">any:</th><td class="field-body">all found files</td>
+</tr>
+<tr class="field-even field"><th class="field-name">nepf:</th><td class="field-body">only files created in context of <a class="reference internal" href="nodestimation.html#nodestimation.pipeline.pipeline" title="nodestimation.pipeline.pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.pipeline.pipeline()</span></code></a> function (literally means: ‘NodesEstimation Pipeline File’)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">original:</th><td class="field-body">all files created outside <a class="reference internal" href="nodestimation.html#nodestimation.pipeline.pipeline" title="nodestimation.pipeline.pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.pipeline.pipeline()</span></code></a> function supposed to be original</td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.read_files">
-<code class="descclassname">nodestimation.project.</code><code class="descname">read_files</code><span class="sig-paren">(</span><em>type: str, paths: List[str], priority: int</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="_modules/nodestimation/project.html#read_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.read_files" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">nodestimation.project.</code><code class="descname">read_files</code><span class="sig-paren">(</span><em>type: str, paths: Union[str, List[str]], priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="_modules/nodestimation/project.html#read_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.read_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads given file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – which <a class="reference internal" href="#type">type</a> given file has</li>
+<li><strong>paths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – paths to read</li>
+<li><strong>priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><em>optional</em>) – if list of path is given, which path to read. If None, reads all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">file content</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">any</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if given reading conditions are wrong (file not found or not readable)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.read_or_write">
-<code class="descclassname">nodestimation.project.</code><code class="descname">read_or_write</code><span class="sig-paren">(</span><em>type: str</em>, <em>search_target: str = 'any'</em>, <em>read_file: bool = True</em>, <em>write_file: bool = True</em>, <em>main_arg_indexes: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/project.html#read_or_write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.read_or_write" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">nodestimation.project.</code><code class="descname">read_or_write</code><span class="sig-paren">(</span><em>type: str</em>, <em>search_target: str = 'any'</em>, <em>read_file: bool = True</em>, <em>write_file: bool = True</em>, <em>main_arg_indexes: Union[int</em>, <em>List[int]] = 0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/project.html#read_or_write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.read_or_write" title="Permalink to this definition">¶</a></dt>
+<dd><p>decorator function, if the file with the result of wrapped function exists,
+then it reads this file, otherwise it executes wrapped function and writes the result to the file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – supposed <a class="reference internal" href="#type">type</a> of wrapped function output</li>
+<li><strong>search_target</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#target">target</a> of a search</li>
+<li><strong>read_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if False, it does not try to find and read existing file with wrapped function output, default True</li>
+<li><strong>write_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if False, it does not try to store wrapped function output, default True</li>
+<li><strong>main_arg_indexes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>) – indexes of necessary arguments for wrapped function without which it does not work.
+If some are not specified it does not call wrapped function and returns None, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">wrapped function result and where it was read/written</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None">None</a> and any or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None">None</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#OSError" title="(in Python v3.9)"><strong>OSError</strong></a> – if subject tree not found, or given conditions to read file incorrect</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.select_suitable_paths">
 <code class="descclassname">nodestimation.project.</code><code class="descname">select_suitable_paths</code><span class="sig-paren">(</span><em>type: str, paths: Union[str, List[str]], target: str, conditions: str</em><span class="sig-paren">)</span> &#x2192; Union[str, List[str]]<a class="reference internal" href="_modules/nodestimation/project.html#select_suitable_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.select_suitable_paths" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>selects files for <a class="reference internal" href="#allowed">allowed</a> <a class="reference internal" href="#search-target">search target</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#file-type">file type</a> to read</li>
+<li><strong>paths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – paths to check</li>
+<li><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#target">target</a> of a search</li>
+<li><strong>conditions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – conditions code for current <a class="reference internal" href="nodestimation.html#nodestimation.pipeline.pipeline" title="nodestimation.pipeline.pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.pipeline.pipeline()</span></code></a> parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">required paths</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if files matching to <a class="reference internal" href="#allowed">allowed</a> <a class="reference internal" href="#search-target">search target</a> not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.project.target_exists">
-<code class="descclassname">nodestimation.project.</code><code class="descname">target_exists</code><span class="sig-paren">(</span><em>paths: List[str], target: str, conditions: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/nodestimation/project.html#target_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.target_exists" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">nodestimation.project.</code><code class="descname">target_exists</code><span class="sig-paren">(</span><em>paths: Union[str, List[str]], target: str, conditions: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/nodestimation/project.html#target_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.project.target_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>determines if a file suitable to the <a class="reference internal" href="#search-target">search target</a> and <a class="reference internal" href="#allowed">allowed</a> by the <a class="reference internal" href="#conditions">conditions</a> of a search exists</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>paths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – paths to check</li>
+<li><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#target">target</a> to search</li>
+<li><strong>conditions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#conditions">conditions</a> code for current <a class="reference internal" href="nodestimation.html#nodestimation.pipeline.pipeline" title="nodestimation.pipeline.pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.pipeline.pipeline()</span></code></a> parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if at least one file for <a class="reference internal" href="#allowed">allowed</a> <a class="reference internal" href="#search-target">search target</a> exists, otherwise False</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if <cite>search target</cite> unknown</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 </div>
@@ -163,27 +789,24 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">NodesEstimation</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="nodestimation.html">nodestimation package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="nodestimation.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nodestimation.processing.html">nodestimation.processing package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">nodestimation.project package</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project.actions">nodestimation.project.actions module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project.annotations">nodestimation.project.annotations module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project.structures">nodestimation.project.structures module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project.subject">nodestimation.project.subject module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.project">Module contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="nodestimation.html">nodestimation package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nodestimation.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.processing.html">nodestimation.processing package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">nodestimation.project package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-project-actions-module">nodestimation.project.actions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-project-annotations-module">nodestimation.project.annotations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-project-structures-module">nodestimation.project.structures module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-project-subject-module">nodestimation.project.subject module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nodestimation.project">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#module-contents">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#module-nodestimation">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -192,10 +815,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">NodesEstimation</a><ul>
   <li><a href="nodestimation.html">nodestimation package</a><ul>
       <li>Previous: <a href="nodestimation.processing.html" title="previous chapter">nodestimation.processing package</a></li>
-  </ul></li>
   </ul></li>
   </ul></li>
 </ul>

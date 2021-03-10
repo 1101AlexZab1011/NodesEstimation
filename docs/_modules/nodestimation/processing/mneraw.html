@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -46,7 +45,25 @@
 
 
 <div class="viewcode-block" id="notchfir"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.notchfir">[docs]</a><span class="k">def</span> <span class="nf">notchfir</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span> <span class="n">lfreq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nfreq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hfreq</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">:</span>
-    <span class="c1"># filters the given raw-object from lfreq to nfreq and from nfreq to hfreq</span>
+    <span class="sd">&quot;&quot;&quot;filters the given raw_ object from lfreq to nfreq and from nfreq to hfreq</span>
+
+<span class="sd">        :param raw: raw_ to filter</span>
+<span class="sd">        :type raw: |iraw|_</span>
+<span class="sd">        :param lfreq: frequency for `low-pass filter &lt;https://en.wikipedia.org/wiki/Low-pass_filter&gt;`_, Hz</span>
+<span class="sd">        :type lfreq: int</span>
+<span class="sd">        :param nfreq: frequency for `band-stop filter &lt;https://en.wikipedia.org/wiki/Band-stop_filter&gt;`_, Hz</span>
+<span class="sd">        :type nfreq: int</span>
+<span class="sd">        :param hfreq: frequency for `high-pass filter &lt;https://en.wikipedia.org/wiki/High-pass_filter&gt;`_, Hz</span>
+<span class="sd">        :type hfreq: int</span>
+<span class="sd">        :return: filtered raw_</span>
+<span class="sd">        :rtype: mne.io.raw_</span>
+
+<span class="sd">        .. _mne.io.raw:</span>
+<span class="sd">        .. _raw:</span>
+<span class="sd">        .. _iraw: https://mne.tools/stable/generated/mne.io.Raw.html</span>
+
+<span class="sd">        .. |iraw| replace:: *mne.io.raw*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">meg_picks</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">pick_types</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">meg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eeg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eog</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">raw_filtered</span> <span class="o">=</span> <span class="n">raw</span> \
@@ -57,8 +74,30 @@
     <span class="k">return</span> <span class="n">raw_filtered</span></div>
 
 
-<div class="viewcode-block" id="artifacts_clean"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.artifacts_clean">[docs]</a><span class="k">def</span> <span class="nf">artifacts_clean</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span> <span class="n">n_components</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;correlation&#39;</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">:</span>
-    <span class="c1"># makes artifacts cleaning of raw-object using ICA</span>
+<div class="viewcode-block" id="artifacts_clean"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.artifacts_clean">[docs]</a><span class="k">def</span> <span class="nf">artifacts_clean</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span> <span class="n">n_components</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;correlation&#39;</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;makes `artifacts &lt;https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data&gt;`_ cleaning</span>
+<span class="sd">        of raw_ object using `ICA &lt;https://en.wikipedia.org/wiki/Independent_component_analysis&gt;`_</span>
+
+<span class="sd">        :param raw: raw_ to filter</span>
+<span class="sd">        :type raw: |iraw|_</span>
+<span class="sd">        :param n_components: number of principal components (from the pre-whitening PCA step) that are passed to the `ICA algorithm &lt;https://mne.tools/stable/generated/mne.preprocessing.ICA.html&gt;`_ during fitting, default 15</span>
+<span class="sd">        :type n_components: |iint|_ *or* |ifloat|_ *or* |iNone|_ *, optional*</span>
+<span class="sd">        :param method: The method used in the `algorithm &lt;https://mne.tools/stable/generated/mne.preprocessing.ICA.html?highlight=ica%20find_bads_ecg#mne.preprocessing.ICA.find_bads_ecg&gt;`_</span>
+<span class="sd">            for detection `ecg &lt;https://en.wikipedia.org/wiki/Electrocardiography&gt;`_ or `eog &lt;https://en.wikipedia.org/wiki/Electrooculography&gt;`_</span>
+<span class="sd">            `ICA &lt;https://en.wikipedia.org/wiki/Independent_component_analysis&gt;`_ components, can be either</span>
+<span class="sd">            &quot;ctps&quot; (`cross-trial phase statistics &lt;https://www.researchgate.net/publication/23302818_Integration_of_Amplitude_and_Phase_Statistics_for_Complete_Artifact_Removal_in_Independent_Components_of_Neuromagnetic_Recordings&gt;`_) or</span>
+<span class="sd">            `&quot;correlation&quot; &lt;https://en.wikipedia.org/wiki/Pearson_correlation_coefficient&gt;`_</span>
+<span class="sd">        :type method: str, optional</span>
+<span class="sd">        :param threshold: The value above which a feature is classified as outlier, can be computed automatically if given value is &quot;auto&quot;, default depends from method (look for</span>
+<span class="sd">            `original function &lt;https://mne.tools/stable/generated/mne.preprocessing.ICA.html?highlight=ica%20find_bads_ecg#mne.preprocessing.ICA.find_bads_ecg&gt;`_)</span>
+<span class="sd">        :type threshold: |ifloat|_ *or* |istr|_ *, optional*</span>
+<span class="sd">        :return: cleaned raw_ object</span>
+<span class="sd">        :rtype: mne.io.raw_</span>
+
+<span class="sd">        .. _iNone: https://docs.python.org/3/library/constants.html#None</span>
+
+<span class="sd">        .. |iNone| replace:: *None*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">ica</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">ICA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">)</span>
     <span class="n">ica</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
@@ -72,21 +111,34 @@
     <span class="k">return</span> <span class="n">raw</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="read_original_raw"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.read_original_raw">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">read_original_raw</span><span class="p">(</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">_subject_tree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SubjectTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_raw_fif</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;reads not processed raw_ data, uses :func:`nodestimation.project.read_or_write` decorator</span>
+
+<span class="sd">        :param path: path to read</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :param _subject_tree: representation of patient`s files structure, default None</span>
+<span class="sd">        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*</span>
+<span class="sd">        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True</span>
+<span class="sd">        :type _conditions: str, optional</span>
+<span class="sd">        :param _priority: if several files are read, which one to choose, if None, read all of them, default None</span>
+<span class="sd">        :type _priority: int, optional</span>
+<span class="sd">        :return: read raw_ object</span>
+<span class="sd">        :rtype: mne.io.raw_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_raw_fif</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;nepf&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="first_processing"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.first_processing">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;nepf&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">first_processing</span><span class="p">(</span>
         <span class="n">raw</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span> <span class="n">lfreq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nfreq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hfreq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">rfreq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">crop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">crop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reconstruct</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">meg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">eeg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -94,12 +146,46 @@
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;processes_ given raw_ object, uses :func:`nodestimation.project.read_or_write` decorator</span>
+
+<span class="sd">        :param raw: raw_ to filter</span>
+<span class="sd">        :type raw: |iraw|_</span>
+<span class="sd">        :param lfreq: frequency for `low-pass filter &lt;https://en.wikipedia.org/wiki/Low-pass_filter&gt;`_, Hz</span>
+<span class="sd">        :type lfreq: int</span>
+<span class="sd">        :param nfreq: frequency for `band-stop filter &lt;https://en.wikipedia.org/wiki/Band-stop_filter&gt;`_, Hz</span>
+<span class="sd">        :type nfreq: int</span>
+<span class="sd">        :param hfreq: frequency for `high-pass filter &lt;https://en.wikipedia.org/wiki/High-pass_filter&gt;`_, Hz</span>
+<span class="sd">        :type hfreq: int</span>
+<span class="sd">        :param crop: end time of the raw data to use (in seconds), if None, does not crop, default None</span>
+<span class="sd">        :type crop: |ifloat|_ *or* |ilist|_ *of* |ifloat|_ *or* |ituple|_ *of* |ifloat|_ *, optional*</span>
+<span class="sd">        :param reconstruct: whether make `artifacts &lt;https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data&gt;`_ cleaning or not, default False</span>
+<span class="sd">        :type reconstruct: bool, optional</span>
+<span class="sd">        :param meg: whether pick meg channel or not, default True</span>
+<span class="sd">        :type meg: bool, optional</span>
+<span class="sd">        :param eeg: whether pick meg channel or not, default True</span>
+<span class="sd">        :type eeg: bool, optional</span>
+<span class="sd">        :param _subject_tree: representation of patient`s files structure, default None</span>
+<span class="sd">        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*</span>
+<span class="sd">        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True</span>
+<span class="sd">        :type _conditions: str, optional</span>
+<span class="sd">        :param _priority: if several files are read, which one to choose, if None, read all of them, default None</span>
+<span class="sd">        :type _priority: int, optional</span>
+<span class="sd">        :return: processed raw_ object</span>
+<span class="sd">        :rtype: mne.io.raw_</span>
+
+<span class="sd">        .. _processes:</span>
+<span class="sd">        .. note:: Processing for raw_ data means</span>
+<span class="sd">            `band-pass &lt;https://en.wikipedia.org/wiki/Band-pass_filter&gt;`_ and `band-stop &lt;https://en.wikipedia.org/wiki/Band-stop_filter&gt;`_ filtering,</span>
+<span class="sd">            `cropping &lt;https://mne.tools/stable/generated/mne.io.Raw.html?highlight=raw%20crop#mne.io.Raw.crop&gt;`_ and `artifacts &lt;https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data&gt;`_ cleaning</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">out</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">crop</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">out</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">tmax</span><span class="o">=</span><span class="n">crop</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> \
+                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> \
                 <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">crop</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">out</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">tmin</span><span class="o">=</span><span class="n">crop</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tmax</span><span class="o">=</span><span class="n">crop</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -114,10 +200,10 @@
 
     <span class="n">out</span><span class="o">.</span><span class="n">pick_types</span><span class="p">(</span><span class="n">meg</span><span class="o">=</span><span class="n">meg</span><span class="p">,</span> <span class="n">eeg</span><span class="o">=</span><span class="n">eeg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">out</span>
+    <span class="k">return</span> <span class="n">out</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;bem&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="bem_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.bem_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;bem&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">bem_computation</span><span class="p">(</span>
         <span class="n">subject</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">subjects_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -126,11 +212,31 @@
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">bem</span><span class="o">.</span><span class="n">ConductorModel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Computes bem_ solution, uses :func:`nodestimation.project.read_or_write` decorator</span>
+
+<span class="sd">        :param subject: patient`s ID</span>
+<span class="sd">        :type subject: str</span>
+<span class="sd">        :param subjects_dir: path to directory with patient`s files</span>
+<span class="sd">        :type subjects_dir: str</span>
+<span class="sd">        :param conductivity: the conductivities to use for each brain tissue shell. Single element for single-layer model or three elements for three-layer model</span>
+<span class="sd">        :type conductivity: tuple</span>
+<span class="sd">        :param _subject_tree: representation of patient`s files structure, default None</span>
+<span class="sd">        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*</span>
+<span class="sd">        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True</span>
+<span class="sd">        :type _conditions: str, optional</span>
+<span class="sd">        :param _priority: if several files are read, which one to choose, if None, read all of them, default None</span>
+<span class="sd">        :type _priority: int, optional</span>
+<span class="sd">        :return: bem_ solution</span>
+<span class="sd">        :rtype: mne.bem.ConductorModel_</span>
+
+<span class="sd">        .. _mne.bem.ConductorModel:</span>
+<span class="sd">        .. _bem: https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">make_bem_model</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">subject</span><span class="p">,</span> <span class="n">conductivity</span><span class="o">=</span><span class="n">conductivity</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="n">subjects_dir</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">make_bem_solution</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">make_bem_solution</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="src_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.src_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">src_computation</span><span class="p">(</span>
         <span class="n">subject</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">subjects_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -140,6 +246,32 @@
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">mne</span><span class="o">.</span><span class="n">SourceSpaces</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">mne</span><span class="o">.</span><span class="n">SourceSpaces</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;computes `source spaces`_ solution, uses :func:`nodestimation.project.read_or_write` decorator</span>
+
+<span class="sd">        :param subject: patient`s ID</span>
+<span class="sd">        :type subject: str</span>
+<span class="sd">        :param subjects_dir: path to directory with patient`s files</span>
+<span class="sd">        :type subjects_dir: str</span>
+<span class="sd">        :param bem: bem_ solution</span>
+<span class="sd">            to build SourceSpaces_</span>
+<span class="sd">        :type bem: mne.bem.ConductorModel_</span>
+<span class="sd">        :param volume: if True, computes `volume source spaces &lt;https://mne.tools/stable/generated/mne.setup_volume_source_space.html?highlight=setup_volume_source_space#mne.setup_volume_source_space&gt;`_,</span>
+<span class="sd">            default False</span>
+<span class="sd">        :type volume: bool, optional</span>
+<span class="sd">        :param _subject_tree: representation of patient`s files structure, default None</span>
+<span class="sd">        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*</span>
+<span class="sd">        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True</span>
+<span class="sd">        :type _conditions: str, optional</span>
+<span class="sd">        :param _priority: if several files are read, which one to choose, if None, read all of them, default None</span>
+<span class="sd">        :type _priority: int, optional</span>
+<span class="sd">        :return: `source spaces`_ solution</span>
+<span class="sd">        :rtype: mne.SourceSpaces_</span>
+
+<span class="sd">        .. _mne.SourceSpaces:</span>
+<span class="sd">        .. _SourceSpaces:</span>
+<span class="sd">        .. _`source spaces`: https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">src</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">setup_source_space</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="s1">&#39;ico5&#39;</span><span class="p">,</span> <span class="n">add_dist</span><span class="o">=</span><span class="s1">&#39;patch&#39;</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="n">subjects_dir</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">volume</span><span class="p">:</span>
@@ -162,20 +294,37 @@
         <span class="k">return</span> <span class="n">src</span> <span class="o">+</span> <span class="n">vol_src</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">src</span>
+        <span class="k">return</span> <span class="n">src</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;trans&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="read_original_trans"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.read_original_trans">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;trans&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">read_original_trans</span><span class="p">(</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">_subject_tree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SubjectTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
-    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_trans</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;reads given `transformation matrix`_, uses :func:`nodestimation.project.read_or_write` decorator</span>
+
+<span class="sd">            :param path: path to read</span>
+<span class="sd">            :type path: str</span>
+<span class="sd">            :param _subject_tree: representation of patient`s files structure, default None</span>
+<span class="sd">            :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*</span>
+<span class="sd">            :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True</span>
+<span class="sd">            :type _conditions: str, optional</span>
+<span class="sd">            :param _priority: if several files are read, which one to choose, if None, read all of them, default None</span>
+<span class="sd">            :type _priority: int, optional</span>
+<span class="sd">            :return: read `transformation matrix`_</span>
+<span class="sd">            :rtype: mne.transforms.Transform_</span>
+
+<span class="sd">            .. _mne.transforms.Transform:</span>
+<span class="sd">            .. _`transformation matrix`: https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_trans</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;fwd&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="forward_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.forward_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;fwd&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">forward_computation</span><span class="p">(</span>
         <span class="n">info</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">Info</span><span class="p">,</span>
         <span class="n">trans</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">Transform</span><span class="p">,</span>
@@ -186,10 +335,10 @@
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">Forward</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">make_forward_solution</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">trans</span><span class="o">=</span><span class="n">trans</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">src</span><span class="p">,</span> <span class="n">bem</span><span class="o">=</span><span class="n">bem</span><span class="p">,</span> <span class="n">meg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eeg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                     <span class="n">mindist</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                     <span class="n">mindist</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;eve&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="events_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.events_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;eve&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">events_computation</span><span class="p">(</span>
         <span class="n">raw</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span>
         <span class="n">time_points</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">range</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
@@ -203,10 +352,10 @@
         <span class="mi">0</span><span class="p">,</span>
         <span class="n">event_id</span>
 
-    <span class="p">]</span> <span class="k">for</span> <span class="n">time_point</span><span class="p">,</span> <span class="n">event_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">time_points</span><span class="p">,</span> <span class="n">ids</span><span class="p">)])</span>
+    <span class="p">]</span> <span class="k">for</span> <span class="n">time_point</span><span class="p">,</span> <span class="n">event_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">time_points</span><span class="p">,</span> <span class="n">ids</span><span class="p">)])</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;epo&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="epochs_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.epochs_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;epo&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">epochs_computation</span><span class="p">(</span>
         <span class="n">raw</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span>
         <span class="n">events</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -216,10 +365,10 @@
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="n">tmax</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="n">tmax</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;cov&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="noise_covariance_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.noise_covariance_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;cov&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">noise_covariance_computation</span><span class="p">(</span>
         <span class="n">epochs</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">,</span>
         <span class="n">tmin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -228,20 +377,20 @@
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">Covariance</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">compute_covariance</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="n">tmax</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;empirical&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">compute_covariance</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="n">tmax</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;empirical&#39;</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;ave&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="evokeds_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.evokeds_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;ave&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">evokeds_computation</span><span class="p">(</span>
         <span class="n">epochs</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">,</span>
         <span class="n">_subject_tree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SubjectTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">Evoked</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">epochs</span><span class="o">.</span><span class="n">average</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">epochs</span><span class="o">.</span><span class="n">average</span><span class="p">()</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;inv&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="inverse_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.inverse_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;inv&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">inverse_computation</span><span class="p">(</span>
         <span class="n">info</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">Info</span><span class="p">,</span>
         <span class="n">fwd</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">Forward</span><span class="p">,</span>
@@ -250,10 +399,10 @@
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mne</span><span class="o">.</span><span class="n">minimum_norm</span><span class="o">.</span><span class="n">inverse</span><span class="o">.</span><span class="n">InverseOperator</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">minimum_norm</span><span class="o">.</span><span class="n">make_inverse_operator</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">fwd</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mne</span><span class="o">.</span><span class="n">minimum_norm</span><span class="o">.</span><span class="n">make_inverse_operator</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">fwd</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;stc&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="source_estimation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.source_estimation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;stc&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">source_estimation</span><span class="p">(</span>
         <span class="n">epochs</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">,</span>
         <span class="n">inv</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">minimum_norm</span><span class="o">.</span><span class="n">inverse</span><span class="o">.</span><span class="n">InverseOperator</span><span class="p">,</span>
@@ -268,10 +417,10 @@
                                                  <span class="n">lambda2</span><span class="p">,</span>
                                                  <span class="n">method</span><span class="p">,</span>
                                                  <span class="n">pick_ori</span><span class="o">=</span><span class="kc">None</span>
-                                                 <span class="p">)</span>
+                                                 <span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;coords&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="coordinates_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.coordinates_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;coords&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">coordinates_computation</span><span class="p">(</span>
         <span class="n">subject</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">subjects_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -285,20 +434,20 @@
         <span class="n">hemis</span><span class="o">=</span><span class="mi">0</span> <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">hemi</span> <span class="o">==</span> <span class="s1">&#39;lh&#39;</span> <span class="k">else</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">subject</span><span class="o">=</span><span class="n">subject</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="n">subjects_dir</span>
     <span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
-    <span class="k">return</span> <span class="p">{</span><span class="n">label</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">vertexes</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">label</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">vertexes</span><span class="p">)}</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;resec&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="read_original_resec"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.read_original_resec">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;resec&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">read_original_resec</span><span class="p">(</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">_subject_tree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SubjectTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">nibabel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nibabel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;resec_mni&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="resection_area_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.resection_area_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;resec_mni&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">resection_area_computation</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">_subject_tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_conditions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_priority</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
     <span class="n">img_coordinates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -321,42 +470,20 @@
             <span class="p">)</span>
         <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mni_coordinates</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mni_coordinates</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mni_coordinates</span><span class="p">)</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;resec_txt&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="viewcode-block" id="read_original_resec_txt"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.read_original_resec_txt">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;resec_txt&#39;</span><span class="p">,</span> <span class="n">search_target</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">read_original_resec_txt</span><span class="p">(</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">_subject_tree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SubjectTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;parc&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">parcellation_creating</span><span class="p">(</span>
-        <span class="n">subject</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">subjects_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">mne</span><span class="o">.</span><span class="n">Label</span><span class="p">],</span>
-        <span class="n">_subject_tree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SubjectTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">_conditions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="n">vertexes</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">mne</span><span class="o">.</span><span class="n">vertex_to_mni</span><span class="p">(</span>
-            <span class="n">label</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span>
-            <span class="n">hemis</span><span class="o">=</span><span class="mi">0</span> <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">hemi</span> <span class="o">==</span> <span class="s1">&#39;lh&#39;</span> <span class="k">else</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">subject</span><span class="o">=</span><span class="n">subject</span><span class="p">,</span>
-            <span class="n">subjects_dir</span><span class="o">=</span><span class="n">subjects_dir</span>
-        <span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span>
-    <span class="p">]</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="n">label</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vertex</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">vertexes</span><span class="p">)</span>
-    <span class="p">}</span>
-
-
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;feat&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="features_computation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.features_computation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;feat&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">features_computation</span><span class="p">(</span>
         <span class="n">epochs</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">,</span>
         <span class="n">inv</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">minimum_norm</span><span class="o">.</span><span class="n">inverse</span><span class="o">.</span><span class="n">InverseOperator</span><span class="p">,</span>
@@ -481,10 +608,10 @@
             <span class="n">upd</span><span class="p">[</span><span class="s1">&#39;time-domain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;envelope&#39;</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">connectivity</span><span class="o">.</span><span class="n">envelope_correlation</span><span class="p">(</span><span class="n">label_ts</span><span class="p">)})</span>
         <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">upd</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">out</span>
+    <span class="k">return</span> <span class="n">out</span></div>
 
 
-<span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="nodes_creation"><a class="viewcode-back" href="../../../nodestimation.processing.html#nodestimation.processing.mneraw.nodes_creation">[docs]</a><span class="nd">@read_or_write</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">nodes_creation</span><span class="p">(</span>
         <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">mne</span><span class="o">.</span><span class="n">Label</span><span class="p">],</span>
         <span class="n">features</span><span class="p">:</span> <span class="n">LabelsFeatures</span><span class="p">,</span>
@@ -541,7 +668,7 @@
     <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="s1">&#39;spared&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]):</span>
         <span class="k">raise</span> <span class="ne">Warning</span><span class="p">(</span><span class="s1">&#39;Resected nodes not found&#39;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">nodes</span>
+    <span class="k">return</span> <span class="n">nodes</span></div>
 </pre></div>
 
           </div>
@@ -561,7 +688,7 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">NodesEstimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nodestimation.html">nodestimation package</a></li>
 </ul>
 
 <div class="relations">

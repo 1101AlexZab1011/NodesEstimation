@@ -1,22 +1,37 @@
 from typing import *
-
 import numpy as np
 import pandas as pd
 from scipy import interpolate
-
 import nodestimation
 from nodestimation import eigencentrality
 from nodestimation.project import read_or_write
 from nodestimation.project.annotations import Features, LabelsFeatures, SubjectTree
 
 
-def prepare_features(label_names: List[str], features: Features) -> LabelsFeatures:
-    # creates a dictionary of dictionaries with the following structure: { feature_name: { label_name: feature_value } }
+def prepare_features(label_names: List[str], features: Features, centrality_metric='eigen') -> LabelsFeatures:
+    """Computes `required metrics <nodestimation.html#list-of-metrics>`_ for each `label <https://mne.tools/dev/generated/mne.Label.html>`_
+
+    :param label_names: `label <https://mne.tools/dev/generated/mne.Label.html>`_ names
+    :type label_names: |ilist|_ *of* |istr|_
+    :param features: `features <nodestimation.learning.html#feature>`_ to compute
+    :type features: *look for Features in* :mod:`nodestimation.project.annotations`
+    :param centrality_metric: `centrality metric`_ to compute, default "eigen"
+    :type centrality_metric: str
+    :return: dictionary with label names to computed features
+    :rtype: look for LabelsFeatures in :mod:`nodestimation.project.annotations`
+
+    .. _`centrality metric`:
+    .. note:: For now, only eigencentrality available. The key word for it: "eigen"
+    """
+
+    centrality = {
+        'eigen': eigencentrality
+    }[centrality_metric]
 
     def prepare_spectral_connectivity(label_names: List[str], connectivity: np.ndarray) -> Dict[str, float]:
         conmat = connectivity[:, :, 0]
         conmat_full = conmat + conmat.T
-        conmat_full = eigencentrality(conmat_full)
+        conmat_full = centrality(conmat_full)
         return {
             label: row
             for label, row in zip(label_names, conmat_full)
@@ -29,14 +44,14 @@ def prepare_features(label_names: List[str], features: Features) -> LabelsFeatur
         }
 
     def prepare_envelope(label_names: List[str], envelope: np.ndarray) -> Dict[str, float]:
-        envelope = eigencentrality(envelope)
+        envelope = centrality(envelope)
         return {
             label: row
             for label, row in zip(label_names, envelope)
         }
 
     def prepare_pearson(label_names: List[str], pearson: np.ndarray) -> Dict[str, float]:
-        pearson = eigencentrality(pearson)
+        pearson = centrality(pearson)
         return {
             label: row
             for label, row in zip(label_names, pearson)
@@ -74,7 +89,37 @@ def prepare_features(label_names: List[str], features: Features) -> LabelsFeatur
 
 @read_or_write('dataset')
 def prepare_data(nodes: List[nodestimation.Node], _subject_tree: SubjectTree = None, _conditions: str = None, _priority: Optional[int] = None) -> pd.DataFrame:
-    # creates a pandas DataFrame of features values with features and frequencies as columns and labels as index
+    """creates  pd.DataFrame_ from :class:`nodestimation.Node` `features <nodestimation.learning.html#feature>`_
+
+        :param nodes: nodes to take information
+        :type nodes: :class:`nodestimation.Node`
+        :param _subject_tree: representation of patient`s files structure, default None
+        :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
+        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True
+        :type _conditions: str, optional
+        :param _priority: if several files are read, which one to choose, if None, read all of them, default None
+        :type _priority: int, optional
+        :return: dataset with patient`s information
+        :rtype: pd.DataFrame_
+
+        .. _ipd.DataFrame:
+        .. _pd.DataFrame: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html
+
+        .. _float:
+        .. _ifloat: https://docs.python.org/3/library/functions.html#float
+        .. _list: https://docs.python.org/3/library/stdtypes.html#list
+        .. _tuple:
+        .. _ituple: https://docs.python.org/3/library/stdtypes.html#tuple
+        .. _str:
+        .. _istr: https://docs.python.org/3/library/stdtypes.html#str
+        .. _dict:
+        .. _idict: https://docs.python.org/3/library/stdtypes.html#dict
+
+        .. |ifloat| replace:: *float*
+        .. |ituple| replace:: *tuple*
+        .. |istr| replace:: *str*
+        .. |idict| replace:: *dict*
+    """
 
     columns = list()
     keys = list()
@@ -107,7 +152,15 @@ def prepare_data(nodes: List[nodestimation.Node], _subject_tree: SubjectTree = N
 
 
 def iterp_for_psd(psd: np.ndarray, n_samples: int) -> np.ndarray:
-    # resamples given psd
+    """resamples given psd using `interpolation <https://en.wikipedia.org/wiki/Interpolation>`_
+
+    :param psd: array with `power spectral destinies <https://en.wikipedia.org/wiki/Spectral_density>`_
+    :type psd: |inp.ndarray|_
+    :param n_samples: how much samples given psd should have after `interpolation <https://en.wikipedia.org/wiki/Interpolation>`_
+    :type n_samples: int
+    :return: interpolated psd
+    :rtype: np.ndarray_
+    """
 
     scale = np.arange(psd.shape[0])
     f = interpolate.interp1d(scale, psd, kind='cubic')

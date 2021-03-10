@@ -1,9 +1,22 @@
 from typing import *
-
+from functools import wraps
 import numpy as np
 
 
 class TimeWindow(object):
+    """Class representing time window of signal
+
+        :param data: supposed to be a signal or set of signals inside the current time window
+        :type data: |inp.ndarray|_
+        :param start: timepoint of time window start
+        :type start: |iint|_ *or* |ifloat|_
+        :param end: timepoint of time window end
+        :type end: |iint|_ *or* |ifloat|_
+
+        .. _iint: https://docs.python.org/3/library/functions.html#int
+
+        .. |iint| replace:: *int*
+    """
 
     def __init__(self, data: np.ndarray, start: Union[int, float], end: Union[int, float]):
         self.data = data
@@ -29,6 +42,7 @@ class TimeWindow(object):
 
     @data.getter
     def data(self):
+        """supposed to be a signal or set of signals inside the current time window"""
         return self._data
 
     @start.setter
@@ -38,6 +52,7 @@ class TimeWindow(object):
 
     @start.getter
     def start(self):
+        """timepoint of time window start"""
         return self._start
 
     @end.setter
@@ -46,14 +61,24 @@ class TimeWindow(object):
 
     @end.getter
     def end(self):
+        """timepoint of time window end"""
         return self._end
 
 
 def sliding_window(size: int, overlap: float):
-    # does computation dividing given data into slices of given size with given overlap
+    """divides data given to wrapped function (1st argument) into slices of given size with given overlap and calls it
+
+    :param size: size (in points) of time window to divide data
+    :type size: int
+    :param overlap: time windows overlapping
+    :type: float
+    :return: time windows with processed data
+    :rtype: :class:`nodestimation.processing.timewindow.TimeWindow`
+    """
 
     def decorator(func: Callable) -> Callable:
 
+        @wraps(func)
         def wrapper(*args, **kwargs):
 
             f = args[0]
@@ -114,7 +139,13 @@ def sliding_window(size: int, overlap: float):
 
 
 def mean_across_tw(twlist: List[TimeWindow]) -> np.ndarray:
-    # computes mean nodes for the given list of time windows
+    """computes mean for data inside the given list of time windows
+
+    :param twlist: windowed data
+    :type twlist: |ilist|_ *of* :class:`nodestimation.processing.timewindow.TimeWindow`
+    :return: mean for windowed data
+    :rtype: np.ndarray_
+    """
 
     if len(twlist[0].data.shape) == 2:
         l, w = twlist[0].data.shape
@@ -142,8 +173,14 @@ def mean_across_tw(twlist: List[TimeWindow]) -> np.ndarray:
         raise ValueError('Can not work with dimension less than two and higher than four')
 
 
-def voxel_from_tw(twlist):
-    # creates n+1-dimensional voxel from the given time windows of n-dimensional data (n supposed to be 2 or 3)
+def voxel_from_tw(twlist: List[TimeWindow]) -> np.ndarray:
+    """creates n+1-dimensional voxel from the given time windows of n-dimensional data (n supposed to be 2 or 3)
+
+    :param twlist: windowed data
+    :type twlist: |ilist|_ *of* :class:`nodestimation.processing.timewindow.TimeWindow`
+    :return: time windows collected in a voxel
+    :rtype: np.ndarray
+    """
 
     if len(twlist[0].data.shape) == 2:
         l, w = twlist[0].data.shape

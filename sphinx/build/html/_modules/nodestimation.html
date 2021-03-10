@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -41,23 +40,33 @@
 <span class="kn">from</span> <span class="nn">nodestimation.processing.timewindow</span> <span class="kn">import</span> <span class="n">mean_across_tw</span>
 <span class="kn">from</span> <span class="nn">nodestimation.project.annotations</span> <span class="kn">import</span> <span class="n">NodeFeatures</span>
 
+
 <div class="viewcode-block" id="Node"><a class="viewcode-back" href="../nodestimation.html#nodestimation.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Brain unit representing one separated area of the brain</span>
-<span class="sd">    this is essentially an extension of `mne.Label &lt;https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label&gt;`_ class</span>
+    <span class="sd">&quot;&quot;&quot;Brain unit representing one separated area of the brain</span>
 
-<span class="sd">    :param label: label related to node</span>
-<span class="sd">    :type label: mne.Label_</span>
-<span class="sd">    :param features: dictionary representing measure value according to frequency</span>
-<span class="sd">    :type features: dict</span>
-<span class="sd">    :param center_coordinates: x, y, and z coordinates of node position (in `mni coordinates &lt;https://neuroimage.usc.edu/brainstorm/CoordinateSystems#MNI_coordinates&gt;`_)</span>
-<span class="sd">    :type center_coordinates: `np.ndarray &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html&gt;`_</span>
-<span class="sd">    :param type: any information allowing distinguish one node (or group of nodes) from others</span>
-<span class="sd">    :type type: str, optional</span>
-<span class="sd">    :raises ValueError: if center_coordinates have `shape &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html&gt;`_ other than (3,)</span>
+<span class="sd">        :param label: label related to node</span>
+<span class="sd">        :type label: |mne.Label|_</span>
+<span class="sd">        :param features: dictionary representing measure value according to frequency</span>
+<span class="sd">        :type features: *look for NodeFeatures in* :mod:`nodestimation.project.annotations`</span>
+<span class="sd">        :param center_coordinates: x, y, and z coordinates of node position (in `mni coordinates &lt;https://neuroimage.usc.edu/brainstorm/CoordinateSystems#MNI_coordinates&gt;`_)</span>
+<span class="sd">        :type center_coordinates: |inp.ndarray|_</span>
+<span class="sd">        :param type: any information allowing distinguish one node (or group of nodes) from others</span>
+<span class="sd">        :type type: str, optional</span>
+<span class="sd">        :raises ValueError: if center_coordinates have `shape &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html&gt;`_ other than (3,)</span>
 
-<span class="sd">    .. _mne.Label: https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label</span>
+<span class="sd">        .. _mne.Label: https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label</span>
+<span class="sd">        .. _inp.ndarray:</span>
+<span class="sd">        .. _np.ndarray: https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html</span>
+<span class="sd">        .. _idict: https://docs.python.org/3/library/stdtypes.html#dict</span>
+<span class="sd">        .. _ifloat: https://docs.python.org/3/library/functions.html#float</span>
+<span class="sd">        .. _istr: https://docs.python.org/3/library/stdtypes.html#str</span>
+
+<span class="sd">        .. |mne.Label| replace:: *mne.Label*</span>
+<span class="sd">        .. |inp.ndarray| replace:: *np.ndarray*</span>
+<span class="sd">        .. |idict| replace:: *dict*</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">label</span><span class="p">:</span> <span class="n">mne</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">Label</span><span class="p">,</span>
@@ -170,10 +179,10 @@
     <span class="sd">&quot;&quot;&quot;Computes eigencentrality for a square matrix</span>
 
 <span class="sd">        :param matrix: a squared matrix for eigencentrality computations</span>
-<span class="sd">        :type matrix: `np.ndarray &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html&gt;`_</span>
+<span class="sd">        :type matrix: |inp.ndarray|_</span>
 <span class="sd">        :return: matrix with the same size as given containing eigencentrality value for each element</span>
 <span class="sd">        :rtype: `np.ndarray &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html&gt;`_</span>
-<span class="sd">        :raises ValueError: if matrix have `shape &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html&gt;`_ other than (:,2)</span>
+<span class="sd">        :raises ValueError: if matrix have `shape &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html&gt;`_ other than (:, :)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -211,7 +220,7 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">NodesEstimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nodestimation.html">nodestimation package</a></li>
 </ul>
 
 <div class="relations">

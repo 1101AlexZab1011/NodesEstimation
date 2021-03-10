@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -40,72 +39,1003 @@ and applying machine learning algorithms to them</p>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="nodestimation-learning-estimation-module">
+<h2>nodestimation.learning.estimation module<a class="headerlink" href="#nodestimation-learning-estimation-module" title="Permalink to this headline">¶</a></h2>
+<p>A module providing algorithm for features comparison according to their standard deviation</p>
+<span class="target" id="module-nodestimation.learning.estimation"></span><dl class="function">
+<dt id="nodestimation.learning.estimation.choose_best">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">choose_best</code><span class="sig-paren">(</span><em>data: List[pandas.core.frame.DataFrame], cross_statistic: pandas.core.frame.DataFrame, for_: str, corr_thresholds: float = 0.9</em><span class="sig-paren">)</span> &#x2192; pandas.core.indexes.base.Index<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#choose_best"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.choose_best" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares <a class="reference internal" href="#features">features</a> in given list of datasets and returns indices of more <a class="reference internal" href="#good">good</a> and less correlated <a class="reference internal" href="#features">features</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – list of datasets to analyze</li>
+<li><strong>cross_statistic</strong> (<a class="reference internal" href="#cross-statistic"><em>cross_statistic</em></a>) – <a class="reference internal" href="#cross-statistical-information">cross statistical information</a> to change</li>
+<li><strong>for</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – for which data make comparison: “true” - for <a class="reference internal" href="#true-data">true data</a>, “false” - for <a class="reference internal" href="#false-data">false data</a>, “both” - for all data</li>
+<li><strong>corr_thresholds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – which <a class="reference internal" href="#features">features</a> consider as correlated (if absolute correlation ratio less than given value, <a class="reference internal" href="#features">features</a> considered as not correlated), default 0.9</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">indices of better <a class="reference internal" href="#features">features</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Index.html">pd.Index</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="best">
+<p class="first admonition-title">Note</p>
+<p class="last">Best feature is a feature which satisfy to some relations in <a class="reference internal" href="#cross-statistical-information">cross statistical information</a>:
+the lesser <strong>mstd/mave</strong>, the lesser <strong>timpstd</strong> for <a class="reference internal" href="#true-data">true data</a> (or <strong>fimpstd</strong> for <a class="reference internal" href="#false-data">false data</a>)
+and the greater <strong>timpave</strong> for <a class="reference internal" href="#true-data">true data</a> (or <strong>fimpave</strong> for <a class="reference internal" href="#false-data">false data</a>)</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.collect_cross_statistic">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">collect_cross_statistic</code><span class="sig-paren">(</span><em>data: List[pandas.core.frame.DataFrame], true_cases: List[pandas.core.frame.DataFrame], false_cases: List[pandas.core.frame.DataFrame]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#collect_cross_statistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.collect_cross_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>collects <a class="reference internal" href="#cross-statistical-information">cross statistical information</a> through several given datasets</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – list of datasets</li>
+<li><strong>true_cases</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – list of datasets with <a class="reference internal" href="#true-data">true data</a> only</li>
+<li><strong>false_cases</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – list of datasets with <a class="reference internal" href="#false-data">false data</a> only</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> with collected <a class="reference internal" href="#cross-statistical-information">cross statistical information</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="cross-statistical-information">
+<p class="first admonition-title">Note</p>
+<p>Statistical information analyzed through datasets (for this algorithm suppose to analyze several datasets with similar <a class="reference internal" href="#features">features</a> and <a class="reference internal" href="#samples">samples</a>)</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">mstd/mave:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of <a class="reference external" href="https://en.wikipedia.org/wiki/Mean">mean</a> values of the <a class="reference internal" href="#feature">feature</a> through datasets divided to averaged <a class="reference external" href="https://en.wikipedia.org/wiki/Mean">mean</a> values of the feature through datasets</td>
+</tr>
+<tr class="field-even field"><th class="field-name">timpave:</th><td class="field-body">averaged <a class="reference internal" href="#importance">importance</a> of the <a class="reference internal" href="#feature">feature</a> for <a class="reference internal" href="#true-data">true data</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">timpstd:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of <a class="reference internal" href="#importance">importance</a> of the <a class="reference internal" href="#feature">feature</a> for all <a class="reference internal" href="#true-data">true data</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">fimpave:</th><td class="field-body">averaged <a class="reference internal" href="#importance">importance</a> of the <a class="reference internal" href="#feature">feature</a> for <a class="reference internal" href="#false-data">false data</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">fimpstd:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of <a class="reference internal" href="#importance">importance</a> of the <a class="reference internal" href="#feature">feature</a> for all <a class="reference internal" href="#false-data">false data</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note" id="cross-statistic">
+<p class="first admonition-title">Note</p>
+<p class="last">cross_statistic is <code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.learning.selection.collect_cross_statistic()</span></code> output. Technically speaking, this is usual <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a>, but
+it must contain <a class="reference internal" href="#statistical-information">statistical information</a> for features</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.collect_statistic">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">collect_statistic</code><span class="sig-paren">(</span><em>data: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#collect_statistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.collect_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>collects <a class="reference internal" href="#statistical-information">statistical information</a> about given <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> to analyze</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> with collected information for each column of given one</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="statistical-information">
+<p class="first admonition-title">Note</p>
+<p>Collected information:</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">mean:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Mean">mean</a> value for <a class="reference internal" href="#feature">feature</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">stdev:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> for <a class="reference internal" href="#feature">feature</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">m+std:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Mean">mean</a> value for <a class="reference internal" href="#feature">feature</a> + <a class="reference external" href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> for <a class="reference internal" href="#feature">feature</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">m-std:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Mean">mean</a> value for <a class="reference internal" href="#feature">feature</a> - <a class="reference external" href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> for <a class="reference internal" href="#feature">feature</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.compute_importance">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">compute_importance</code><span class="sig-paren">(</span><em>data: pandas.core.frame.DataFrame</em>, <em>statistic: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.series.Series<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#compute_importance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.compute_importance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze <a class="reference internal" href="#importance">importance</a> for each <a class="reference internal" href="#feature">feature</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> to analyze</li>
+<li><strong>statistic</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – output from <code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.learning.selection.collect_statistic()</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html">pd.Series</a> with computed importance for each <a class="reference internal" href="#feature">feature</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html">pd.Series</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="feature">
+<span id="features"></span><span id="samples"></span><span id="sample"></span><p class="first admonition-title">Note</p>
+<p class="last">Feature in terms of spreadsheet with data means one column of data. Otherwise, one row of data called “sample”</p>
+</div>
+<div class="admonition note" id="importance">
+<span id="important-features"></span><p class="first admonition-title">Note</p>
+<p class="last">The important <a class="reference internal" href="#feature">feature</a> for this algorithm means the <a class="reference internal" href="#feature">feature</a> which is more deviant for the <a class="reference internal" href="#true-data">true data</a> than for the <a class="reference internal" href="#false-data">false data</a> and visa versa</p>
+</div>
+<div class="admonition note" id="false-data">
+<span id="true-data"></span><p class="first admonition-title">Note</p>
+<p class="last">True data here from the point of view of the classification problem for two classes means <a class="reference internal" href="#samples">samples</a> belonging to the first class,
+and false data, respectively, means <a class="reference internal" href="#samples">samples</a> belonging to the second class</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.make_feature_selection">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">make_feature_selection</code><span class="sig-paren">(</span><em>datasets: List[pandas.core.frame.DataFrame], target: str</em><span class="sig-paren">)</span> &#x2192; List[pandas.core.frame.DataFrame]<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#make_feature_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.make_feature_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>chooses the most <a class="reference internal" href="#important-features">important features</a> from the list of datasets</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>datasets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – list of datasets to analyze</li>
+<li><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – name of the <a class="reference internal" href="#target-feature">target feature</a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of modified datasets</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.make_selection_map">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">make_selection_map</code><span class="sig-paren">(</span><em>cross_statistic: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#make_selection_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.make_selection_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes average for all kind of <a class="reference internal" href="#samples">samples</a> of <a class="reference internal" href="#cross-statistical-information">cross statistical information</a> and compares if with <a class="reference internal" href="#cross-statistical-information">cross statistical information</a> for each <a class="reference internal" href="#feature">feature</a>,
+then creates boolean map with “True” for <a class="reference internal" href="#good-feature">good feature</a> and “False” otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cross_statistic</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#cross-statistical-information">cross statistical information</a> for <a class="reference internal" href="#features">features</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool values for features (“True” for <a class="reference internal" href="#good">good</a> otherwise “False”)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="good-features">
+<span id="good-feature"></span><span id="good"></span><p class="first admonition-title">Note</p>
+<p class="last">The feature is better, the lesser <strong>mstd/mave</strong>, the lesser <strong>timpstd</strong> for <a class="reference internal" href="#true-data">true data</a> (or <strong>fimpstd</strong> for <a class="reference internal" href="#false-data">false data</a>),
+and the greater <strong>timpave</strong> for <a class="reference internal" href="#true-data">true data</a> (or <strong>fimpave</strong> for <a class="reference internal" href="#false-data">false data</a>) it has
+(look <a class="reference internal" href="#cross-statistical-information">cross statistical information</a> for meaning <strong>mstd/mave</strong>, <strong>timpstd</strong>, <strong>fimpstd</strong>, <strong>timpave</strong> and <strong>fimpave</strong>)</p>
+</div>
+<div class="admonition note" id="selection-map">
+<p class="first admonition-title">Note</p>
+<p class="last">selection_map is <code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.learning.selection.make_selection_map()</span></code> output. Technically speaking, this is usual <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a>, but
+its values must be boolean and it must have only two rows: the first one used for <a class="reference internal" href="#true-data">true data</a> selection and the second - for <a class="reference internal" href="#false-data">false data</a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.select">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">select</code><span class="sig-paren">(</span><em>data: Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]], droplist: List[str]</em><span class="sig-paren">)</span> &#x2192; Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]]<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all specified <a class="reference internal" href="#features">features</a> from dataset</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – datasets to change</li>
+<li><strong>droplist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – <a class="reference internal" href="#features">features</a> to remove</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified datasets</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.selected_data">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">selected_data</code><span class="sig-paren">(</span><em>data: Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]], selection_map: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]], Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]]]<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#selected_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.selected_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select required features from dataset using <a class="reference internal" href="#selection-map">selection_map</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – datasets to change</li>
+<li><strong>selection_map</strong> (<a class="reference internal" href="#selection-map"><em>selection_map</em></a>) – boolean map to distinguish <a class="reference internal" href="#good-features">good features</a> from bad ones</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">ipd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.selected_statistic">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">selected_statistic</code><span class="sig-paren">(</span><em>cross_statistic: pandas.core.frame.DataFrame</em>, <em>selection_map: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]]<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#selected_statistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.selected_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes all unimportant features from <a class="reference internal" href="#cross-statistical-information">cross statistical information</a> leaving it for <a class="reference internal" href="#good-features">good features</a> only</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cross_statistic</strong> (<a class="reference internal" href="#cross-statistic"><em>cross_statistic</em></a>) – <a class="reference internal" href="#cross-statistical-information">cross statistical information</a> to change</li>
+<li><strong>selection_map</strong> (<a class="reference internal" href="#selection-map"><em>selection_map</em></a>) – boolean map to distinguish <a class="reference internal" href="#good-features">good features</a> from bad ones</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="#cross-statistical-information">cross statistical information</a> for <a class="reference internal" href="#good-features">good features</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#cross-statistic">cross_statistic</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.estimation.separate_datasets">
+<code class="descclassname">nodestimation.learning.estimation.</code><code class="descname">separate_datasets</code><span class="sig-paren">(</span><em>datasets: Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]], target: str</em><span class="sig-paren">)</span> &#x2192; Tuple[List[pandas.core.frame.DataFrame], List[pandas.core.frame.DataFrame], List[pandas.core.frame.DataFrame]]<a class="reference internal" href="_modules/nodestimation/learning/estimation.html#separate_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.estimation.separate_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes <a class="reference internal" href="#target-feature">target feature</a> from given dataset and divide it into true dataset (with <a class="reference internal" href="#true-data">true data</a> only) and false dataset (with <a class="reference internal" href="#false-data">false data</a> only)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>datasets</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – datasets to change</li>
+<li><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#target-feature">target feature</a> name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">full dataset without target feature, true dataset and false dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a> of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="target-feature">
+<p class="first admonition-title">Note</p>
+<p class="last">Target feature means a <a class="reference internal" href="#feature">feature</a> that marks <a class="reference internal" href="#samples">samples</a> as true and false. Used in the case of <a class="reference external" href="https://en.wikipedia.org/wiki/Supervised_learning">supervised learning</a></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="nodestimation-learning-modification-module">
+<h2>nodestimation.learning.modification module<a class="headerlink" href="#nodestimation-learning-modification-module" title="Permalink to this headline">¶</a></h2>
+<p>A module containing algorithms to modify dataset</p>
+<span class="target" id="module-nodestimation.learning.modification"></span><dl class="function">
+<dt id="nodestimation.learning.modification.append_series">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">append_series</code><span class="sig-paren">(</span><em>df: pandas.core.frame.DataFrame, series: Union[pandas.core.series.Series, List[pandas.core.series.Series]], index: Union[int, str, List[Union[str, int]], None] = None</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#append_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.append_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html">series</a> to the end
+of given <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> to change</li>
+<li><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html"><em>pd.Series</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html"><em>pd.Series</em></a>) – <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html">pd.Series</a> to add</li>
+<li><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>) – <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Index.html">index</a> to new <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> row</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.appstart_series">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">appstart_series</code><span class="sig-paren">(</span><em>df: pandas.core.frame.DataFrame, series: Union[pandas.core.series.Series, List[pandas.core.series.Series]], index: Union[int, str, List[Union[str, int]], None] = None</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#appstart_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.appstart_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html">series</a> to the start
+of given <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> to change</li>
+<li><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html"><em>pd.Series</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html"><em>pd.Series</em></a>) – <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html">pd.Series</a> to add</li>
+<li><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>, optional</em>) – <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Index.html">index</a> to new <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> row, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.binarize">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">binarize</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>trigger: Optional[int] = None</em>, <em>axis: int = 0</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#binarize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.binarize" title="Permalink to this definition">¶</a></dt>
+<dd><p>binarizes given dataset</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to binarize</li>
+<li><strong>trigger</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – trigger value, all values less than the trigger will be nullified, the rest - equated to 1, if None takes mean, default None</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to binarize, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">binarized dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if trigger value unreached</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.choose_indices">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">choose_indices</code><span class="sig-paren">(</span><em>array: numpy.ndarray</em>, <em>number: int</em>, <em>axis: int = 0</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="_modules/nodestimation/learning/modification.html#choose_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.choose_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>chooses specified number of random indices from given <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>array</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – array to choose indices</li>
+<li><strong>number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of indices to choose</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to choose, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of indices</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int">int</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.choose_items">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">choose_items</code><span class="sig-paren">(</span><em>array: numpy.ndarray</em>, <em>number: Optional[int] = None</em>, <em>indices: Optional[List[int]] = None</em>, <em>axis=0</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/learning/modification.html#choose_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.choose_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>chooses specified number of random elements from given <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>array</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – array to take elements</li>
+<li><strong>number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of random elements to take. If None, considers required indices, default None</li>
+<li><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>,optional</em>) – If number is None, takes specified indices, default None</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to choose, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">array of chosen elements</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if neither number nor indices specified</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.clusterize">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">clusterize</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>n_clusters: int = 5</em>, <em>optimal: str = 'num'</em>, <em>axis: int = 0</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#clusterize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.clusterize" title="Permalink to this definition">¶</a></dt>
+<dd><p>groups given data into set of clusters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to binarize</li>
+<li><strong>n_clusters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of clusters to group, default 5</li>
+<li><strong>optimal</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – <a class="reference internal" href="#rule">rule</a> to cclusterize, default “num”</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to clusterize, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">clusterized dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="rule">
+<p class="first admonition-title">Note</p>
+<p>Clusterization rules</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">num:</th><td class="field-body">the value for each element in the cluster is equated to the ordinal number of this cluster</td>
+</tr>
+<tr class="field-even field"><th class="field-name">mean:</th><td class="field-body">the value for each element in the cluster is equated to the average of cluster elements</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">min:</th><td class="field-body">the value for each element in the cluster is equated to the minimum of cluster elements</td>
+</tr>
+<tr class="field-even field"><th class="field-name">max:</th><td class="field-body">the value for each element in the cluster is equated to the maximum of cluster elements</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">symfar:</th><td class="field-body">the value for each element in the cluster is equated to the maximum of cluster elements if the ordinal number of this cluster less than half of clusters number, otherwise to minimum</td>
+</tr>
+<tr class="field-even field"><th class="field-name">symclose:</th><td class="field-body">the value for each element in the cluster is equated to the minimum of cluster elements if the ordinal number of this cluster less than half of clusters number, otherwise to maximum</td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.promote">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">promote</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>trigger: Optional[int] = None</em>, <em>optimal: Union[int</em>, <em>str</em>, <em>None] = 'mean'</em>, <em>axis: int = 0</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#promote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.promote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Promotes given dataset to optimal value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to promote</li>
+<li><strong>trigger</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – trigger value, all values greater than the trigger will be optimized, if None takes mean, default None</li>
+<li><strong>optimal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>, optional</em>) – value to promote, if “mean” takes mean of promoted values, if “min” takes min of promoted values, if “max” takes max of promoted values, default “mean”</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to promote, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">promoted dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if rigger or optimal conditions unreached or optimal value is wrong</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.rm">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">rm</code><span class="sig-paren">(</span><em>array: Union[list, numpy.ndarray], indices: Union[int, List[int]], axis: int = 0</em><span class="sig-paren">)</span> &#x2192; any<a class="reference internal" href="_modules/nodestimation/learning/modification.html#rm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.rm" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes elements with specified indexes from array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>array</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a>) – array-like object to change</li>
+<li><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>) – indices related to the elements to be removed</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to choose, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.suppress">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">suppress</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>trigger: Optional[int] = None</em>, <em>optimal: Union[int</em>, <em>str</em>, <em>None] = 'mean'</em>, <em>axis: int = 0</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#suppress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.suppress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suppress given dataset to optimal value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to suppress</li>
+<li><strong>trigger</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – trigger value, all values less than the trigger will be optimized, if None takes mean, default None</li>
+<li><strong>optimal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>, optional</em>) – value to suppress, if “mean” takes mean of suppressed values, if “min” takes min of suppressed values, if “max” takes max of suppressed values, default “mean”</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to suppress, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">suppressed dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if rigger or optimal conditions unreached or optimal value is wrong</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="nodestimation-learning-selection-module">
 <h2>nodestimation.learning.selection module<a class="headerlink" href="#nodestimation-learning-selection-module" title="Permalink to this headline">¶</a></h2>
 <p>A module containing algorithms for selecting the most suitable features</p>
-<span class="target" id="module-nodestimation.learning.selection"></span><dl class="function">
-<dt id="nodestimation.learning.selection.append_series">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">append_series</code><span class="sig-paren">(</span><em>df: pandas.core.frame.DataFrame, series: Union[pandas.core.series.Series, List[pandas.core.series.Series]], index: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#append_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.append_series" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="target" id="module-nodestimation.learning.selection"></span><dl class="class">
+<dt id="nodestimation.learning.selection.Mannwhitneyu">
+<em class="property">class </em><code class="descclassname">nodestimation.learning.selection.</code><code class="descname">Mannwhitneyu</code><span class="sig-paren">(</span><em>class1</em>, <em>class2</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/learning/selection.html#Mannwhitneyu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.Mannwhitneyu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nodestimation.learning.selection.Test" title="nodestimation.learning.selection.Test"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.learning.selection.Test</span></code></a></p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test">Mannwhitneyu</a> test for given <a class="reference internal" href="#true-data">true data</a> and <a class="reference internal" href="#false-data">false data</a>,
+inherits from <a class="reference internal" href="#nodestimation.learning.selection.Test" title="nodestimation.learning.selection.Test"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.learning.selection.Test</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>class1</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#false-data">false data</a></li>
+<li><strong>class2</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#true-data">true data</a></li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – some information to describe analyzed datasets</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="staticmethod">
+<dt id="nodestimation.learning.selection.Mannwhitneyu.run_test">
+<em class="property">static </em><code class="descname">run_test</code><span class="sig-paren">(</span><em>class1: pandas.core.frame.DataFrame</em>, <em>class2: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; Dict[Union[str, int], Tuple[float, float]]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#Mannwhitneyu.run_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.Mannwhitneyu.run_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes statistic and p-value
+for given datasets</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>class1</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#false-data">false data</a></li>
+<li><strong>class2</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#true-data">true data</a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dictionary with features as keys and with statistics and p_values as values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int">int</a> to <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<dl class="function">
-<dt id="nodestimation.learning.selection.appstart_series">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">appstart_series</code><span class="sig-paren">(</span><em>df: pandas.core.frame.DataFrame, series: Union[pandas.core.series.Series, List[pandas.core.series.Series]], index: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#appstart_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.appstart_series" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="attribute">
+<dt id="nodestimation.learning.selection.Mannwhitneyu.type">
+<code class="descname">type</code><a class="headerlink" href="#nodestimation.learning.selection.Mannwhitneyu.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Key word to describe statistical test</p>
+</dd></dl>
 
-<dl class="function">
-<dt id="nodestimation.learning.selection.choose_best">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">choose_best</code><span class="sig-paren">(</span><em>data: List[pandas.core.frame.DataFrame], cross_statistic: pandas.core.frame.DataFrame, for_: str, corr_thresholds: float = 0.9</em><span class="sig-paren">)</span> &#x2192; pandas.core.indexes.base.Index<a class="reference internal" href="_modules/nodestimation/learning/selection.html#choose_best"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.choose_best" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+</dd></dl>
 
-<dl class="function">
-<dt id="nodestimation.learning.selection.collect_cross_statistic">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">collect_cross_statistic</code><span class="sig-paren">(</span><em>data: List[pandas.core.frame.DataFrame], true_cases: List[pandas.core.frame.DataFrame], false_cases: List[pandas.core.frame.DataFrame]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#collect_cross_statistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.collect_cross_statistic" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nodestimation.learning.selection.collect_statistic">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">collect_statistic</code><span class="sig-paren">(</span><em>data: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#collect_statistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.collect_statistic" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nodestimation.learning.selection.compute_importance">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">compute_importance</code><span class="sig-paren">(</span><em>data: pandas.core.frame.DataFrame</em>, <em>statistic: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.series.Series<a class="reference internal" href="_modules/nodestimation/learning/selection.html#compute_importance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.compute_importance" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nodestimation.learning.selection.make_feature_selection">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">make_feature_selection</code><span class="sig-paren">(</span><em>datasets: List[pandas.core.frame.DataFrame], target: str</em><span class="sig-paren">)</span> &#x2192; List[pandas.core.frame.DataFrame]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#make_feature_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.make_feature_selection" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nodestimation.learning.selection.make_selection_map">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">make_selection_map</code><span class="sig-paren">(</span><em>cross_statistic: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#make_selection_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.make_selection_map" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nodestimation.learning.selection.select">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">select</code><span class="sig-paren">(</span><em>data: Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]], droplist: List[str]</em><span class="sig-paren">)</span> &#x2192; Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.select" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nodestimation.learning.selection.selected_data">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">selected_data</code><span class="sig-paren">(</span><em>data: Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]], selection_map: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]], Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]]]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#selected_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.selected_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nodestimation.learning.selection.selected_statistic">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">selected_statistic</code><span class="sig-paren">(</span><em>cross_statistic: pandas.core.frame.DataFrame</em>, <em>selection_map: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#selected_statistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.selected_statistic" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nodestimation.learning.selection.separate_datasets">
-<code class="descclassname">nodestimation.learning.selection.</code><code class="descname">separate_datasets</code><span class="sig-paren">(</span><em>datasets: Union[pandas.core.frame.DataFrame, List[pandas.core.frame.DataFrame]], target: str</em><span class="sig-paren">)</span> &#x2192; Tuple[List[pandas.core.frame.DataFrame], List[pandas.core.frame.DataFrame], List[pandas.core.frame.DataFrame]]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#separate_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.separate_datasets" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dl class="class">
+<dt id="nodestimation.learning.selection.SubjectsStatistic">
+<em class="property">class </em><code class="descclassname">nodestimation.learning.selection.</code><code class="descname">SubjectsStatistic</code><span class="sig-paren">(</span><em>subjects: List[nodestimation.project.subject.Subject], target: str, convert: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Provides statistical information about a list of subjects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subjects</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a>) – list of subjects</li>
+<li><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#target-feature">target feature</a></li>
+<li><strong>convert</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>oprional</em>) – what type of <a class="reference internal" href="#conversion">conversion</a> to apply to the given data, if None, does not convert, default None</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="conversion">
+<p class="first admonition-title">Note</p>
+<p>Available data conversions</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">None:</th><td class="field-body">does not convert given data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">binarize:</th><td class="field-body">binarizes given data, provided by <a class="reference internal" href="#nodestimation.learning.modification.binarize" title="nodestimation.learning.modification.binarize"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.learning.modification.binarize()</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">suppress:</th><td class="field-body">suppresses given data with optimal value equated to minimum value, provided by <a class="reference internal" href="#nodestimation.learning.modification.suppress" title="nodestimation.learning.modification.suppress"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.learning.modification.suppress()</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">promote:</th><td class="field-body">promotes given data with optimal value equated to maximum value, provided by <a class="reference internal" href="#nodestimation.learning.modification.promote" title="nodestimation.learning.modification.promote"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.learning.modification.promote()</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">clusterize:</th><td class="field-body">clusterizes given data into 5 clusters with optimal value equated to the cluster ordinal number, provided by: <a class="reference internal" href="#nodestimation.learning.modification.clusterize" title="nodestimation.learning.modification.clusterize"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.learning.modification.clusterize()</span></code></a></td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="section" id="module-nodestimation.learning">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nodestimation.learning" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.datasets">
+<code class="descname">datasets</code><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>dictionary of <a class="reference internal" href="#required-datasets">required datasets</a></p>
+<div class="admonition note" id="required-datasets">
+<span id="required-dataset"></span><span id="provided-datasets"></span><p class="first admonition-title">Note</p>
+<p>Provided datasets:</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">full:</th><td class="field-body">concatenated datasets from each <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">true:</th><td class="field-body">all <a class="reference internal" href="#true-data">true data</a> from full dataset</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">false:</th><td class="field-body">all <a class="reference internal" href="#false-data">false data</a> from full dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">false_mirror:</th><td class="field-body">dataset from data <a class="reference internal" href="#symmetric">symmetric</a> to <a class="reference internal" href="#true-data">true data</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">false_res:</th><td class="field-body">dataset with <a class="reference internal" href="#false-data">false data</a> resampled to the shape of dataset with <a class="reference internal" href="#true-data">true data</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note" id="symmetric">
+<p class="first admonition-title">Note</p>
+<p class="last">Each data <a class="reference internal" href="#sample">sample</a> represents <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a> that refers to one of brain regions. Brain regions are
+<a class="reference external" href="http://www.cis.jhu.edu/~parky/MRN/Desikan%20Region%20Labels%20and%20Descriptions.pdf">named</a> according
+to <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/CorticalParcellation">parcellation type</a>.
+If two brain regions have the same name and different hemisphere markers (“-lh” and “-rh”), they are symmetrical</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.random_samples">
+<code class="descname">random_samples</code><span class="sig-paren">(</span><em>data: str = 'false'</em>, <em>number: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic.random_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.random_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates dataset with randomly chosen <a class="reference internal" href="#samples">samples</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – data to use, can be any of <a class="reference internal" href="#provided-datasets">provided datasets</a> , default “false”</li>
+<li><strong>number</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of samples to choose, if None, number equated to number of samples for <a class="reference internal" href="#true-data">true data</a> will be chosen, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dataset with randomly chosen <a class="reference internal" href="#samples">samples</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.reflect_true">
+<em class="property">static </em><code class="descname">reflect_true</code><span class="sig-paren">(</span><em>true_dataset: pandas.core.frame.DataFrame, false_dataset: pandas.core.frame.DataFrame, subjects: List[nodestimation.project.subject.Subject]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic.reflect_true"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.reflect_true" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds <a class="reference internal" href="#samples">samples</a> <a class="reference internal" href="#symmetric">symmetric</a> to given dataset with <a class="reference internal" href="#true-data">true data</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>true_dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset with <a class="reference internal" href="#true-data">true data</a></li>
+<li><strong>false_dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset with <a class="reference internal" href="#false-data">false data</a></li>
+<li><strong>subjects</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a>) – list of subjects</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="#symmetric">symmetric</a> dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if required <a class="reference internal" href="#sample">sample</a> is not found or hemisphere marker different from “rh” or “lh”</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.resample_false">
+<em class="property">static </em><code class="descname">resample_false</code><span class="sig-paren">(</span><em>true_dataset: pandas.core.frame.DataFrame</em>, <em>false_dataset: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic.resample_false"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.resample_false" title="Permalink to this definition">¶</a></dt>
+<dd><p>resample <a class="reference internal" href="#false-data">false data</a> to the same shape as <a class="reference internal" href="#true-data">true data</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>true_dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset with <a class="reference internal" href="#true-data">true data</a></li>
+<li><strong>false_dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset with <a class="reference internal" href="#false-data">false data</a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">resampled dataset with <a class="reference internal" href="#false-data">false data</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.subjects">
+<code class="descname">subjects</code><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.subjects" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> objects</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.subjects_to_dataframe">
+<em class="property">static </em><code class="descname">subjects_to_dataframe</code><span class="sig-paren">(</span><em>subjects: List[nodestimation.project.subject.Subject]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic.subjects_to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.subjects_to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates all subjects datasets in one dataset and adds subject name to its <a class="reference internal" href="#sample">sample</a> names</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subjects</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a>) – list of subjects</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">concatenated dataset</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.target">
+<code class="descname">target</code><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.target" title="Permalink to this definition">¶</a></dt>
+<dd><p>a <a class="reference internal" href="#target-feature">target feature</a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.test">
+<code class="descname">test</code><span class="sig-paren">(</span><em>state: str = 'resampled'</em>, <em>test: str = 'wilcoxon'</em><span class="sig-paren">)</span> &#x2192; nodestimation.learning.selection.Test<a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic.test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes required <a class="reference external" href="https://en.wikipedia.org/wiki/Statistical_hypothesis_testing">statistical tests</a>
+for <a class="reference internal" href="#required-dataset">required dataset</a>: either “false_res” or “false_mirror”</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – dataset to analyze: either “resampled” for “false_res” or “reflected” for “false_mirror”, default “resampled”</li>
+<li><strong>test</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – what <a class="reference internal" href="#test">test</a> to compute, default “wilcoxon”</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">computed test</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#nodestimation.learning.selection.Test" title="nodestimation.learning.selection.Test"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.learning.selection.Test</span></code></a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if specified state incorrect</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="test">
+<p class="first admonition-title">Note</p>
+<p>Available tests:</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">mannwhitneyu:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test">Mann–Whitney U test</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">wilcoxon:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test">Wilcoxon signed-rank test</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="nodestimation.learning.selection.SubjectsStatistic.true_false_division">
+<em class="property">static </em><code class="descname">true_false_division</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic.true_false_division"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.true_false_division" title="Permalink to this definition">¶</a></dt>
+<dd><p>divides dataset into <a class="reference internal" href="#true-data">true data</a> and <a class="reference internal" href="#false-data">false data</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to divide</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dataset with <a class="reference internal" href="#true-data">true data</a> and <a class="reference internal" href="#false-data">false data</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a> of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nodestimation.learning.selection.Test">
+<em class="property">class </em><code class="descclassname">nodestimation.learning.selection.</code><code class="descname">Test</code><span class="sig-paren">(</span><em>class1</em>, <em>class2</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/learning/selection.html#Test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.Test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Abstract test providing <a class="reference external" href="https://en.wikipedia.org/wiki/Statistical_hypothesis_testing">statistical tests</a> for given <a class="reference internal" href="#true-data">true data</a> and <a class="reference internal" href="#false-data">false data</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>class1</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#false-data">false data</a></li>
+<li><strong>class2</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#true-data">true data</a></li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – some information to describe analyzed datasets</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nodestimation.learning.selection.Test.name">
+<code class="descname">name</code><a class="headerlink" href="#nodestimation.learning.selection.Test.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>some information to describe analyzed datasets</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.learning.selection.Test.result">
+<code class="descname">result</code><a class="headerlink" href="#nodestimation.learning.selection.Test.result" title="Permalink to this definition">¶</a></dt>
+<dd><p>dictionary with features as keys and with statistics and p_values as values</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="nodestimation.learning.selection.Test.run_test">
+<em class="property">static </em><code class="descname">run_test</code><span class="sig-paren">(</span><em>class1: pandas.core.frame.DataFrame</em>, <em>class2: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; Dict[Union[str, int], Tuple[float, float]]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#Test.run_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.Test.run_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes statistic and p-value
+for given datasets</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>class1</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#false-data">false data</a></li>
+<li><strong>class2</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#true-data">true data</a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dictionary with features as keys and with statistics and p_values as values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int">int</a> to <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nodestimation.learning.selection.Test.show_result">
+<code class="descname">show_result</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/learning/selection.html#Test.show_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.Test.show_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>prints test results for each feature</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.learning.selection.Test.type">
+<code class="descname">type</code><a class="headerlink" href="#nodestimation.learning.selection.Test.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Key word to describe statistical test</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nodestimation.learning.selection.Wilcoxon">
+<em class="property">class </em><code class="descclassname">nodestimation.learning.selection.</code><code class="descname">Wilcoxon</code><span class="sig-paren">(</span><em>class1</em>, <em>class2</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/learning/selection.html#Wilcoxon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.Wilcoxon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nodestimation.learning.selection.Test" title="nodestimation.learning.selection.Test"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.learning.selection.Test</span></code></a></p>
+<p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html">Wilcoxon</a> test for given <a class="reference internal" href="#true-data">true data</a> and <a class="reference internal" href="#false-data">false data</a>,
+inherits from <a class="reference internal" href="#nodestimation.learning.selection.Test" title="nodestimation.learning.selection.Test"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.learning.selection.Test</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>class1</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#false-data">false data</a></li>
+<li><strong>class2</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#true-data">true data</a></li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – some information to describe analyzed datasets</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="staticmethod">
+<dt id="nodestimation.learning.selection.Wilcoxon.run_test">
+<em class="property">static </em><code class="descname">run_test</code><span class="sig-paren">(</span><em>class1: pandas.core.frame.DataFrame</em>, <em>class2: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; Dict[Union[str, int], Tuple[float, float]]<a class="reference internal" href="_modules/nodestimation/learning/selection.html#Wilcoxon.run_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.Wilcoxon.run_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes statistic and p-value
+for given datasets</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>class1</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#false-data">false data</a></li>
+<li><strong>class2</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – <a class="reference internal" href="#true-data">true data</a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dictionary with features as keys and with statistics and p_values as values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int">int</a> to <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.learning.selection.Wilcoxon.type">
+<code class="descname">type</code><a class="headerlink" href="#nodestimation.learning.selection.Wilcoxon.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Key word to describe statistical test</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -127,24 +1057,22 @@ and applying machine learning algorithms to them</p>
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">NodesEstimation</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="nodestimation.html">nodestimation package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="nodestimation.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">nodestimation.learning package</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nodestimation-learning-selection-module">nodestimation.learning.selection module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="#module-nodestimation.learning">Module contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="nodestimation.html">nodestimation package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nodestimation.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">nodestimation.learning package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-learning-estimation-module">nodestimation.learning.estimation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-learning-modification-module">nodestimation.learning.modification module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-learning-selection-module">nodestimation.learning.selection module</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="nodestimation.processing.html">nodestimation.processing package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nodestimation.project.html">nodestimation.project package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.processing.html">nodestimation.processing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.project.html">nodestimation.project package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nodestimation.html#module-contents">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#module-nodestimation">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -153,11 +1081,9 @@ and applying machine learning algorithms to them</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">NodesEstimation</a><ul>
   <li><a href="nodestimation.html">nodestimation package</a><ul>
       <li>Previous: <a href="nodestimation.html" title="previous chapter">nodestimation package</a></li>
       <li>Next: <a href="nodestimation.processing.html" title="next chapter">nodestimation.processing package</a></li>
-  </ul></li>
   </ul></li>
   </ul></li>
 </ul>

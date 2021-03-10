@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -44,6 +43,7 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
@@ -59,11 +59,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nodestimation.project.html#nodestimation.project.add_file_to_tree">add_file_to_tree() (in module nodestimation.project)</a>
 </li>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.append_series">append_series() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.append_series">append_series() (in module nodestimation.learning.modification)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.appstart_series">appstart_series() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.appstart_series">appstart_series() (in module nodestimation.learning.modification)</a>
 </li>
       <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.artifacts_clean">artifacts_clean() (in module nodestimation.processing.mneraw)</a>
 </li>
@@ -73,10 +73,14 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.project.html#nodestimation.project.build_resources_tree">build_resources_tree() (in module nodestimation.project)</a>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.bem_computation">bem_computation() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.binarize">binarize() (in module nodestimation.learning.modification)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.project.html#nodestimation.project.build_resources_tree">build_resources_tree() (in module nodestimation.project)</a>
+</li>
       <li><a href="nodestimation.processing.html#nodestimation.processing.by_default">by_default() (in module nodestimation.processing)</a>
 </li>
   </ul></td>
@@ -85,19 +89,29 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.html#nodestimation.Node.center_coordinates">center_coordinates (nodestimation.Node attribute)</a>
+</li>
       <li><a href="nodestimation.project.html#nodestimation.project.check_path">check_path() (in module nodestimation.project)</a>
 </li>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.choose_best">choose_best() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.choose_best">choose_best() (in module nodestimation.learning.estimation)</a>
 </li>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.collect_cross_statistic">collect_cross_statistic() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.choose_indices">choose_indices() (in module nodestimation.learning.modification)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.choose_items">choose_items() (in module nodestimation.learning.modification)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.collect_statistic">collect_statistic() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.clusterize">clusterize() (in module nodestimation.learning.modification)</a>
 </li>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.compute_importance">compute_importance() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.collect_cross_statistic">collect_cross_statistic() (in module nodestimation.learning.estimation)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.collect_statistic">collect_statistic() (in module nodestimation.learning.estimation)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.compute_importance">compute_importance() (in module nodestimation.learning.estimation)</a>
 </li>
       <li><a href="nodestimation.project.html#nodestimation.project.conditions_unique_code">conditions_unique_code() (in module nodestimation.project)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.coordinates_computation">coordinates_computation() (in module nodestimation.processing.mneraw)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -111,13 +125,17 @@
         <li><a href="nodestimation.project.html#nodestimation.project.subject.Subject.data">(nodestimation.project.subject.Subject attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nodestimation.project.html#nodestimation.project.subject.Subject.data_description">data_description() (nodestimation.project.subject.Subject method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nodestimation.project.html#nodestimation.project.subject.Subject.dataset">dataset (nodestimation.project.subject.Subject attribute)</a>
 </li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.datasets">datasets (nodestimation.learning.selection.SubjectsStatistic attribute)</a>
+</li>
       <li><a href="nodestimation.project.html#nodestimation.project.subject.Subject.dir">dir (nodestimation.project.subject.Subject attribute)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.connectivity.do_nothing">do_nothing() (in module nodestimation.processing.connectivity)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -125,7 +143,17 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.html#nodestimation.eigencentrality">eigencentrality() (in module nodestimation)</a>
+</li>
       <li><a href="nodestimation.processing.html#nodestimation.processing.timewindow.TimeWindow.end">end (nodestimation.processing.timewindow.TimeWindow attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.epochs_computation">epochs_computation() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.events_computation">events_computation() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.evokeds_computation">evokeds_computation() (in module nodestimation.processing.mneraw)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -133,7 +161,17 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.html#nodestimation.Node.features">features (nodestimation.Node attribute)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.features_computation">features_computation() (in module nodestimation.processing.mneraw)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nodestimation.project.html#nodestimation.project.find_subject_dir">find_subject_dir() (in module nodestimation.project)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.first_processing">first_processing() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.forward_computation">forward_computation() (in module nodestimation.processing.mneraw)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -153,7 +191,9 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.project.html#nodestimation.project.is_allowed_type">is_allowed_type() (in module nodestimation.project)</a>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.inverse_computation">inverse_computation() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.project.html#nodestimation.project.is_allowed_target">is_allowed_target() (in module nodestimation.project)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -164,14 +204,24 @@
   </ul></td>
 </tr></table>
 
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.html#nodestimation.Node.label">label (nodestimation.Node attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.make_feature_selection">make_feature_selection() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.make_feature_selection">make_feature_selection() (in module nodestimation.learning.estimation)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.make_selection_map">make_selection_map() (in module nodestimation.learning.estimation)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.make_selection_map">make_selection_map() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Mannwhitneyu">Mannwhitneyu (class in nodestimation.learning.selection)</a>
 </li>
       <li><a href="nodestimation.processing.html#nodestimation.processing.timewindow.mean_across_tw">mean_across_tw() (in module nodestimation.processing.timewindow)</a>
 </li>
@@ -181,9 +231,19 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Test.name">name (nodestimation.learning.selection.Test attribute)</a>
+</li>
+      <li><a href="nodestimation.html#nodestimation.Node">Node (class in nodestimation)</a>
+</li>
       <li><a href="nodestimation.project.html#nodestimation.project.subject.Subject.nodes">nodes (nodestimation.project.subject.Subject attribute)</a>
 </li>
-      <li><a href="nodestimation.learning.html#module-nodestimation.learning">nodestimation.learning (module)</a>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.nodes_creation">nodes_creation() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.html#module-nodestimation">nodestimation (module)</a>
+</li>
+      <li><a href="nodestimation.learning.html#module-nodestimation.learning.estimation">nodestimation.learning.estimation (module)</a>
+</li>
+      <li><a href="nodestimation.learning.html#module-nodestimation.learning.modification">nodestimation.learning.modification (module)</a>
 </li>
       <li><a href="nodestimation.learning.html#module-nodestimation.learning.selection">nodestimation.learning.selection (module)</a>
 </li>
@@ -191,12 +251,12 @@
 </li>
       <li><a href="nodestimation.processing.html#module-nodestimation.processing">nodestimation.processing (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nodestimation.processing.html#module-nodestimation.processing.connectivity">nodestimation.processing.connectivity (module)</a>
 </li>
       <li><a href="nodestimation.processing.html#module-nodestimation.processing.features">nodestimation.processing.features (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nodestimation.processing.html#module-nodestimation.processing.mneraw">nodestimation.processing.mneraw (module)</a>
 </li>
       <li><a href="nodestimation.processing.html#module-nodestimation.processing.timewindow">nodestimation.processing.timewindow (module)</a>
@@ -211,6 +271,8 @@
 </li>
       <li><a href="nodestimation.project.html#module-nodestimation.project.subject">nodestimation.project.subject (module)</a>
 </li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.noise_covariance_computation">noise_covariance_computation() (in module nodestimation.processing.mneraw)</a>
+</li>
       <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.notchfir">notchfir() (in module nodestimation.processing.mneraw)</a>
 </li>
   </ul></td>
@@ -219,13 +281,21 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.connectivity.pearson">pearson() (in module nodestimation.processing.connectivity)</a>
+</li>
       <li><a href="nodestimation.processing.html#nodestimation.processing.connectivity.pearson_ts">pearson_ts() (in module nodestimation.processing.connectivity)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.connectivity.phase_locking_value">phase_locking_value() (in module nodestimation.processing.connectivity)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nodestimation.html#nodestimation.pipeline.pipeline">pipeline() (in module nodestimation.pipeline)</a>
 </li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.features.prepare_data">prepare_data() (in module nodestimation.processing.features)</a>
+</li>
       <li><a href="nodestimation.processing.html#nodestimation.processing.features.prepare_features">prepare_features() (in module nodestimation.processing.features)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.promote">promote() (in module nodestimation.learning.modification)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -233,39 +303,81 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.random_samples">random_samples() (nodestimation.learning.selection.SubjectsStatistic method)</a>
+</li>
       <li><a href="nodestimation.project.html#nodestimation.project.read_files">read_files() (in module nodestimation.project)</a>
 </li>
       <li><a href="nodestimation.project.html#nodestimation.project.read_or_write">read_or_write() (in module nodestimation.project)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.read_original_raw">read_original_raw() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.read_original_resec">read_original_resec() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.read_original_resec_txt">read_original_resec_txt() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.read_original_trans">read_original_trans() (in module nodestimation.processing.mneraw)</a>
+</li>
       <li><a href="nodestimation.html#nodestimation.pipeline.read_subject">read_subject() (in module nodestimation.pipeline)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nodestimation.html#nodestimation.pipeline.read_subjects">read_subjects() (in module nodestimation.pipeline)</a>
 </li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.reflect_true">reflect_true() (nodestimation.learning.selection.SubjectsStatistic static method)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.resample_false">resample_false() (nodestimation.learning.selection.SubjectsStatistic static method)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.resection_area_computation">resection_area_computation() (in module nodestimation.processing.mneraw)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Test.result">result (nodestimation.learning.selection.Test attribute)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.rm">rm() (in module nodestimation.learning.modification)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Mannwhitneyu.run_test">run_test() (nodestimation.learning.selection.Mannwhitneyu static method)</a>
+
+      <ul>
+        <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Test.run_test">(nodestimation.learning.selection.Test static method)</a>
+</li>
+        <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Wilcoxon.run_test">(nodestimation.learning.selection.Wilcoxon static method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.select">select() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.select">select() (in module nodestimation.learning.estimation)</a>
 </li>
       <li><a href="nodestimation.project.html#nodestimation.project.select_suitable_paths">select_suitable_paths() (in module nodestimation.project)</a>
 </li>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.selected_data">selected_data() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.selected_data">selected_data() (in module nodestimation.learning.estimation)</a>
 </li>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.selected_statistic">selected_statistic() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.selected_statistic">selected_statistic() (in module nodestimation.learning.estimation)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.estimation.separate_datasets">separate_datasets() (in module nodestimation.learning.estimation)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Test.show_result">show_result() (nodestimation.learning.selection.Test method)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.timewindow.sliding_window">sliding_window() (in module nodestimation.processing.timewindow)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.separate_datasets">separate_datasets() (in module nodestimation.learning.selection)</a>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.source_estimation">source_estimation() (in module nodestimation.processing.mneraw)</a>
 </li>
-      <li><a href="nodestimation.processing.html#nodestimation.processing.timewindow.sliding_window">sliding_window() (in module nodestimation.processing.timewindow)</a>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.mneraw.src_computation">src_computation() (in module nodestimation.processing.mneraw)</a>
 </li>
       <li><a href="nodestimation.processing.html#nodestimation.processing.timewindow.TimeWindow.start">start (nodestimation.processing.timewindow.TimeWindow attribute)</a>
 </li>
       <li><a href="nodestimation.project.html#nodestimation.project.subject.Subject">Subject (class in nodestimation.project.subject)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.subjects">subjects (nodestimation.learning.selection.SubjectsStatistic attribute)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.subjects_to_dataframe">subjects_to_dataframe() (nodestimation.learning.selection.SubjectsStatistic static method)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic">SubjectsStatistic (class in nodestimation.learning.selection)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.modification.suppress">suppress() (in module nodestimation.learning.modification)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -273,12 +385,30 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.target">target (nodestimation.learning.selection.SubjectsStatistic attribute)</a>
+</li>
       <li><a href="nodestimation.project.html#nodestimation.project.target_exists">target_exists() (in module nodestimation.project)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Test">Test (class in nodestimation.learning.selection)</a>
+</li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.test">test() (nodestimation.learning.selection.SubjectsStatistic method)</a>
+</li>
+      <li><a href="nodestimation.processing.html#nodestimation.processing.timewindow.TimeWindow">TimeWindow (class in nodestimation.processing.timewindow)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.processing.html#nodestimation.processing.timewindow.TimeWindow">TimeWindow (class in nodestimation.processing.timewindow)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.true_false_division">true_false_division() (nodestimation.learning.selection.SubjectsStatistic static method)</a>
 </li>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Mannwhitneyu.type">type (nodestimation.learning.selection.Mannwhitneyu attribute)</a>
+
+      <ul>
+        <li><a href="nodestimation.html#nodestimation.Node.type">(nodestimation.Node attribute)</a>
+</li>
+        <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Test.type">(nodestimation.learning.selection.Test attribute)</a>
+</li>
+        <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Wilcoxon.type">(nodestimation.learning.selection.Wilcoxon attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -293,10 +423,12 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nodestimation.html#nodestimation.pipeline.write_subject">write_subject() (in module nodestimation.pipeline)</a>
+      <li><a href="nodestimation.learning.html#nodestimation.learning.selection.Wilcoxon">Wilcoxon (class in nodestimation.learning.selection)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nodestimation.html#nodestimation.pipeline.write_subject">write_subject() (in module nodestimation.pipeline)</a>
+</li>
       <li><a href="nodestimation.html#nodestimation.pipeline.write_subjects">write_subjects() (in module nodestimation.pipeline)</a>
 </li>
   </ul></td>
@@ -321,7 +453,7 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">NodesEstimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodestimation.html">nodestimation package</a></li>
 </ul>
 
 <div class="relations">

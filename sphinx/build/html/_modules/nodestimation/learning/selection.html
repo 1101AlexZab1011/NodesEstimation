@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -32,266 +31,516 @@
           <div class="body" role="main">
             
   <h1>Source code for nodestimation.learning.selection</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
-
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">wilcoxon</span><span class="p">,</span> <span class="n">mannwhitneyu</span>
+<span class="kn">from</span> <span class="nn">nodestimation.learning.modification</span> <span class="kn">import</span> <span class="n">append_series</span><span class="p">,</span> <span class="n">choose_items</span><span class="p">,</span> <span class="n">choose_indices</span><span class="p">,</span> <span class="n">rm</span><span class="p">,</span> <span class="n">binarize</span><span class="p">,</span> <span class="n">suppress</span><span class="p">,</span> <span class="n">promote</span><span class="p">,</span> <span class="n">clusterize</span>
+<span class="kn">from</span> <span class="nn">nodestimation.project.subject</span> <span class="kn">import</span> <span class="n">Subject</span>
 
 
-<div class="viewcode-block" id="collect_statistic"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.collect_statistic">[docs]</a><span class="k">def</span> <span class="nf">collect_statistic</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="n">means</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">stds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">mean</span> <span class="o">+</span> <span class="n">std</span> <span class="k">for</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">means</span><span class="p">,</span> <span class="n">stds</span><span class="p">)],</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">mean</span> <span class="o">-</span> <span class="n">std</span> <span class="k">for</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">means</span><span class="p">,</span> <span class="n">stds</span><span class="p">)],</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<div class="viewcode-block" id="Test"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.Test">[docs]</a><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract test providing `statistical tests &lt;https://en.wikipedia.org/wiki/Statistical_hypothesis_testing&gt;`_ for given `true data`_ and `false data`_</span>
 
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">means</span><span class="p">,</span> <span class="n">stds</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">,</span> <span class="n">lower_bound</span><span class="p">],</span>
-                        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;stdev&#39;</span><span class="p">,</span> <span class="s1">&#39;m+std&#39;</span><span class="p">,</span> <span class="s1">&#39;m-std&#39;</span><span class="p">])</span></div>
+<span class="sd">        :param class1: `false data`_</span>
+<span class="sd">        :type class1: |ipd.DataFrame|_</span>
+<span class="sd">        :param class2: `true data`_</span>
+<span class="sd">        :type class2: |ipd.DataFrame|_</span>
+<span class="sd">        :param name: some information to describe analyzed datasets</span>
+<span class="sd">        :type name: str</span>
 
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="append_series"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.append_series">[docs]</a><span class="k">def</span> <span class="nf">append_series</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]],</span> <span class="n">index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class1</span><span class="p">,</span> <span class="n">class2</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">class1</span><span class="p">,</span> <span class="n">class2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">series</span> <span class="o">=</span> <span class="p">[</span><span class="n">series</span><span class="p">]</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> test object for </span><span class="si">{}</span><span class="s1"> data&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="nd">@result</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_test</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">classes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nd">@result</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;dictionary with features as keys and with statistics and p_values as values&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span>
 
-    <span class="n">df_series</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
-        <span class="n">df_series</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_series</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
+    <span class="nd">@name</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;some information to describe analyzed datasets&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Key word to describe statistical test&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;Abstract&#39;</span>
 
-<div class="viewcode-block" id="appstart_series"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.appstart_series">[docs]</a><span class="k">def</span> <span class="nf">appstart_series</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]],</span> <span class="n">index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="Test.run_test"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.Test.run_test">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">run_test</span><span class="p">(</span><span class="n">class1</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">class2</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;computes statistic and p-value</span>
+<span class="sd">            for given datasets</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">series</span> <span class="o">=</span> <span class="p">[</span><span class="n">series</span><span class="p">]</span>
+<span class="sd">            :param class1: `false data`_</span>
+<span class="sd">            :type class1: |ipd.DataFrame|_</span>
+<span class="sd">            :param class2: `true data`_</span>
+<span class="sd">            :type class2: |ipd.DataFrame|_</span>
+<span class="sd">            :return: dictionary with features as keys and with statistics and p_values as values</span>
+<span class="sd">            :rtype: dict_ of str_ or int_ to tuple_ of float_</span>
 
-    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+<div class="viewcode-block" id="Test.show_result"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.Test.show_result">[docs]</a>    <span class="k">def</span> <span class="nf">show_result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;prints test results for each feature</span>
 
-        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="n">df_series</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
-
-    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">df_series</span><span class="p">:</span>
-        <span class="n">series</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="compute_importance"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.compute_importance">[docs]</a><span class="k">def</span> <span class="nf">compute_importance</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">statistic</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-
-    <span class="n">sample_statistics</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-        <span class="n">sample_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">local_statistic</span> <span class="o">=</span> <span class="n">statistic</span>
-        <span class="n">sample_statistics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">appstart_series</span><span class="p">(</span><span class="n">local_statistic</span><span class="p">,</span> <span class="n">sample_data</span><span class="p">))</span>
-
-    <span class="n">feature_imp_statistics</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-
-    <span class="k">for</span> <span class="n">sample_statistic</span> <span class="ow">in</span> <span class="n">sample_statistics</span><span class="p">:</span>
-        <span class="n">outbounds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span>
-            <span class="p">{</span>
-                <span class="kc">True</span><span class="p">:</span> <span class="n">sample_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">-</span> <span class="n">sample_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;m+std&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">],</span>
-                <span class="kc">False</span><span class="p">:</span> <span class="n">sample_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;m-std&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">-</span> <span class="n">sample_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span>
-            <span class="p">}[</span><span class="n">sample_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">sample_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">]]</span>
-            <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">sample_statistic</span><span class="o">.</span><span class="n">columns</span>
-        <span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">sample_statistic</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-
-        <span class="n">importances</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([(</span><span class="n">sample_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;stdev&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">+</span> <span class="n">outbounds</span><span class="p">[</span><span class="n">feat</span><span class="p">])</span>
-                                 <span class="o">/</span> <span class="n">sample_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;stdev&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span>
-                                 <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">sample_statistic</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">sample_statistic</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-
-        <span class="n">feature_imp_statistics</span> <span class="o">=</span> <span class="n">append_series</span><span class="p">(</span><span class="n">feature_imp_statistics</span><span class="p">,</span> <span class="n">importances</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span>
-        <span class="n">feature_imp_statistics</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">feature_imp_statistics</span><span class="o">.</span><span class="n">columns</span>
-    <span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">feature_imp_statistics</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="separate_datasets"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.separate_datasets">[docs]</a><span class="k">def</span> <span class="nf">separate_datasets</span><span class="p">(</span><span class="n">datasets</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">datasets</span><span class="p">]</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">dataset</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">target</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">]</span>
-    <span class="n">true_cases</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
-            <span class="n">sample</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">target</span><span class="p">]</span>
-        <span class="p">])</span> <span class="k">for</span> <span class="n">sample</span><span class="p">,</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">datasets</span><span class="p">)</span>
-    <span class="p">]</span>
-    <span class="n">false_cases</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
-            <span class="n">sample</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">target</span><span class="p">]</span>
-        <span class="p">])</span> <span class="k">for</span> <span class="n">sample</span><span class="p">,</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">datasets</span><span class="p">)</span>
-    <span class="p">]</span>
-    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">true_cases</span><span class="p">,</span> <span class="n">false_cases</span></div>
+        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> test, </span><span class="si">{}</span><span class="s1">:</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Feature: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Statistic: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">P-value: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">feature</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">feature</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">feature</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="collect_cross_statistic"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.collect_cross_statistic">[docs]</a><span class="k">def</span> <span class="nf">collect_cross_statistic</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">true_cases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">false_cases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="n">statistics</span> <span class="o">=</span> <span class="p">[</span><span class="n">collect_statistic</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-    <span class="n">mean_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">statistic</span> <span class="ow">in</span> <span class="n">statistics</span><span class="p">])</span>
-    <span class="n">true_importance</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">compute_importance</span><span class="p">(</span><span class="n">true_case</span><span class="p">,</span> <span class="n">statistic</span><span class="p">)</span> <span class="k">for</span> <span class="n">true_case</span><span class="p">,</span> <span class="n">statistic</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">true_cases</span><span class="p">,</span> <span class="n">statistics</span><span class="p">)])</span>
-    <span class="n">false_importance</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">compute_importance</span><span class="p">(</span><span class="n">false_case</span><span class="p">,</span> <span class="n">statistic</span><span class="p">)</span> <span class="k">for</span> <span class="n">false_case</span><span class="p">,</span> <span class="n">statistic</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">false_cases</span><span class="p">,</span> <span class="n">statistics</span><span class="p">)])</span>
+<div class="viewcode-block" id="Wilcoxon"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.Wilcoxon">[docs]</a><span class="k">class</span> <span class="nc">Wilcoxon</span><span class="p">(</span><span class="n">Test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;`Wilcoxon &lt;https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html&gt;`_ test for given `true data`_ and `false data`_,</span>
+<span class="sd">        inherits from :class:`nodestimation.learning.selection.Test`</span>
 
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">mean_values</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">/</span> <span class="n">mean_values</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">mean_values</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">mean_values</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">true_importance</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">true_importance</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">true_importance</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">true_importance</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">true_importance</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">true_importance</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">false_importance</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">false_importance</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">false_importance</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">false_importance</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">false_importance</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">false_importance</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span>
-        <span class="s1">&#39;mean, std / mean, averaged&#39;</span><span class="p">,</span> <span class="s1">&#39;true importance, averaged&#39;</span><span class="p">,</span> <span class="s1">&#39;true importance, std&#39;</span><span class="p">,</span> <span class="s1">&#39;false importance, averaged&#39;</span><span class="p">,</span> <span class="s1">&#39;false importance, std&#39;</span>
-    <span class="p">])</span></div>
+<span class="sd">        :param class1: `false data`_</span>
+<span class="sd">        :type class1: |ipd.DataFrame|_</span>
+<span class="sd">        :param class2: `true data`_</span>
+<span class="sd">        :type class2: |ipd.DataFrame|_</span>
+<span class="sd">        :param name: some information to describe analyzed datasets</span>
+<span class="sd">        :type name: str</span>
 
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="make_selection_map"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.make_selection_map">[docs]</a><span class="k">def</span> <span class="nf">make_selection_map</span><span class="p">(</span><span class="n">cross_statistic</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="n">criteria</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span>
-        <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;mean, std / mean, averaged&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
-        <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;true importance, averaged&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
-        <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;true importance, std&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
-        <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;false importance, averaged&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
-        <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;false importance, std&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span>
-        <span class="s1">&#39;criterion universal&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;criterion true 1&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;criterion true 2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;criterion false 1&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;criterion false 2&#39;</span>
-    <span class="p">])</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class1</span><span class="p">,</span> <span class="n">class2</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">class1</span><span class="p">,</span> <span class="n">class2</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span>
-            <span class="n">cross_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">criteria</span><span class="p">[</span><span class="s1">&#39;criterion universal&#39;</span><span class="p">]</span> <span class="ow">and</span>
-            <span class="n">cross_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">criteria</span><span class="p">[</span><span class="s1">&#39;criterion true 1&#39;</span><span class="p">]</span> <span class="ow">and</span>
-            <span class="n">cross_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">criteria</span><span class="p">[</span><span class="s1">&#39;criterion true 2&#39;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">cross_statistic</span><span class="o">.</span><span class="n">columns</span>
-        <span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span>
-            <span class="n">cross_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">criteria</span><span class="p">[</span><span class="s1">&#39;criterion universal&#39;</span><span class="p">]</span> <span class="ow">and</span>
-            <span class="n">cross_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">criteria</span><span class="p">[</span><span class="s1">&#39;criterion false 1&#39;</span><span class="p">]</span> <span class="ow">and</span>
-            <span class="n">cross_statistic</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">criteria</span><span class="p">[</span><span class="s1">&#39;criterion false 2&#39;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">cross_statistic</span><span class="o">.</span><span class="n">columns</span>
-        <span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;for true cases&#39;</span><span class="p">,</span> <span class="s1">&#39;for false cases&#39;</span><span class="p">])</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Wilcoxon&#39;</span>
 
+<div class="viewcode-block" id="Wilcoxon.run_test"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.Wilcoxon.run_test">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">run_test</span><span class="p">(</span><span class="n">class1</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">class2</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;computes statistic and p-value</span>
+<span class="sd">            for given datasets</span>
 
-<div class="viewcode-block" id="select"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.select">[docs]</a><span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span> <span class="n">droplist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="n">sample</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">droplist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">data</span>
-        <span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">droplist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+<span class="sd">            :param class1: `false data`_</span>
+<span class="sd">            :type class1: |ipd.DataFrame|_</span>
+<span class="sd">            :param class2: `true data`_</span>
+<span class="sd">            :type class2: |ipd.DataFrame|_</span>
+<span class="sd">            :return: dictionary with features as keys and with statistics and p_values as values</span>
+<span class="sd">            :rtype: dict_ of str_ or int_ to tuple_ of float_</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">class1</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">false_dataset</span> <span class="o">=</span> <span class="n">class1</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">true_dataset</span> <span class="o">=</span> <span class="n">class2</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="n">w</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">wilcoxon</span><span class="p">(</span><span class="n">false_dataset</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">true_dataset</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="p">(</span>
+                            <span class="n">w</span><span class="p">,</span>
+                            <span class="n">p</span>
+                        <span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out</span></div></div>
 
 
-<div class="viewcode-block" id="selected_data"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.selected_data">[docs]</a><span class="k">def</span> <span class="nf">selected_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span> <span class="n">selection_map</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]]:</span>
-    <span class="n">droplist_true</span> <span class="o">=</span> <span class="p">[</span><span class="n">feat</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">selection_map</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;for true cases&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">]]</span>
-    <span class="n">droplist_false</span> <span class="o">=</span> <span class="p">[</span><span class="n">feat</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">selection_map</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;for false cases&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">]]</span>
+<div class="viewcode-block" id="Mannwhitneyu"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.Mannwhitneyu">[docs]</a><span class="k">class</span> <span class="nc">Mannwhitneyu</span><span class="p">(</span><span class="n">Test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;`Mannwhitneyu &lt;https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test&gt;`_ test for given `true data`_ and `false data`_,</span>
+<span class="sd">        inherits from :class:`nodestimation.learning.selection.Test`</span>
 
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">select</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">droplist_true</span><span class="p">),</span>
-        <span class="n">select</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">droplist_false</span><span class="p">)</span>
-    <span class="p">)</span></div>
+<span class="sd">        :param class1: `false data`_</span>
+<span class="sd">        :type class1: |ipd.DataFrame|_</span>
+<span class="sd">        :param class2: `true data`_</span>
+<span class="sd">        :type class2: |ipd.DataFrame|_</span>
+<span class="sd">        :param name: some information to describe analyzed datasets</span>
+<span class="sd">        :type name: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class1</span><span class="p">,</span> <span class="n">class2</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">class1</span><span class="p">,</span> <span class="n">class2</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Mannwhitneyu&#39;</span>
+
+<div class="viewcode-block" id="Mannwhitneyu.run_test"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.Mannwhitneyu.run_test">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">run_test</span><span class="p">(</span><span class="n">class1</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">class2</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;computes statistic and p-value</span>
+<span class="sd">            for given datasets</span>
+
+<span class="sd">            :param class1: `false data`_</span>
+<span class="sd">            :type class1: |ipd.DataFrame|_</span>
+<span class="sd">            :param class2: `true data`_</span>
+<span class="sd">            :type class2: |ipd.DataFrame|_</span>
+<span class="sd">            :return: dictionary with features as keys and with statistics and p_values as values</span>
+<span class="sd">            :rtype: dict_ of str_ or int_ to tuple_ of float_</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">class1</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">false_dataset</span> <span class="o">=</span> <span class="n">class1</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">true_dataset</span> <span class="o">=</span> <span class="n">class2</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="n">u</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">mannwhitneyu</span><span class="p">(</span><span class="n">false_dataset</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">true_dataset</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="p">(</span>
+                            <span class="n">u</span><span class="p">,</span>
+                            <span class="n">p</span>
+                        <span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out</span></div></div>
 
 
-<div class="viewcode-block" id="selected_statistic"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.selected_statistic">[docs]</a><span class="k">def</span> <span class="nf">selected_statistic</span><span class="p">(</span><span class="n">cross_statistic</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">selection_map</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
-    <span class="n">droplist</span> <span class="o">=</span> <span class="p">[</span><span class="n">feat</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">cross_statistic</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">selection_map</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;for true cases&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">selection_map</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;for false cases&#39;</span><span class="p">][</span><span class="n">feat</span><span class="p">]]</span>
+<div class="viewcode-block" id="SubjectsStatistic"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic">[docs]</a><span class="k">class</span> <span class="nc">SubjectsStatistic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provides statistical information about a list of subjects</span>
 
-    <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">cross_statistic</span><span class="p">,</span> <span class="n">droplist</span><span class="p">)</span></div>
+<span class="sd">        :param subjects: list of subjects</span>
+<span class="sd">        :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`</span>
+<span class="sd">        :param target: `target feature`_</span>
+<span class="sd">        :type target: str</span>
+<span class="sd">        :param convert: what type of conversion_ to apply to the given data, if None, does not convert, default None</span>
+<span class="sd">        :type convert: str, oprional</span>
 
+<span class="sd">        .. _conversion:</span>
+<span class="sd">        .. note:: Available data conversions</span>
 
-<div class="viewcode-block" id="choose_best"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.choose_best">[docs]</a><span class="k">def</span> <span class="nf">choose_best</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">cross_statistic</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">for_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">corr_thresholds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">worst_feature</span><span class="p">(</span><span class="n">feat1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">feat2</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">for_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cross_statistic</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="sd">            :None: does not convert given data</span>
+<span class="sd">            :binarize: binarizes given data, provided by :func:`nodestimation.learning.modification.binarize`</span>
+<span class="sd">            :suppress: suppresses given data with optimal value equated to minimum value, provided by :func:`nodestimation.learning.modification.suppress`</span>
+<span class="sd">            :promote: promotes given data with optimal value equated to maximum value, provided by :func:`nodestimation.learning.modification.promote`</span>
+<span class="sd">            :clusterize: clusterizes given data into 5 clusters with optimal value equated to the cluster ordinal number, provided by: :func:`nodestimation.learning.modification.clusterize`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">for_</span> <span class="o">==</span> <span class="s1">&#39;both&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;true importance, averaged&#39;</span><span class="p">][</span><span class="n">feat1</span><span class="p">]</span> <span class="o">/</span>
-                <span class="p">(</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;mean, std / mean, averaged&#39;</span><span class="p">][</span><span class="n">feat1</span><span class="p">]</span> <span class="o">*</span>
-                 <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;true importance, std&#39;</span><span class="p">][</span><span class="n">feat1</span><span class="p">]))</span> <span class="o">*</span> \
-                    <span class="p">(</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;false importance, averaged&#39;</span><span class="p">][</span><span class="n">feat1</span><span class="p">]</span> <span class="o">/</span>
-                     <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;false importance, std&#39;</span><span class="p">][</span><span class="n">feat1</span><span class="p">])</span> <span class="o">&gt;</span> \
-                    <span class="p">(</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;true importance, averaged&#39;</span><span class="p">][</span><span class="n">feat2</span><span class="p">]</span> <span class="o">/</span>
-                     <span class="p">(</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;mean, std / mean, averaged&#39;</span><span class="p">][</span><span class="n">feat2</span><span class="p">]</span> <span class="o">*</span>
-                      <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;true importance, std&#39;</span><span class="p">][</span><span class="n">feat2</span><span class="p">]))</span> <span class="o">*</span> \
-                    <span class="p">(</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;false importance, averaged&#39;</span><span class="p">][</span><span class="n">feat2</span><span class="p">]</span> <span class="o">/</span>
-                     <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;false importance, std&#39;</span><span class="p">][</span><span class="n">feat2</span><span class="p">]):</span>
-                <span class="k">return</span> <span class="n">feat2</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">convert</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__convert</span> <span class="o">=</span> <span class="n">convert</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subjects</span> <span class="o">=</span> <span class="n">subjects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span> <span class="o">=</span> <span class="n">subjects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;SubjectsStatistic for: </span><span class="si">{}</span><span class="se">\n\t</span><span class="s1"> target feature: </span><span class="si">{}</span><span class="se">\n\t</span><span class="s1"> data transformation: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">([</span><span class="n">subject</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjects</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__convert</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@subjects</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;list of :class:`nodestimation.project.subject.Subject` objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subjects</span>
+
+    <span class="nd">@subjects</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subjects</span> <span class="o">=</span> <span class="n">subjects</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@datasets</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">]):</span>
+
+        <span class="n">full</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjects_to_dataframe</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="kc">None</span><span class="p">:</span> <span class="n">full</span><span class="p">,</span>
+            <span class="s1">&#39;binarize&#39;</span><span class="p">:</span> <span class="n">binarize</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;resected&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">resected</span><span class="o">=</span><span class="n">full</span><span class="p">[</span><span class="s1">&#39;resected&#39;</span><span class="p">]),</span>
+            <span class="s1">&#39;suppress&#39;</span><span class="p">:</span> <span class="n">suppress</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;resected&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">optimal</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">resected</span><span class="o">=</span><span class="n">full</span><span class="p">[</span><span class="s1">&#39;resected&#39;</span><span class="p">]),</span>
+            <span class="s1">&#39;promote&#39;</span><span class="p">:</span> <span class="n">promote</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;resected&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">optimal</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">resected</span><span class="o">=</span><span class="n">full</span><span class="p">[</span><span class="s1">&#39;resected&#39;</span><span class="p">]),</span>
+            <span class="s1">&#39;clusterize&#39;</span><span class="p">:</span> <span class="n">clusterize</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;resected&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">resected</span><span class="o">=</span><span class="n">full</span><span class="p">[</span><span class="s1">&#39;resected&#39;</span><span class="p">])</span>
+        <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">__convert</span><span class="p">]</span>
+        <span class="n">true</span><span class="p">,</span> <span class="n">false</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">true_false_division</span><span class="p">(</span><span class="n">full</span><span class="p">)</span>
+        <span class="n">false_mirror</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflect_true</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">false</span><span class="p">,</span> <span class="n">subjects</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datasets</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;full&#39;</span><span class="p">:</span> <span class="n">full</span><span class="p">,</span>
+            <span class="s1">&#39;true&#39;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+            <span class="s1">&#39;false&#39;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+            <span class="s1">&#39;false_mirror&#39;</span><span class="p">:</span> <span class="n">false_mirror</span><span class="p">,</span>
+            <span class="s1">&#39;false_res&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample_false</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">false</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="nd">@datasets</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;dictionary of `required datasets`_</span>
+
+<span class="sd">            .. _`provided datasets`:</span>
+<span class="sd">            .. _`required dataset`:</span>
+<span class="sd">            .. _`required datasets`:</span>
+<span class="sd">            .. note:: Provided datasets:</span>
+
+<span class="sd">                :full: concatenated datasets from each :class:`nodestimation.project.subject.Subject` object</span>
+<span class="sd">                :true: all `true data`_ from full dataset</span>
+<span class="sd">                :false: all `false data`_ from full dataset</span>
+<span class="sd">                :false_mirror: dataset from data symmetric_ to `true data`_</span>
+<span class="sd">                :false_res: dataset with `false data`_ resampled to the shape of dataset with `true data`_</span>
+
+<span class="sd">            .. _symmetric:</span>
+<span class="sd">            .. note:: Each data sample_ represents :class:`nodestimation.Node` that refers to one of brain regions. Brain regions are</span>
+<span class="sd">                `named &lt;http://www.cis.jhu.edu/~parky/MRN/Desikan%20Region%20Labels%20and%20Descriptions.pdf&gt;`_ according</span>
+<span class="sd">                to `parcellation type &lt;https://surfer.nmr.mgh.harvard.edu/fswiki/CorticalParcellation&gt;`_.</span>
+<span class="sd">                If two brain regions have the same name and different hemisphere markers (&quot;-lh&quot; and &quot;-rh&quot;), they are symmetrical</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datasets</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">target</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@target</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_target</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="o">=</span> <span class="n">new_target</span>
+
+    <span class="nd">@target</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">target</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;a `target feature`_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span>
+
+<div class="viewcode-block" id="SubjectsStatistic.subjects_to_dataframe"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.subjects_to_dataframe">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">subjects_to_dataframe</span><span class="p">(</span><span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Concatenates all subjects datasets in one dataset and adds subject name to its sample_ names</span>
+
+<span class="sd">        :param subjects: list of subjects</span>
+<span class="sd">        :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`</span>
+<span class="sd">        :return: concatenated dataset</span>
+<span class="sd">        :rtype: pd.DataFrame_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">subject</span><span class="o">.</span><span class="n">dataset</span>
+             <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">subjects</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">new_indexes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">subjects</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">subject</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="n">new_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">subject</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">new_indexes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SubjectsStatistic.true_false_division"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.true_false_division">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">true_false_division</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;divides dataset into `true data`_ and `false data`_</span>
+
+<span class="sd">        :param dataset: dataset to divide</span>
+<span class="sd">        :type dataset: |ipd.DataFrame|_</span>
+<span class="sd">        :return: dataset with `true data`_ and `false data`_</span>
+<span class="sd">        :rtype: tuple_ of pd.DataFrame_</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">true_cases</span><span class="p">,</span> <span class="n">false_cases</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(),</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;resected&#39;</span><span class="p">]:</span>
+                <span class="n">true_cases</span> <span class="o">=</span> <span class="n">append_series</span><span class="p">(</span><span class="n">true_cases</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">feat1</span>
+
+                <span class="n">false_cases</span> <span class="o">=</span> <span class="n">append_series</span><span class="p">(</span><span class="n">false_cases</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">true_cases</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;resected&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">false_cases</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;resected&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SubjectsStatistic.reflect_true"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.reflect_true">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">reflect_true</span><span class="p">(</span><span class="n">true_dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">false_dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;finds samples_ symmetric_ to given dataset with `true data`_</span>
+
+<span class="sd">        :param true_dataset: dataset with `true data`_</span>
+<span class="sd">        :type true_dataset: |ipd.DataFrame|_</span>
+<span class="sd">        :param false_dataset: dataset with `false data`_</span>
+<span class="sd">        :type false_dataset: |ipd.DataFrame|_</span>
+<span class="sd">        :param subjects: list of subjects</span>
+<span class="sd">        :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`</span>
+<span class="sd">        :return: symmetric_ dataset</span>
+<span class="sd">        :rtype: pd.DataFrame_</span>
+<span class="sd">        :raise ValueError: if required sample_ is not found or hemisphere marker different from &quot;rh&quot; or &quot;lh&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">postfix</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;rh&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;lh&#39;</span>
+            <span class="k">elif</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;lh&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;rh&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+
+        <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">label_name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">postfix</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">subjects</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">subject</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">label_name</span><span class="p">][</span><span class="s1">&#39;resected&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">subject</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;label&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span> <span class="o">+</span> <span class="s1">&#39; not found&#39;</span><span class="p">)</span>
+
+        <span class="n">false_dataset_symmetric</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">true_dataset</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">false_dataset_symmetric</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">false_dataset_symmetric</span><span class="p">,</span>
+                        <span class="n">false_dataset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">postfix</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span>
+                    <span class="p">],</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">false_dataset_symmetric</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">false_dataset_symmetric</span><span class="p">,</span>
+                        <span class="n">false_dataset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">prefix</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">subjects</span><span class="p">)</span> <span class="o">+</span> <span class="n">index</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">postfix</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span>
+                    <span class="p">],</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">false_dataset_symmetric</span><span class="o">.</span><span class="n">T</span></div>
+
+<div class="viewcode-block" id="SubjectsStatistic.resample_false"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.resample_false">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">resample_false</span><span class="p">(</span><span class="n">true_dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">false_dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;resample `false data`_ to the same shape as `true data`_</span>
+
+<span class="sd">        :param true_dataset: dataset with `true data`_</span>
+<span class="sd">        :type true_dataset: |ipd.DataFrame|_</span>
+<span class="sd">        :param false_dataset: dataset with `false data`_</span>
+<span class="sd">        :type false_dataset: |ipd.DataFrame|_</span>
+<span class="sd">        :return: resampled dataset with `false data`_</span>
+<span class="sd">        :rtype: |ipd.DataFrame|_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">false_data_np</span><span class="p">,</span> \
+        <span class="n">true_data_np</span> \
+            <span class="o">=</span> \
+            <span class="n">false_dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> \
+            <span class="n">true_dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="n">data_for_resampling</span> <span class="o">=</span> <span class="n">false_data_np</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">bands</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">false_data_np</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="n">true_data_np</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">choose_indices</span><span class="p">(</span><span class="n">data_for_resampling</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="n">true_data_np</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">choose_items</span><span class="p">(</span><span class="n">data_for_resampling</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">data_for_resampling</span> <span class="o">=</span> <span class="n">rm</span><span class="p">(</span><span class="n">data_for_resampling</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bands</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">true_dataset</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SubjectsStatistic.random_samples"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.random_samples">[docs]</a>    <span class="k">def</span> <span class="nf">random_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;false&#39;</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;creates dataset with randomly chosen `samples`_</span>
+
+<span class="sd">            :param data: data to use, can be any of `provided datasets`_ , default &quot;false&quot;</span>
+<span class="sd">            :type data: str, optional</span>
+<span class="sd">            :param number: number of samples to choose, if None, number equated to number of samples for `true data`_ will be chosen, default None</span>
+<span class="sd">            :type number: int, optional</span>
+<span class="sd">            :return: dataset with randomly chosen `samples`_</span>
+<span class="sd">            :rtype: pd.DataFrame_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">data_np</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;true&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;true&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span>
+            <span class="s1">&#39;false&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;false&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span>
+            <span class="s1">&#39;full&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;full&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span>
+            <span class="s1">&#39;false_mirror&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;false_mirror&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span>
+            <span class="s1">&#39;false_res&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;false_res&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="p">}[</span><span class="n">data</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">number</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;true&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">choose_items</span><span class="p">(</span><span class="n">data_np</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;true&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SubjectsStatistic.test"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;resampled&#39;</span><span class="p">,</span> <span class="n">test</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;wilcoxon&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Test</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;computes required `statistical tests &lt;https://en.wikipedia.org/wiki/Statistical_hypothesis_testing&gt;`_</span>
+<span class="sd">            for `required dataset`_: either &quot;false_res&quot; or &quot;false_mirror&quot;</span>
+
+<span class="sd">            :param state: dataset to analyze: either &quot;resampled&quot; for &quot;false_res&quot; or &quot;reflected&quot; for &quot;false_mirror&quot;, default &quot;resampled&quot;</span>
+<span class="sd">            :type state: str, optional</span>
+<span class="sd">            :param test: what `test`_ to compute, default &quot;wilcoxon&quot;</span>
+<span class="sd">            :type test: str, optional</span>
+<span class="sd">            :return: computed test</span>
+<span class="sd">            :rtype: :class:`nodestimation.learning.selection.Test`</span>
+<span class="sd">            :raise ValueError: if specified state incorrect</span>
+
+<span class="sd">            .. _dict: https://docs.python.org/3/library/stdtypes.html#dict</span>
+<span class="sd">            .. _str: https://docs.python.org/3/library/stdtypes.html#str</span>
+<span class="sd">            .. _float: https://docs.python.org/3/library/functions.html#float</span>
+
+<span class="sd">            .. _`test`:</span>
+<span class="sd">            .. note:: Available tests:</span>
+
+<span class="sd">                :mannwhitneyu: `Mann–Whitney U test &lt;https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test&gt;`_</span>
+<span class="sd">                :wilcoxon: `Wilcoxon signed-rank test &lt;https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test&gt;`_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;resampled&#39;</span><span class="p">:</span>
+            <span class="n">true_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;true&#39;</span><span class="p">]</span>
+            <span class="n">false_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;false_res&#39;</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;reflected&#39;</span><span class="p">:</span>
+            <span class="n">true_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;true&#39;</span><span class="p">]</span>
+            <span class="n">false_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="s1">&#39;false_mirror&#39;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">for_</span> <span class="o">+</span> <span class="s1">&#39; importance, averaged&#39;</span><span class="p">][</span><span class="n">feat1</span><span class="p">]</span> <span class="o">/</span> \
-                    <span class="p">(</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;mean, std / mean, averaged&#39;</span><span class="p">][</span><span class="n">feat1</span><span class="p">]</span> <span class="o">*</span>
-                     <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">for_</span> <span class="o">+</span> <span class="s1">&#39; importance, std&#39;</span><span class="p">][</span><span class="n">feat1</span><span class="p">])</span> <span class="o">&gt;</span> \
-                    <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">for_</span> <span class="o">+</span> <span class="s1">&#39; importance, averaged&#39;</span><span class="p">][</span><span class="n">feat2</span><span class="p">]</span> <span class="o">/</span> \
-                    <span class="p">(</span><span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;mean, std / mean, averaged&#39;</span><span class="p">][</span><span class="n">feat2</span><span class="p">]</span> <span class="o">*</span>
-                     <span class="n">cross_statistic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">for_</span> <span class="o">+</span> <span class="s1">&#39; importance, std&#39;</span><span class="p">][</span><span class="n">feat2</span><span class="p">]):</span>
-                <span class="k">return</span> <span class="n">feat2</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">feat1</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;parameter state can be &quot;resampled&quot; or &quot;reflected&quot;&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">choose</span><span class="p">(</span><span class="n">corrmap</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">from_</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="n">from_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">from_</span> <span class="o">=</span> <span class="n">corrmap</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">corrmap</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="n">corrmap</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">from_</span><span class="p">)::]:</span>
-            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">corrmap</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="n">corrmap</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">from_</span><span class="p">)::]:</span>
-                <span class="k">if</span> <span class="n">row</span> <span class="o">!=</span> <span class="n">column</span> \
-                        <span class="ow">and</span> <span class="p">(</span><span class="n">corrmap</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">corr_thresholds</span>
-                             <span class="ow">or</span> <span class="n">corrmap</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">corr_thresholds</span><span class="p">):</span>
-                    <span class="n">worst</span> <span class="o">=</span> <span class="n">worst_feature</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">for_</span><span class="p">,</span> <span class="n">cross_statistic</span><span class="p">)</span>
-                    <span class="n">from_</span> <span class="o">=</span> <span class="n">corrmap</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="n">corrmap</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">worst</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">corrmap</span> <span class="o">=</span> <span class="n">corrmap</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">worst</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">worst</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="n">choose</span><span class="p">(</span><span class="n">corrmap</span><span class="p">,</span> <span class="n">from_</span><span class="o">=</span><span class="n">from_</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">corrmap</span><span class="o">.</span><span class="n">columns</span>
-
-    <span class="n">corrmap</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-            <span class="n">sample</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">data</span>
-        <span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-        <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-        <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">choose</span><span class="p">(</span><span class="n">corrmap</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="make_feature_selection"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.make_feature_selection">[docs]</a><span class="k">def</span> <span class="nf">make_feature_selection</span><span class="p">(</span><span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-    <span class="n">data</span><span class="p">,</span> <span class="n">true_cases</span><span class="p">,</span> <span class="n">false_cases</span> <span class="o">=</span> <span class="n">separate_datasets</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-    <span class="n">cross_statistic</span> <span class="o">=</span> <span class="n">collect_cross_statistic</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">true_cases</span><span class="p">,</span> <span class="n">false_cases</span><span class="p">)</span>
-    <span class="n">selection_map</span> <span class="o">=</span> <span class="n">make_selection_map</span><span class="p">(</span><span class="n">cross_statistic</span><span class="p">)</span>
-    <span class="n">data_for_true</span><span class="p">,</span> <span class="n">data_for_false</span> <span class="o">=</span> <span class="n">selected_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">selection_map</span><span class="p">)</span>
-    <span class="n">best_true</span> <span class="o">=</span> <span class="n">choose_best</span><span class="p">(</span><span class="n">data_for_true</span><span class="p">,</span> <span class="n">cross_statistic</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span>
-    <span class="n">best_false</span> <span class="o">=</span> <span class="n">choose_best</span><span class="p">(</span><span class="n">data_for_false</span><span class="p">,</span> <span class="n">cross_statistic</span><span class="p">,</span> <span class="s1">&#39;false&#39;</span><span class="p">)</span>
-    <span class="n">best_raw</span> <span class="o">=</span> <span class="n">best_true</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_false</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
-    <span class="n">drop</span> <span class="o">=</span> <span class="p">[</span><span class="n">column</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">best_raw</span><span class="p">]</span>
-    <span class="n">best_data_common</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">drop</span><span class="p">)</span>
-    <span class="n">best</span> <span class="o">=</span> <span class="n">choose_best</span><span class="p">(</span><span class="n">best_data_common</span><span class="p">,</span> <span class="n">cross_statistic</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">)</span>
-    <span class="n">drop_</span> <span class="o">=</span> <span class="p">[</span><span class="n">column</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">best_data_common</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">best</span><span class="p">]</span>
-    <span class="n">best_data</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">best_data_common</span><span class="p">,</span> <span class="n">drop_</span><span class="p">)</span>
-    <span class="n">best_data</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">best_sample</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">best_sample</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">sample</span><span class="p">[</span>
-            <span class="n">sample</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-        <span class="k">for</span> <span class="n">best_sample</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">best_data</span><span class="p">,</span> <span class="n">datasets</span><span class="p">)</span>
-    <span class="p">]</span>
-    <span class="k">for</span> <span class="n">best_sample</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">best_data</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
-        <span class="n">best_sample</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">best_data</span></div>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;wilcoxon&#39;</span><span class="p">:</span> <span class="n">Wilcoxon</span><span class="p">,</span>
+            <span class="s1">&#39;mannwhitneyu&#39;</span><span class="p">:</span> <span class="n">Mannwhitneyu</span>
+        <span class="p">}[</span><span class="n">test</span><span class="p">](</span><span class="n">true_data</span><span class="p">,</span> <span class="n">false_data</span><span class="p">,</span> <span class="n">state</span> <span class="o">+</span> <span class="s1">&#39;/true&#39;</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -311,7 +560,7 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">NodesEstimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nodestimation.html">nodestimation package</a></li>
 </ul>
 
 <div class="relations">
