@@ -184,6 +184,7 @@ def pipeline(
         conductivity,
         se_method,
         methods,
+        centrality_metrics,
         rfreq,
         nfreq,
         lfreq,
