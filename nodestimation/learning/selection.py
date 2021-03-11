@@ -86,7 +86,7 @@ class Test(ABC):
                 '\tFeature: {}\n'
                 '\tStatistic: {}\n'
                 '\tP-value: {}\n'
-                    .format(
+                .format(
                     self.type,
                     self.name,
                     feature,
@@ -213,6 +213,8 @@ class SubjectsStatistic(object):
         :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`
         :param target: `target feature`_
         :type target: str
+        :param centrality_metric: `centrality metric <nodestimation.html#centrality-metrics>`_ to compute, default "eigen"
+        :type centrality_metric: str, optional
         :param convert: what type of conversion_ to apply to the given data, if None, does not convert, default None
         :type convert: str, oprional
 
@@ -226,14 +228,20 @@ class SubjectsStatistic(object):
             :clusterize: clusterizes given data into 5 clusters with optimal value equated to the cluster ordinal number, provided by: :func:`nodestimation.learning.modification.clusterize`
     """
 
-    def __init__(self, subjects: List[Subject], target: str, convert: Optional[str] = None):
+    def __init__(self, subjects: List[Subject], target: str, centrality_metric: str = 'eigen', convert: Optional[str] = None):
         self.__convert = convert
+        self.__centrality_metric = centrality_metric
         self.subjects = subjects
         self.datasets = subjects
         self.target = target
 
     def __str__(self):
-        return 'SubjectsStatistic for: {}\n\t target feature: {}\n\t data transformation: {}'.format([subject.name for subject in self.subjects], self.target, self.__convert)
+        return 'SubjectsStatistic for: {}\n\t target feature: {}\n\t metric: {}\n\t data transformation: {}'.format(
+            [subject.name for subject in self.subjects],
+            self.target,
+            self.__centrality_metric,
+            self.__convert
+        )
 
     @property
     def subjects(self):
@@ -257,7 +265,7 @@ class SubjectsStatistic(object):
     @datasets.setter
     def datasets(self, subjects: List[Subject]):
 
-        full = self.subjects_to_dataframe(subjects)
+        full = self.subjects_to_dataframe(subjects, self.__centrality_metric)
         full = {
             None: full,
             'binarize': binarize(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected']),
@@ -315,17 +323,18 @@ class SubjectsStatistic(object):
         return self._target
 
     @staticmethod
-    def subjects_to_dataframe(subjects: List[Subject]) -> pd.DataFrame:
+    def subjects_to_dataframe(subjects: List[Subject], centrality_metric: str) -> pd.DataFrame:
         """Concatenates all subjects datasets in one dataset and adds subject name to its sample_ names
 
         :param subjects: list of subjects
         :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`
+        :param centrality_metric: `centrality metric <nodestimation.html#centrality-metrics>`_ to use
         :return: concatenated dataset
         :rtype: pd.DataFrame_
         """
 
         dataset = pd.concat(
-            [subject.dataset
+            [subject.dataset[centrality_metric]
              for subject in subjects],
             axis=0,
         )

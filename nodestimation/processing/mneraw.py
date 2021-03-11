@@ -612,8 +612,11 @@ def nodes_creation(
                 label,
                 {
                     freq_band: {
-                        method: features[freq_band][method][label.name]
-                        for method in features[freq_band]
+                        method: {
+                            centrality:
+                            features[freq_band][method][centrality][label.name]
+                            for centrality in features[freq_band][method]
+                        } for method in features[freq_band]
                     } for freq_band in features
                 },
                 nodes_coordinates[label.name],

@@ -119,7 +119,7 @@
                 <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Feature: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
                 <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Statistic: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
                 <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">P-value: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                    <span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                     <span class="n">feature</span><span class="p">,</span>
@@ -246,6 +246,8 @@
 <span class="sd">        :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`</span>
 <span class="sd">        :param target: `target feature`_</span>
 <span class="sd">        :type target: str</span>
+<span class="sd">        :param centrality_metric: `centrality metric &lt;nodestimation.html#centrality-metrics&gt;`_ to compute, default &quot;eigen&quot;</span>
+<span class="sd">        :type centrality_metric: str, optional</span>
 <span class="sd">        :param convert: what type of conversion_ to apply to the given data, if None, does not convert, default None</span>
 <span class="sd">        :type convert: str, oprional</span>
 
@@ -259,14 +261,20 @@
 <span class="sd">            :clusterize: clusterizes given data into 5 clusters with optimal value equated to the cluster ordinal number, provided by: :func:`nodestimation.learning.modification.clusterize`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">convert</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">centrality_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;eigen&#39;</span><span class="p">,</span> <span class="n">convert</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__convert</span> <span class="o">=</span> <span class="n">convert</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__centrality_metric</span> <span class="o">=</span> <span class="n">centrality_metric</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">subjects</span> <span class="o">=</span> <span class="n">subjects</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span> <span class="o">=</span> <span class="n">subjects</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;SubjectsStatistic for: </span><span class="si">{}</span><span class="se">\n\t</span><span class="s1"> target feature: </span><span class="si">{}</span><span class="se">\n\t</span><span class="s1"> data transformation: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">([</span><span class="n">subject</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjects</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__convert</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;SubjectsStatistic for: </span><span class="si">{}</span><span class="se">\n\t</span><span class="s1"> target feature: </span><span class="si">{}</span><span class="se">\n\t</span><span class="s1"> metric: </span><span class="si">{}</span><span class="se">\n\t</span><span class="s1"> data transformation: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">subject</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjects</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__centrality_metric</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__convert</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -290,7 +298,7 @@
     <span class="nd">@datasets</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">]):</span>
 
-        <span class="n">full</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjects_to_dataframe</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjects_to_dataframe</span><span class="p">(</span><span class="n">subjects</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__centrality_metric</span><span class="p">)</span>
         <span class="n">full</span> <span class="o">=</span> <span class="p">{</span>
             <span class="kc">None</span><span class="p">:</span> <span class="n">full</span><span class="p">,</span>
             <span class="s1">&#39;binarize&#39;</span><span class="p">:</span> <span class="n">binarize</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;resected&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">resected</span><span class="o">=</span><span class="n">full</span><span class="p">[</span><span class="s1">&#39;resected&#39;</span><span class="p">]),</span>
@@ -348,17 +356,18 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span>
 
 <div class="viewcode-block" id="SubjectsStatistic.subjects_to_dataframe"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.selection.SubjectsStatistic.subjects_to_dataframe">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">subjects_to_dataframe</span><span class="p">(</span><span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">subjects_to_dataframe</span><span class="p">(</span><span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">],</span> <span class="n">centrality_metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Concatenates all subjects datasets in one dataset and adds subject name to its sample_ names</span>
 
 <span class="sd">        :param subjects: list of subjects</span>
 <span class="sd">        :type subjects: |ilist|_ *of* :class:`nodestimation.project.subject.Subject`</span>
+<span class="sd">        :param centrality_metric: `centrality metric &lt;nodestimation.html#centrality-metrics&gt;`_ to use</span>
 <span class="sd">        :return: concatenated dataset</span>
 <span class="sd">        :rtype: pd.DataFrame_</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">subject</span><span class="o">.</span><span class="n">dataset</span>
+            <span class="p">[</span><span class="n">subject</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">centrality_metric</span><span class="p">]</span>
              <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">subjects</span><span class="p">],</span>
             <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="p">)</span>

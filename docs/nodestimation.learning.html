@@ -678,7 +678,7 @@ for given datasets</p>
 
 <dl class="class">
 <dt id="nodestimation.learning.selection.SubjectsStatistic">
-<em class="property">class </em><code class="descclassname">nodestimation.learning.selection.</code><code class="descname">SubjectsStatistic</code><span class="sig-paren">(</span><em>subjects: List[nodestimation.project.subject.Subject], target: str, convert: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nodestimation.learning.selection.</code><code class="descname">SubjectsStatistic</code><span class="sig-paren">(</span><em>subjects: List[nodestimation.project.subject.Subject], target: str, centrality_metric: str = 'eigen', convert: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Provides statistical information about a list of subjects</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -688,6 +688,7 @@ for given datasets</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>subjects</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a>) – list of subjects</li>
 <li><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#target-feature">target feature</a></li>
+<li><strong>centrality_metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – <a class="reference external" href="nodestimation.html#centrality-metrics">centrality metric</a> to compute, default “eigen”</li>
 <li><strong>convert</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>oprional</em>) – what type of <a class="reference internal" href="#conversion">conversion</a> to apply to the given data, if None, does not convert, default None</li>
 </ul>
 </td>
@@ -831,17 +832,24 @@ If two brain regions have the same name and different hemisphere markers (“-lh
 
 <dl class="staticmethod">
 <dt id="nodestimation.learning.selection.SubjectsStatistic.subjects_to_dataframe">
-<em class="property">static </em><code class="descname">subjects_to_dataframe</code><span class="sig-paren">(</span><em>subjects: List[nodestimation.project.subject.Subject]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic.subjects_to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.subjects_to_dataframe" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">subjects_to_dataframe</code><span class="sig-paren">(</span><em>subjects: List[nodestimation.project.subject.Subject], centrality_metric: str</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/selection.html#SubjectsStatistic.subjects_to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.selection.SubjectsStatistic.subjects_to_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenates all subjects datasets in one dataset and adds subject name to its <a class="reference internal" href="#sample">sample</a> names</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subjects</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a>) – list of subjects</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subjects</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a>) – list of subjects</li>
+<li><strong>centrality_metric</strong> – <p><a class="reference external" href="nodestimation.html#centrality-metrics">centrality metric</a> to use</p>
+</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">concatenated dataset</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">concatenated dataset</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
 </tr>
 </tbody>
 </table>

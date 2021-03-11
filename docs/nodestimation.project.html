@@ -130,7 +130,6 @@
 </table>
 <span class="target" id="module-nodestimation.project.actions"></span></div>
 <div class="section" id="nodestimation-project-annotations-module">
-<span class="target" id="module-nodestimation.project.annotations"></span>
 <h2>nodestimation.project.annotations module<a class="headerlink" href="#nodestimation-project-annotations-module" title="Permalink to this headline">¶</a></h2>
 <p>This module provides <a class="reference external" href="https://docs.python.org/3/library/typing.html#type-aliases">type aliases</a> used in the NodesEstimation project</p>
 <p>Annotations used in this package:</p>
@@ -162,16 +161,20 @@
 <span class="n">LabelsFeatures</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span>
     <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
         <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
-            <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
+                <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span>
+            <span class="p">]</span>
         <span class="p">]</span>
     <span class="p">]</span>
 <span class="p">]</span>
 
 <span class="n">NodeFeatures</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
                 <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span>
                     <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span>
                 <span class="p">]</span>
             <span class="p">]</span>
+        <span class="p">]</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -186,7 +189,7 @@
 <li><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a></li>
 </ul>
 </div>
-</div>
+<span class="target" id="module-nodestimation.project.annotations"></span></div>
 <div class="section" id="nodestimation-project-structures-module">
 <h2>nodestimation.project.structures module<a class="headerlink" href="#nodestimation-project-structures-module" title="Permalink to this headline">¶</a></h2>
 <p>This module provides structures to help understand what types of files exist, how to search, distinguish, and in what format to store them</p>

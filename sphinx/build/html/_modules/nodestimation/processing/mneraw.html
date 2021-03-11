@@ -645,8 +645,11 @@
                 <span class="n">label</span><span class="p">,</span>
                 <span class="p">{</span>
                     <span class="n">freq_band</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="n">method</span><span class="p">:</span> <span class="n">features</span><span class="p">[</span><span class="n">freq_band</span><span class="p">][</span><span class="n">method</span><span class="p">][</span><span class="n">label</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">features</span><span class="p">[</span><span class="n">freq_band</span><span class="p">]</span>
+                        <span class="n">method</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="n">centrality</span><span class="p">:</span>
+                            <span class="n">features</span><span class="p">[</span><span class="n">freq_band</span><span class="p">][</span><span class="n">method</span><span class="p">][</span><span class="n">centrality</span><span class="p">][</span><span class="n">label</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+                            <span class="k">for</span> <span class="n">centrality</span> <span class="ow">in</span> <span class="n">features</span><span class="p">[</span><span class="n">freq_band</span><span class="p">][</span><span class="n">method</span><span class="p">]</span>
+                        <span class="p">}</span> <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">features</span><span class="p">[</span><span class="n">freq_band</span><span class="p">]</span>
                     <span class="p">}</span> <span class="k">for</span> <span class="n">freq_band</span> <span class="ow">in</span> <span class="n">features</span>
                 <span class="p">},</span>
                 <span class="n">nodes_coordinates</span><span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>

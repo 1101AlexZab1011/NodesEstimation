@@ -142,14 +142,21 @@ class Node(object):
         return self._type
 
 
-def eigencentrality(matrix: np.ndarray) -> np.ndarray:
-    """Computes eigencentrality for a square matrix
+def centrality(matrix: np.ndarray, centrality_metric: Callable, **kwargs) -> np.ndarray:
+    """computes centrality for a square matrix with specified function
 
-        :param matrix: a squared matrix for eigencentrality computations
+        :param matrix: a squared matrix for centrality computations
         :type matrix: |inp.ndarray|_
-        :return: matrix with the same size as given containing eigencentrality value for each element
-        :rtype: `np.ndarray <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html>`_
+        :param centrality_metric: function to compute centrality
+        :type: |icallable|_
+        :return: vector with the same size as one row of given containing centrality value for each element
+        :rtype: np.ndarray_
         :raises ValueError: if matrix have `shape <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html>`_ other than (:, :)
+
+        .. _icallable: https://docs.python.org/3/library/typing.html#typing.Callable
+        .. _np.ndarray: https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html
+
+        .. |icallable| replace:: *callable*
     """
 
     if len(matrix.shape) == 2:
@@ -159,7 +166,7 @@ def eigencentrality(matrix: np.ndarray) -> np.ndarray:
         out = list()
 
         G = nx.from_numpy_matrix(matrix)
-        centrality = nx.eigenvector_centrality_numpy(G, weight='weight')
+        centrality = centrality_metric(G, **kwargs)
 
         for node in centrality:
             out.append(centrality[node])
@@ -168,3 +175,110 @@ def eigencentrality(matrix: np.ndarray) -> np.ndarray:
 
     else:
         raise ValueError('Can work with two dimensions only')
+
+
+def degree_centrality(matrix: np.ndarray) -> np.ndarray:
+    """computes centrality for a square matrix with specified function
+
+        :param matrix: a squared matrix for nodes degree computations
+        :type matrix: |inp.ndarray|_
+        :param centrality_metric: function to compute nodes degree
+        :type: |icallable|_
+        :return: vector with the same size as one row of given containing node degree for each element
+        :rtype: np.ndarray_
+        :raises ValueError: if matrix have `shape <https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html>`_ other than (:, :)
+
+        .. _icallable: https://docs.python.org/3/library/typing.html#typing.Callable
+        .. _np.ndarray: https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html
+
+        .. |icallable| replace:: *callable*
+    """
+
+    if len(matrix.shape) == 2:
+        if matrix.shape[0] != matrix.shape[1]:
+            raise ValueError('Can not compute centrality for non-square matrix')
+
+        out = list()
+
+        G = nx.from_numpy_matrix(matrix)
+        centrality = G.degree(weight='weight')
+
+        for node in centrality:
+            out.append(node[1])
+
+        return np.array(out)
+
+    else:
+        raise ValueError('Can work with two dimensions only')
+
+
+def eigencentrality(matrix: np.ndarray) -> np.ndarray:
+    """Computes eigencentrality for a square matrix
+
+        :param matrix: a squared matrix for eigencentrality computations
+        :type matrix: |inp.ndarray|_
+        :return: vector with the same size as one row of given containing eigencentrality value for each element
+        :rtype: np.ndarray_
+    """
+
+    return centrality(matrix, nx.eigenvector_centrality_numpy, weight='weight')
+
+
+def closeness_centrality(matrix: np.ndarray) -> np.ndarray:
+    """Computes closeness centrality for a square matrix
+
+        :param matrix: a squared matrix for closeness centrality computations
+        :type matrix: |inp.ndarray|_
+        :return: vector with the same size as one row of given containing closeness centrality value for each element
+        :rtype: np.ndarray_
+    """
+
+    return centrality(matrix, nx.closeness_centrality, distance='weight')
+
+
+def betweenness_centrality(matrix: np.ndarray) -> np.ndarray:
+    """Computes betweenness centrality for a square matrix
+
+        :param matrix: a squared matrix for betweenness centrality computations
+        :type matrix: |inp.ndarray|_
+        :return: vector with the same size as one row of given containing betweenness centrality value for each element
+        :rtype: np.ndarray_
+    """
+
+    return centrality(matrix, nx.betweenness_centrality, weight='weight')
+
+
+def katz_centrality(matrix: np.ndarray) -> np.ndarray:
+    """Computes katz centrality for a square matrix
+
+        :param matrix: a squared matrix for katz centrality computations
+        :type matrix: |inp.ndarray|_
+        :return: vector with the same size as one row of given containing katz centrality value for each element
+        :rtype: np.ndarray_
+    """
+
+    return centrality(matrix, nx.katz_centrality, weight='weight')
+
+
+def information_centrality(matrix: np.ndarray) -> np.ndarray:
+    """Computes information centrality for a square matrix
+
+        :param matrix: a squared matrix for information centrality computations
+        :type matrix: |inp.ndarray|_
+        :return: vector with the same size as one row of given containing information centrality value for each element
+        :rtype: np.ndarray_
+    """
+
+    return centrality(matrix, nx.information_centrality, weight='weight')
+
+
+def harmonic_centrality(matrix: np.ndarray) -> np.ndarray:
+    """Computes harmonic centrality for a square matrix
+
+        :param matrix: a squared matrix for harmonic centrality computations
+        :type matrix: |inp.ndarray|_
+        :return: vector with the same size as one row of given containing harmonic centrality value for each element
+        :rtype: np.ndarray_
+    """
+
+    return centrality(matrix, nx.harmonic_centrality, distance='weight')

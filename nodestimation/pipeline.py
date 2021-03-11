@@ -65,7 +65,7 @@ def write_subject(path: str, subject: Subject):
     pickle.dump(subject, open(path, 'wb'))
 
 
-def read_subject(path: str):
+def read_subject(path: str) -> Subject:
     """Reads one :class:`nodestimation.project.subject.Subject` object
 
             :param path: path to read
@@ -83,6 +83,7 @@ def pipeline(
         epochs_tmax: Optional[Union[int, float]] = 1,
         conductivity: Optional[tuple] = (0.3,),
         se_method: Optional[str] = "sLORETA",
+        centrality_metrics: Optional[Union[str, List[str]]] = 'eigen',
         methods: Optional[Union[str, List[str]]] = 'plv',
         rfreq: Optional[int] = 200,
         nfreq: Optional[int] = 50,
@@ -101,6 +102,8 @@ def pipeline(
 
         :param methods: set of metrics to be computed (see `list of metrics`_), default ``"plv"``
         :type methods: |ilist|_ *of* |istr|_ *or* |istr|_, *optional*
+        :param centrality_metrics: set of `centrality metrics`_ to compute, default ``"eigen"``
+        :type centrality_metrics: |ilist|_ *of* |istr|_ *or* |istr|_, *optional*
         :param se_method: MNE solution for inverse computations (see `list of MNE solutions`_), default ``"sLORETA"``
         :type se_method: str, optional
         :param conductivity: suggested tissues conductivity, default (0.3,)
@@ -139,6 +142,17 @@ def pipeline(
         .. _`list of MNE solutions`:
         .. note:: MNE solutions that can be applied:
             `MNE, dSPM, sLORETA, eLORETA <https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse>`_
+
+        .. _`centrality metrics`:
+        .. note:: Available centrality metrics
+
+            :"degree": `degree centrality <https://en.wikipedia.org/wiki/Centrality#Degree_centrality>`_
+            :"eigen": `eigencentrality <https://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality>`_
+            :"katz": `katz centrality <https://en.wikipedia.org/wiki/Centrality#Katz_centrality>`_
+            :"close": `clossness centrality <https://en.wikipedia.org/wiki/Centrality#Closeness_centrality>`_
+            :"harmonic": `harmonic centrality <https://en.wikipedia.org/wiki/Centrality#Harmonic_centrality>`_
+            :"between": `betweenness centrality <https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality>`_
+            :"info": `information centrality <https://www.sciencedirect.com/science/article/abs/pii/0378873389900166?via%3Dihub>`_
 
         .. _ifloat: https://docs.python.org/3/library/functions.html#float
         .. _ilist:
@@ -300,7 +314,7 @@ def pipeline(
                 )
                 nodes, nodes_path = nodes_creation(
                     labels,
-                    prepare_features(label_names, feat),
+                    prepare_features(label_names, feat, centrality_metrics=centrality_metrics),
                     coords,
                     resec_mni,
                     resec_txt,

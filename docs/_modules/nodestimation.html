@@ -175,14 +175,21 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span></div>
 
 
-<div class="viewcode-block" id="eigencentrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.eigencentrality">[docs]</a><span class="k">def</span> <span class="nf">eigencentrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Computes eigencentrality for a square matrix</span>
+<div class="viewcode-block" id="centrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.centrality">[docs]</a><span class="k">def</span> <span class="nf">centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centrality_metric</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;computes centrality for a square matrix with specified function</span>
 
-<span class="sd">        :param matrix: a squared matrix for eigencentrality computations</span>
+<span class="sd">        :param matrix: a squared matrix for centrality computations</span>
 <span class="sd">        :type matrix: |inp.ndarray|_</span>
-<span class="sd">        :return: matrix with the same size as given containing eigencentrality value for each element</span>
-<span class="sd">        :rtype: `np.ndarray &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html&gt;`_</span>
+<span class="sd">        :param centrality_metric: function to compute centrality</span>
+<span class="sd">        :type: |icallable|_</span>
+<span class="sd">        :return: vector with the same size as one row of given containing centrality value for each element</span>
+<span class="sd">        :rtype: np.ndarray_</span>
 <span class="sd">        :raises ValueError: if matrix have `shape &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html&gt;`_ other than (:, :)</span>
+
+<span class="sd">        .. _icallable: https://docs.python.org/3/library/typing.html#typing.Callable</span>
+<span class="sd">        .. _np.ndarray: https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html</span>
+
+<span class="sd">        .. |icallable| replace:: *callable*</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -192,7 +199,7 @@
         <span class="n">out</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
         <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_numpy_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-        <span class="n">centrality</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">eigenvector_centrality_numpy</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span>
+        <span class="n">centrality</span> <span class="o">=</span> <span class="n">centrality_metric</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">centrality</span><span class="p">:</span>
             <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">centrality</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
@@ -201,6 +208,113 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Can work with two dimensions only&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="degree_centrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.degree_centrality">[docs]</a><span class="k">def</span> <span class="nf">degree_centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;computes centrality for a square matrix with specified function</span>
+
+<span class="sd">        :param matrix: a squared matrix for nodes degree computations</span>
+<span class="sd">        :type matrix: |inp.ndarray|_</span>
+<span class="sd">        :param centrality_metric: function to compute nodes degree</span>
+<span class="sd">        :type: |icallable|_</span>
+<span class="sd">        :return: vector with the same size as one row of given containing node degree for each element</span>
+<span class="sd">        :rtype: np.ndarray_</span>
+<span class="sd">        :raises ValueError: if matrix have `shape &lt;https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html&gt;`_ other than (:, :)</span>
+
+<span class="sd">        .. _icallable: https://docs.python.org/3/library/typing.html#typing.Callable</span>
+<span class="sd">        .. _np.ndarray: https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html</span>
+
+<span class="sd">        .. |icallable| replace:: *callable*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Can not compute centrality for non-square matrix&#39;</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_numpy_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="n">centrality</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">centrality</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Can work with two dimensions only&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="eigencentrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.eigencentrality">[docs]</a><span class="k">def</span> <span class="nf">eigencentrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Computes eigencentrality for a square matrix</span>
+
+<span class="sd">        :param matrix: a squared matrix for eigencentrality computations</span>
+<span class="sd">        :type matrix: |inp.ndarray|_</span>
+<span class="sd">        :return: vector with the same size as one row of given containing eigencentrality value for each element</span>
+<span class="sd">        :rtype: np.ndarray_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">eigenvector_centrality_numpy</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="closeness_centrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.closeness_centrality">[docs]</a><span class="k">def</span> <span class="nf">closeness_centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Computes closeness centrality for a square matrix</span>
+
+<span class="sd">        :param matrix: a squared matrix for closeness centrality computations</span>
+<span class="sd">        :type matrix: |inp.ndarray|_</span>
+<span class="sd">        :return: vector with the same size as one row of given containing closeness centrality value for each element</span>
+<span class="sd">        :rtype: np.ndarray_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">closeness_centrality</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="betweenness_centrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.betweenness_centrality">[docs]</a><span class="k">def</span> <span class="nf">betweenness_centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Computes betweenness centrality for a square matrix</span>
+
+<span class="sd">        :param matrix: a squared matrix for betweenness centrality computations</span>
+<span class="sd">        :type matrix: |inp.ndarray|_</span>
+<span class="sd">        :return: vector with the same size as one row of given containing betweenness centrality value for each element</span>
+<span class="sd">        :rtype: np.ndarray_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="katz_centrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.katz_centrality">[docs]</a><span class="k">def</span> <span class="nf">katz_centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Computes katz centrality for a square matrix</span>
+
+<span class="sd">        :param matrix: a squared matrix for katz centrality computations</span>
+<span class="sd">        :type matrix: |inp.ndarray|_</span>
+<span class="sd">        :return: vector with the same size as one row of given containing katz centrality value for each element</span>
+<span class="sd">        :rtype: np.ndarray_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">katz_centrality</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="information_centrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.information_centrality">[docs]</a><span class="k">def</span> <span class="nf">information_centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Computes information centrality for a square matrix</span>
+
+<span class="sd">        :param matrix: a squared matrix for information centrality computations</span>
+<span class="sd">        :type matrix: |inp.ndarray|_</span>
+<span class="sd">        :return: vector with the same size as one row of given containing information centrality value for each element</span>
+<span class="sd">        :rtype: np.ndarray_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">information_centrality</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="harmonic_centrality"><a class="viewcode-back" href="../nodestimation.html#nodestimation.harmonic_centrality">[docs]</a><span class="k">def</span> <span class="nf">harmonic_centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Computes harmonic centrality for a square matrix</span>
+
+<span class="sd">        :param matrix: a squared matrix for harmonic centrality computations</span>
+<span class="sd">        :type matrix: |inp.ndarray|_</span>
+<span class="sd">        :return: vector with the same size as one row of given containing harmonic centrality value for each element</span>
+<span class="sd">        :rtype: np.ndarray_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">centrality</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">harmonic_centrality</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

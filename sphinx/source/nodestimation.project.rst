@@ -115,16 +115,20 @@ Annotations used in this package::
     LabelsFeatures = Dict[
         str, Dict[
             str, Dict[
-                str, float
+                str, Dict[
+                    str, float
+                ]
             ]
         ]
     ]
 
     NodeFeatures = Dict[
+                str, Dict[
                     str, Dict[
                         str, float
                     ]
                 ]
+            ]
 
 .. note:: Annotations module uses type hints
 

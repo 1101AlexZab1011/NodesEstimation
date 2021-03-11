@@ -98,7 +98,7 @@
     <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="read_subject"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.read_subject">[docs]</a><span class="k">def</span> <span class="nf">read_subject</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="read_subject"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.read_subject">[docs]</a><span class="k">def</span> <span class="nf">read_subject</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subject</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Reads one :class:`nodestimation.project.subject.Subject` object</span>
 
 <span class="sd">            :param path: path to read</span>
@@ -116,6 +116,7 @@
         <span class="n">epochs_tmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">conductivity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.3</span><span class="p">,),</span>
         <span class="n">se_method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sLORETA&quot;</span><span class="p">,</span>
+        <span class="n">centrality_metrics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="s1">&#39;eigen&#39;</span><span class="p">,</span>
         <span class="n">methods</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="s1">&#39;plv&#39;</span><span class="p">,</span>
         <span class="n">rfreq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
         <span class="n">nfreq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
@@ -134,6 +135,8 @@
 
 <span class="sd">        :param methods: set of metrics to be computed (see `list of metrics`_), default ``&quot;plv&quot;``</span>
 <span class="sd">        :type methods: |ilist|_ *of* |istr|_ *or* |istr|_, *optional*</span>
+<span class="sd">        :param centrality_metrics: set of `centrality metrics`_ to compute, default ``&quot;eigen&quot;``</span>
+<span class="sd">        :type centrality_metrics: |ilist|_ *of* |istr|_ *or* |istr|_, *optional*</span>
 <span class="sd">        :param se_method: MNE solution for inverse computations (see `list of MNE solutions`_), default ``&quot;sLORETA&quot;``</span>
 <span class="sd">        :type se_method: str, optional</span>
 <span class="sd">        :param conductivity: suggested tissues conductivity, default (0.3,)</span>
@@ -172,6 +175,17 @@
 <span class="sd">        .. _`list of MNE solutions`:</span>
 <span class="sd">        .. note:: MNE solutions that can be applied:</span>
 <span class="sd">            `MNE, dSPM, sLORETA, eLORETA &lt;https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse&gt;`_</span>
+
+<span class="sd">        .. _`centrality metrics`:</span>
+<span class="sd">        .. note:: Available centrality metrics</span>
+
+<span class="sd">            :&quot;degree&quot;: `degree centrality &lt;https://en.wikipedia.org/wiki/Centrality#Degree_centrality&gt;`_</span>
+<span class="sd">            :&quot;eigen&quot;: `eigencentrality &lt;https://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality&gt;`_</span>
+<span class="sd">            :&quot;katz&quot;: `katz centrality &lt;https://en.wikipedia.org/wiki/Centrality#Katz_centrality&gt;`_</span>
+<span class="sd">            :&quot;close&quot;: `clossness centrality &lt;https://en.wikipedia.org/wiki/Centrality#Closeness_centrality&gt;`_</span>
+<span class="sd">            :&quot;harmonic&quot;: `harmonic centrality &lt;https://en.wikipedia.org/wiki/Centrality#Harmonic_centrality&gt;`_</span>
+<span class="sd">            :&quot;between&quot;: `betweenness centrality &lt;https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality&gt;`_</span>
+<span class="sd">            :&quot;info&quot;: `information centrality &lt;https://www.sciencedirect.com/science/article/abs/pii/0378873389900166?via%3Dihub&gt;`_</span>
 
 <span class="sd">        .. _ifloat: https://docs.python.org/3/library/functions.html#float</span>
 <span class="sd">        .. _ilist:</span>
@@ -333,7 +347,7 @@
                 <span class="p">)</span>
                 <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes_path</span> <span class="o">=</span> <span class="n">nodes_creation</span><span class="p">(</span>
                     <span class="n">labels</span><span class="p">,</span>
-                    <span class="n">prepare_features</span><span class="p">(</span><span class="n">label_names</span><span class="p">,</span> <span class="n">feat</span><span class="p">),</span>
+                    <span class="n">prepare_features</span><span class="p">(</span><span class="n">label_names</span><span class="p">,</span> <span class="n">feat</span><span class="p">,</span> <span class="n">centrality_metrics</span><span class="o">=</span><span class="n">centrality_metrics</span><span class="p">),</span>
                     <span class="n">coords</span><span class="p">,</span>
                     <span class="n">resec_mni</span><span class="p">,</span>
                     <span class="n">resec_txt</span><span class="p">,</span>

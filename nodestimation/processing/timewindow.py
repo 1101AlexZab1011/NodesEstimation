@@ -65,7 +65,7 @@ class TimeWindow(object):
         return self._end
 
 
-def sliding_window(size: int, overlap: float):
+def sliding_window(size: int, overlap: float) -> Callable:
     """divides data given to wrapped function (1st argument) into slices of given size with given overlap and calls it
 
     :param size: size (in points) of time window to divide data

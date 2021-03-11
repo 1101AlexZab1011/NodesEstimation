@@ -150,14 +150,15 @@
 
 <dl class="function">
 <dt id="nodestimation.processing.features.prepare_data">
-<code class="descclassname">nodestimation.processing.features.</code><code class="descname">prepare_data</code><span class="sig-paren">(</span><em>nodes: List[nodestimation.Node], _subject_tree: Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]] = None, _conditions: str = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/processing/features.html#prepare_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.prepare_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>creates  <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> from <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a> <a class="reference external" href="nodestimation.learning.html#feature">features</a></p>
+<code class="descclassname">nodestimation.processing.features.</code><code class="descname">prepare_data</code><span class="sig-paren">(</span><em>nodes: List[nodestimation.Node], centrality_metrics: Union[str, List[str]], _subject_tree: Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]] = None, _conditions: str = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, pandas.core.frame.DataFrame]<a class="reference internal" href="_modules/nodestimation/processing/features.html#prepare_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.prepare_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>for each centrality metric creates  <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> from <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a> <a class="reference external" href="nodestimation.learning.html#feature">features</a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>nodes</strong> (<a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a>) – nodes to take information</li>
+<li><strong>centrality_metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>, optional) – <a class="reference external" href="nodestimation.html#centrality-metrics">centrality metrics</a> to compute, default “eigen”</li>
 <li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
 <li><strong>_conditions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – output from <a class="reference internal" href="nodestimation.project.html#nodestimation.project.conditions_unique_code" title="nodestimation.project.conditions_unique_code"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.conditions_unique_code()</span></code></a>, default True</li>
 <li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
@@ -167,7 +168,7 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dataset with patient`s information</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
 </td>
 </tr>
 </tbody>
@@ -176,7 +177,7 @@
 
 <dl class="function">
 <dt id="nodestimation.processing.features.prepare_features">
-<code class="descclassname">nodestimation.processing.features.</code><code class="descname">prepare_features</code><span class="sig-paren">(</span><em>label_names: List[str], features: Dict[str, Dict[str, numpy.ndarray]], centrality_metric='eigen'</em><span class="sig-paren">)</span> &#x2192; Dict[str, Dict[str, Dict[str, float]]]<a class="reference internal" href="_modules/nodestimation/processing/features.html#prepare_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.prepare_features" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nodestimation.processing.features.</code><code class="descname">prepare_features</code><span class="sig-paren">(</span><em>label_names: List[str], features: Dict[str, Dict[str, numpy.ndarray]], centrality_metrics: Union[str, List[str]]</em><span class="sig-paren">)</span> &#x2192; Dict[str, Dict[str, Dict[str, Dict[str, float]]]]<a class="reference internal" href="_modules/nodestimation/processing/features.html#prepare_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.prepare_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes <a class="reference external" href="nodestimation.html#list-of-metrics">required metrics</a> for each <a class="reference external" href="https://mne.tools/dev/generated/mne.Label.html">label</a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -187,7 +188,8 @@
 </li>
 <li><strong>features</strong> (<em>look for Features in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a>) – <p><a class="reference external" href="nodestimation.learning.html#feature">features</a> to compute</p>
 </li>
-<li><strong>centrality_metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference internal" href="#centrality-metric">centrality metric</a> to compute, default “eigen”</li>
+<li><strong>centrality_metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – <p><a class="reference external" href="nodestimation.html#centrality-metrics">centrality metrics</a> to compute, default “eigen”</p>
+</li>
 </ul>
 </td>
 </tr>
@@ -199,10 +201,6 @@
 </tr>
 </tbody>
 </table>
-<div class="admonition note" id="centrality-metric">
-<p class="first admonition-title">Note</p>
-<p class="last">For now, only eigencentrality available. The key word for it: “eigen”</p>
-</div>
 </dd></dl>
 
 </div>
@@ -347,7 +345,7 @@ for detection <a class="reference external" href="https://en.wikipedia.org/wiki/
 
 <dl class="function">
 <dt id="nodestimation.processing.mneraw.nodes_creation">
-<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">nodes_creation</code><span class="sig-paren">(</span><em>labels: List[mne.label.Label], features: Dict[str, Dict[str, Dict[str, float]]], nodes_coordinates: numpy.ndarray, resec_coordinates: Union[None, numpy.ndarray], resec_txt: str, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _conditions: Optional[str] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; List[nodestimation.Node]<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#nodes_creation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.nodes_creation" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">nodes_creation</code><span class="sig-paren">(</span><em>labels: List[mne.label.Label], features: Dict[str, Dict[str, Dict[str, Dict[str, float]]]], nodes_coordinates: numpy.ndarray, resec_coordinates: Union[None, numpy.ndarray], resec_txt: str, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _conditions: Optional[str] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; List[nodestimation.Node]<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#nodes_creation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.nodes_creation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -549,7 +547,7 @@ default False</li>
 
 <dl class="function">
 <dt id="nodestimation.processing.timewindow.sliding_window">
-<code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">sliding_window</code><span class="sig-paren">(</span><em>size: int</em>, <em>overlap: float</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#sliding_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.sliding_window" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">sliding_window</code><span class="sig-paren">(</span><em>size: int</em>, <em>overlap: float</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#sliding_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.sliding_window" title="Permalink to this definition">¶</a></dt>
 <dd><p>divides data given to wrapped function (1st argument) into slices of given size with given overlap and calls it</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

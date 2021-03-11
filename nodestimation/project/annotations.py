@@ -30,13 +30,17 @@ Features = Dict[
 LabelsFeatures = Dict[
     str, Dict[
         str, Dict[
-            str, float
+            str, Dict[
+                str, float
+            ]
         ]
     ]
 ]
 
 NodeFeatures = Dict[
-                str, Dict[
-                    str, float
-                ]
-            ]
+    str, Dict[
+        str, Dict[
+            str, float
+        ]
+    ]
+]

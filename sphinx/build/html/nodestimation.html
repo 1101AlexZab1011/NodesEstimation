@@ -75,7 +75,7 @@
 <p>Module containing pipeline for data transforming and functionality for storing it</p>
 <span class="target" id="module-nodestimation.pipeline"></span><dl class="function">
 <dt id="nodestimation.pipeline.pipeline">
-<code class="descclassname">nodestimation.pipeline.</code><code class="descname">pipeline</code><span class="sig-paren">(</span><em>crop_time: Optional[int] = 120, snr: Optional[float] = 0.5, epochs_tmin: Union[int, float, None] = -1, epochs_tmax: Union[int, float, None] = 1, conductivity: Optional[tuple] = (0.3,), se_method: Optional[str] = 'sLORETA', methods: Union[str, List[str], None] = 'plv', rfreq: Optional[int] = 200, nfreq: Optional[int] = 50, lfreq: Optional[int] = 1, hfreq: Optional[int] = 70, freq_bands: Union[tuple, List[tuple], None] = (0.5, 4)</em><span class="sig-paren">)</span> &#x2192; List[nodestimation.project.subject.Subject]<a class="reference internal" href="_modules/nodestimation/pipeline.html#pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.pipeline.pipeline" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nodestimation.pipeline.</code><code class="descname">pipeline</code><span class="sig-paren">(</span><em>crop_time: Optional[int] = 120, snr: Optional[float] = 0.5, epochs_tmin: Union[int, float, None] = -1, epochs_tmax: Union[int, float, None] = 1, conductivity: Optional[tuple] = (0.3,), se_method: Optional[str] = 'sLORETA', centrality_metrics: Union[str, List[str], None] = 'eigen', methods: Union[str, List[str], None] = 'plv', rfreq: Optional[int] = 200, nfreq: Optional[int] = 50, lfreq: Optional[int] = 1, hfreq: Optional[int] = 70, freq_bands: Union[tuple, List[tuple], None] = (0.5, 4)</em><span class="sig-paren">)</span> &#x2192; List[nodestimation.project.subject.Subject]<a class="reference internal" href="_modules/nodestimation/pipeline.html#pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.pipeline.pipeline" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Pipeline for brain data transformation</dt>
 <dd><strong>includes:</strong></dd>
@@ -93,6 +93,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>methods</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>, <em>optional</em>) – set of metrics to be computed (see <a class="reference internal" href="#list-of-metrics">list of metrics</a>), default <code class="docutils literal notranslate"><span class="pre">&quot;plv&quot;</span></code></li>
+<li><strong>centrality_metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>, <em>optional</em>) – set of <a class="reference internal" href="#centrality-metrics">centrality metrics</a> to compute, default <code class="docutils literal notranslate"><span class="pre">&quot;eigen&quot;</span></code></li>
 <li><strong>se_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – MNE solution for inverse computations (see <a class="reference internal" href="#list-of-mne-solutions">list of MNE solutions</a>), default <code class="docutils literal notranslate"><span class="pre">&quot;sLORETA&quot;</span></code></li>
 <li><strong>conductivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>, <em>optional</em>) – suggested tissues conductivity, default (0.3,)</li>
 <li><strong>epochs_tmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – start time (s) before event, default -1</li>
@@ -131,11 +132,35 @@ wpli2_debiased</a>,
 <p class="last">MNE solutions that can be applied:
 <a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse">MNE, dSPM, sLORETA, eLORETA</a></p>
 </div>
+<div class="admonition note" id="centrality-metrics">
+<p class="first admonition-title">Note</p>
+<p>Available centrality metrics</p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">“degree”:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Centrality#Degree_centrality">degree centrality</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">“eigen”:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality">eigencentrality</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">“katz”:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Centrality#Katz_centrality">katz centrality</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">“close”:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Centrality#Closeness_centrality">clossness centrality</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">“harmonic”:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Centrality#Harmonic_centrality">harmonic centrality</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">“between”:</th><td class="field-body"><a class="reference external" href="https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality">betweenness centrality</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">“info”:</th><td class="field-body"><a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/0378873389900166?via%3Dihub">information centrality</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="nodestimation.pipeline.read_subject">
-<code class="descclassname">nodestimation.pipeline.</code><code class="descname">read_subject</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/pipeline.html#read_subject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.pipeline.read_subject" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nodestimation.pipeline.</code><code class="descname">read_subject</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; nodestimation.project.subject.Subject<a class="reference internal" href="_modules/nodestimation/pipeline.html#read_subject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.pipeline.read_subject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads one <a class="reference internal" href="nodestimation.project.html#nodestimation.project.subject.Subject" title="nodestimation.project.subject.Subject"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.project.subject.Subject</span></code></a> object</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -208,7 +233,7 @@ wpli2_debiased</a>,
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nodestimation" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nodestimation.Node">
-<em class="property">class </em><code class="descclassname">nodestimation.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>label: mne.label.Label, features: Dict[str, Dict[str, float]], center_coordinates: numpy.ndarray, type: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.Node" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nodestimation.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>label: mne.label.Label, features: Dict[str, Dict[str, Dict[str, float]]], center_coordinates: numpy.ndarray, type: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.Node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Brain unit representing one separated area of the brain</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -255,6 +280,104 @@ wpli2_debiased</a>,
 </dd></dl>
 
 <dl class="function">
+<dt id="nodestimation.betweenness_centrality">
+<code class="descclassname">nodestimation.</code><code class="descname">betweenness_centrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#betweenness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.betweenness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes betweenness centrality for a square matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for betweenness centrality computations</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">vector with the same size as one row of given containing betweenness centrality value for each element</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.centrality">
+<code class="descclassname">nodestimation.</code><code class="descname">centrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em>, <em>centrality_metric: Callable</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes centrality for a square matrix with specified function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for centrality computations</li>
+<li><strong>centrality_metric</strong> – function to compute centrality</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable"><em>callable</em></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">vector with the same size as one row of given containing centrality value for each element</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <p>if matrix have <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html">shape</a> other than (:, :)</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.closeness_centrality">
+<code class="descclassname">nodestimation.</code><code class="descname">closeness_centrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#closeness_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.closeness_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes closeness centrality for a square matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for closeness centrality computations</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">vector with the same size as one row of given containing closeness centrality value for each element</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.degree_centrality">
+<code class="descclassname">nodestimation.</code><code class="descname">degree_centrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#degree_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.degree_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes centrality for a square matrix with specified function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for nodes degree computations</li>
+<li><strong>centrality_metric</strong> – function to compute nodes degree</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable"><em>callable</em></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">vector with the same size as one row of given containing node degree for each element</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <p>if matrix have <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html">shape</a> other than (:, :)</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="nodestimation.eigencentrality">
 <code class="descclassname">nodestimation.</code><code class="descname">eigencentrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#eigencentrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.eigencentrality" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes eigencentrality for a square matrix</p>
@@ -264,12 +387,63 @@ wpli2_debiased</a>,
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for eigencentrality computations</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">matrix with the same size as given containing eigencentrality value for each element</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">vector with the same size as one row of given containing eigencentrality value for each element</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <p>if matrix have <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html">shape</a> other than (:, :)</p>
-</td>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.harmonic_centrality">
+<code class="descclassname">nodestimation.</code><code class="descname">harmonic_centrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#harmonic_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.harmonic_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes harmonic centrality for a square matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for harmonic centrality computations</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">vector with the same size as one row of given containing harmonic centrality value for each element</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.information_centrality">
+<code class="descclassname">nodestimation.</code><code class="descname">information_centrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#information_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.information_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes information centrality for a square matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for information centrality computations</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">vector with the same size as one row of given containing information centrality value for each element</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.katz_centrality">
+<code class="descclassname">nodestimation.</code><code class="descname">katz_centrality</code><span class="sig-paren">(</span><em>matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation.html#katz_centrality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.katz_centrality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes katz centrality for a square matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – a squared matrix for katz centrality computations</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">vector with the same size as one row of given containing katz centrality value for each element</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
 </tr>
 </tbody>
 </table>
