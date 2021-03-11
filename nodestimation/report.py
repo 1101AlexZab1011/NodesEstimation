@@ -1,3 +1,20 @@
+## resection areas
+
+# for subject in subjects:
+#     print(subject.name)
+#     fig, ax = plt.subplots(figsize=(15, 15))
+#     display = nplt.plot_glass_brain(None, display_mode='lyrz', figure=fig, axes=ax, title=subject.name)
+#     spared = [node.center_coordinates for node in subject.nodes if node.type == 'spared']
+#     resected = [node.center_coordinates for node in subject.nodes if node.type == 'resected']
+#
+#     if subject.data['resec_mni']:
+#         resection = read['resec_mni'](subject.data['resec_mni'])
+#         display.add_markers(resection, marker_color="violet", marker_size=1)
+#     display.add_markers(np.array(spared), marker_color="yellow", marker_size=100)
+#     display.add_markers(np.array(resected), marker_color="red", marker_size=250)
+#     # plt.show()
+
+
 ## label time cources comparison
 
 # plt.plot(np.arange(401), label_ts[0][10].T, np.arange(401), label_ts[0][36].T)
@@ -94,7 +111,7 @@
 
 ## pearson and plv nodes
 
-#%%
+# %%
 
 # if os.path.isfile(res_pearson_nodes_file):
 #     print('Reading nodes...')
@@ -124,7 +141,7 @@
 # nplt.show()
 #
 
-#%%
+# %%
 
 # if os.path.isfile(res_plv_nodes_file):
 #     print('Reading nodes...')

@@ -53,7 +53,7 @@ def read_subjects(path: str) -> List[Subject]:
     return pickle.load(open(path, 'rb'))
 
 
-def write_subject(path: str, subject: Subject):
+def write_subject(path: str, subject: Subject) -> None:
     """Stores information about one :class:`nodestimation.project.subject.Subject` object
 
         :param path: path to write
