@@ -16,7 +16,7 @@ file_save_format = {
     'resec_txt': 'txt',
     'feat': 'pkl',
     'nodes': 'pkl',
-    'dataset': 'csv'
+    'dataset': 'pkl'
 }
 
 file_search_regexps = {
@@ -37,7 +37,7 @@ file_search_regexps = {
     'resec_txt': r'.*resec.*\.txt.*',
     'feat': r'.*feat.*\.pkl.*',
     'nodes': r'.*nodes.*\.pkl.*',
-    'dataset': r'.*dataset.*\.csv.*'
+    'dataset': r'.*dataset.*\.pkl.*'
 }
 
 tree_data_types = (
