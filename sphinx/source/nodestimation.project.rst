@@ -70,8 +70,8 @@ Functions for storing and reading required files
      - lambda_ path: `pickle.load(open(path, 'rb')) <https://docs.python.org/3/library/pickle.html#pickle.load>`_
      - lambda_ path, nodes: `pickle.dump(nodes, open(path, 'wb')) <https://docs.python.org/3/library/pickle.html#pickle.dump>`_
    * - dataset
-     - `pandas.read_csv <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html>`_
-     - lambda_ path, csv: `csv.to_csv(path) <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_csv.html>`_
+     - lambda_ path: `pickle.load(open(path, 'rb')) <https://docs.python.org/3/library/pickle.html#pickle.load>`_
+     - lambda_ path, data: `pickle.dump(data, open(path, 'wb')) <https://docs.python.org/3/library/pickle.html#pickle.dump>`_
 
 .. _lambda: https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions
 

@@ -21,7 +21,7 @@ save = {
     'resec_txt': lambda path, resec: open(path, 'w').write(resec),
     'feat': lambda path, feat: pickle.dump(feat, open(path, 'wb')),
     'nodes': lambda path, nodes: pickle.dump(nodes, open(path, 'wb')),
-    'dataset': lambda path, csv: csv.to_csv(path)
+    'dataset': lambda path, data: pickle.dump(data, open(path, 'wb'))
 }
 
 read = {
@@ -42,5 +42,5 @@ read = {
     'resec_txt': lambda path: open(path, 'r').read(),
     'feat': lambda path: pickle.load(open(path, 'rb')),
     'nodes': lambda path: pickle.load(open(path, 'rb')),
-    'dataset': pandas.read_csv
+    'dataset': lambda path: pickle.load(open(path, 'rb'))
 }
