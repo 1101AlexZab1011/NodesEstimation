@@ -325,6 +325,7 @@ def pipeline(
                 )
                 dataset, dataset_path = prepare_data(
                     nodes,
+                    centrality_metrics,
                     _subject_tree=tree[subject_name],
                     _conditions=conditions_code,
                     _priority=0

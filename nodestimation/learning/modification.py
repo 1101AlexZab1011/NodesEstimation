@@ -311,7 +311,7 @@ def promote(dataset: pd.DataFrame, trigger: Optional[int] = None, optimal: Optio
         :return: promoted dataset
         :rtype: pd.DataFrame_
         :raise ValueError: if rigger or optimal conditions unreached or optimal value is wrong
-        """
+    """
 
     def create_optimal_mask(dataset, trigger_mask, for_):
 
