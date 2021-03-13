@@ -147,7 +147,6 @@ def prepare_data(
 
     columns = list()
     keys = list()
-    values = list()
     datasets = dict()
 
     for freq_band in nodes[0].features:
@@ -163,6 +162,7 @@ def prepare_data(
         keys.append(node.label.name)
 
     for centrality in centrality_metrics:
+        values = list()
         for node in nodes:
             row = list()
             for freq_band in node.features:

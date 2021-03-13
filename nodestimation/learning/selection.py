@@ -342,7 +342,7 @@ class SubjectsStatistic(object):
         new_indexes = list()
 
         for subject in subjects:
-            for index in subject.dataset.index:
+            for index in subject.dataset[centrality_metric].index:
                 new_indexes.append('_'.join([subject.name, index]))
 
         return pd.DataFrame(dataset.to_numpy(), columns=dataset.columns, index=new_indexes)
