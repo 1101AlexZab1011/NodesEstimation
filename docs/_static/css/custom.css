@@ -201,6 +201,16 @@ div.note{
     margin-bottom: 40px
 }
 
+div.warning{
+    background-color: #ffe4e4;
+    border: none;
+    border-left: #cccccc 1px solid;
+    border-top: #cccccc 1px solid;
+    padding: 20px 30px;
+    margin-top: 30px;
+    margin-bottom: 40px
+}
+
 ul.first.simple > li {
     margin-bottom: 15px;
 }

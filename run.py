@@ -7,7 +7,7 @@ from nodestimation.project.actions import read
 subjects = pipeline(
     methods=['wpli', 'envelope'],
     freq_bands=[(0.5, 4), (4, 7), (7, 14), (14, 30), (30, 70)],
-    centrality_metrics=['eigen', 'close', 'between', 'degree', 'katz', 'info', 'harmonic']
+    centrality_metrics=['eigen', 'close', 'between']#, 'degree', 'katz', 'info', 'harmonic']
 )
 
 

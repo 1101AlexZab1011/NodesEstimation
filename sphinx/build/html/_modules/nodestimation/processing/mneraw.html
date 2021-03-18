@@ -825,6 +825,9 @@
     <span class="k">def</span> <span class="nf">correlationenvelope_connectivity_computation</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="n">label_ts</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">fmin</span><span class="p">,</span> <span class="n">fmax</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="nb">input</span>
 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label_ts</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">label_ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">label_ts</span><span class="p">)</span>
+
         <span class="c1"># filtering</span>
         <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">sfreq</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">fftfreq</span><span class="p">(</span><span class="n">label_ts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>

@@ -154,6 +154,8 @@ def pipeline(
             :"between": `betweenness centrality <https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality>`_
             :"info": `information centrality <https://www.sciencedirect.com/science/article/abs/pii/0378873389900166?via%3Dihub>`_
 
+        .. warning:: Be careful choosing centrality metrics. Some connectivity measures are inconsistent with some centrality metrics!
+
         .. _ifloat: https://docs.python.org/3/library/functions.html#float
         .. _ilist:
         .. _list: https://docs.python.org/3/library/stdtypes.html#list
