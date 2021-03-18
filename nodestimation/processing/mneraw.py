@@ -792,6 +792,9 @@ def features_computation(
     def correlationenvelope_connectivity_computation(input: tuple) -> np.ndarray:
         label_ts, sfreq, fmin, fmax, method = input
 
+        if isinstance(label_ts, list):
+            label_ts = np.ndarray(label_ts)
+
         # filtering
         dt = 1/sfreq
         w = fftfreq(label_ts.shape[1], d=dt)
