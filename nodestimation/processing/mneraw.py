@@ -793,7 +793,7 @@ def features_computation(
         label_ts, sfreq, fmin, fmax, method = input
 
         if isinstance(label_ts, list):
-            label_ts = np.ndarray(label_ts)
+            label_ts = np.array(label_ts)
 
         # filtering
         dt = 1/sfreq
