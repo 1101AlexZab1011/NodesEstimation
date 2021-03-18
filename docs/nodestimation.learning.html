@@ -538,6 +538,64 @@ of given <a class="reference external" href="https://pandas.pydata.org/pandas-do
 </dd></dl>
 
 <dl class="function">
+<dt id="nodestimation.learning.modification.lead_mean">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">lead_mean</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>new_mean: Union[float</em>, <em>List[float]] = None</em>, <em>take_mean_from: pandas.core.frame.DataFrame = None</em>, <em>axis: int = 0</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#lead_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.lead_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes mean values in dataset to specified values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to lead mean</li>
+<li><strong>new_mean</strong> (<em>float</em> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a> <em>, optional</em>) – mean value to lead, if None, dataset from “take_mean_from” used, default None</li>
+<li><strong>take_mean_from</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to take mean value, if None, “new_mean” used, default None</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to change mean, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mean-led dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if mean values to lead are not given, both new_mean and take_mean_from are given or given mean values are wrong</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.learning.modification.lead_std">
+<code class="descclassname">nodestimation.learning.modification.</code><code class="descname">lead_std</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>new_std: Union[float</em>, <em>List[float]] = None</em>, <em>take_std_from: pandas.core.frame.DataFrame = None</em>, <em>axis: int = 0</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#lead_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.lead_std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes standard deviations in dataset to specified values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to lead std</li>
+<li><strong>new_std</strong> (<em>float</em> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a> <em>, optional</em>) – standard deviations to lead, if None, dataset from “take_std_from” used, default None</li>
+<li><strong>take_std_from</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html"><em>pd.DataFrame</em></a>) – dataset to take standard deviations, if None, “new_std” used, default None</li>
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – axis along which to change std, default 0</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">std-led dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – if standard deviations to lead are not given, both new_std and take_std_from are given or given standard deviations are wrong</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="nodestimation.learning.modification.promote">
 <code class="descclassname">nodestimation.learning.modification.</code><code class="descname">promote</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>trigger: Optional[int] = None</em>, <em>optimal: Union[int</em>, <em>str</em>, <em>None] = 'mean'</em>, <em>axis: int = 0</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/nodestimation/learning/modification.html#promote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.learning.modification.promote" title="Permalink to this definition">¶</a></dt>
 <dd><p>Promotes given dataset to optimal value</p>

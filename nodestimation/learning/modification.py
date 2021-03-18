@@ -474,7 +474,7 @@ def clusterize(dataset: pd.DataFrame, n_clusters: int = 5, optimal: str = 'num',
 
     def group(dataset: np.ndarray, n_clusters: int, indices: Iterable, sort: bool = False) -> Dict[Any, List[List[np.ndarray]]]:
         dataset = dataset.copy()
-        cluster_size = dataset.shape[1]//n_clusters
+        cluster_size = dataset.shape[1] // n_clusters
 
         out = dict()
 
@@ -497,18 +497,18 @@ def clusterize(dataset: pd.DataFrame, n_clusters: int = 5, optimal: str = 'num',
                         cluster_count += 1
 
                 group_i += 1
-                out[index][cluster_count - 1].append(row[group_i + cluster_size*(cluster_i - 1) - 1])
+                out[index][cluster_count - 1].append(row[group_i + cluster_size * (cluster_i - 1) - 1])
 
         return out
 
     def symfar(cluster: List[np.ndarray], num: int, n_clusters: int) -> float:
-        if num > n_clusters/2:
+        if num > n_clusters / 2:
             return round(np.max(cluster), 4) + 0.0001
         else:
             return round(np.min(cluster), 4) - 0.0001
 
     def symclose(cluster: List[np.ndarray], num: int, n_clusters: int) -> float:
-        if num > n_clusters/2:
+        if num > n_clusters / 2:
             return round(np.min(cluster), 4) - 0.0001
         else:
             return round(np.max(cluster), 4) + 0.0001
@@ -564,7 +564,165 @@ def clusterize(dataset: pd.DataFrame, n_clusters: int = 5, optimal: str = 'num',
 
     if axis == 0:
         return pd.DataFrame(
-                processed,
+            processed,
+            index=indices,
+            columns=columns
+        )
+    else:
+        return pd.DataFrame(
+            processed.T,
+            index=indices,
+            columns=columns
+        )
+
+
+def lead_std(dataset: pd.DataFrame, new_std: Union[float, List[float]] = None, take_std_from: pd.DataFrame = None, axis: int = 0) -> pd.DataFrame:
+    """Changes standard deviations in dataset to specified values
+
+        :param dataset: dataset to lead std
+        :type dataset: |ipd.DataFrame|_
+        :param new_std: standard deviations to lead, if None, dataset from "take_std_from" used, default None
+        :type new_std: |ifloat| *or* |ilist|_ *of* |ifloat|_ *, optional*
+        :param take_std_from: dataset to take standard deviations, if None, "new_std" used, default None
+        :type take_std_from: |ipd.DataFrame|_
+        :param axis: axis along which to change std, default 0
+        :type axis: int, optional
+        :return: std-led dataset
+        :rtype: pd.DataFrame_
+        :raise ValueError: if standard deviations to lead are not given, both new_std and take_std_from are given or given standard deviations are wrong
+
+        .. _ifloat: https://docs.python.org/3/library/functions.html#float
+
+        .. |ifloat| replace:: *float*
+    """
+
+    def create_optimal_mask(dataset):
+        if axis == 0:
+            dataset = dataset.to_numpy()
+        else:
+            dataset = dataset.to_numpy().T
+
+        return [sample.std() for sample in dataset]
+
+    if new_std is None and take_std_from is None:
+        raise ValueError('Standard deviation to lead is not given')
+
+    if new_std is not None and take_std_from is not None:
+        raise ValueError('new_std and take_std_from cannot be given at the same time')
+
+    columns = dataset.columns
+    indices = dataset.index
+    dataset = dataset.copy()
+
+    if axis == 0:
+        dataset = dataset.to_numpy()
+    else:
+        dataset = dataset.to_numpy().T
+
+    optimal_mask = None
+    if new_std is not None and isinstance(new_std, float):
+        optimal_mask = [new_std for i in range(dataset.shape[0])]
+    elif new_std is not None and isinstance(new_std, list):
+        if len(new_std) != dataset.shape[0]:
+            raise ValueError('new_std must have the same len as row (or column) in given dataset')
+        else:
+            optimal_mask = new_std
+    elif new_std is None and isinstance(take_std_from, pd.DataFrame):
+        optimal_mask = create_optimal_mask(take_std_from)
+    else:
+        if new_std is not None:
+            raise ValueError('new_std should be float or list but {} was given'.format(type(new_std)))
+        elif take_std_from is not None:
+            raise ValueError('take_std_from should be pandas.DataFrame but {} was given'.format(type(take_std_from)))
+
+    processed = dataset.copy()
+
+    for i, optimal_std in zip(range(dataset.shape[0]), optimal_mask):
+        row = np.take(dataset, [i], axis=0)[0]
+
+        m = row.mean()
+        std = row.std()
+        for j in range(dataset.shape[1]):
+            processed[i, j] = m + (optimal_std/std)*(processed[i, j] - m)
+
+    if axis == 0:
+        return pd.DataFrame(
+            processed,
+            index=indices,
+            columns=columns
+        )
+    else:
+        return pd.DataFrame(
+            processed.T,
+            index=indices,
+            columns=columns
+        )
+
+
+def lead_mean(dataset: pd.DataFrame, new_mean: Union[float, List[float]] = None, take_mean_from: pd.DataFrame = None, axis: int = 0) -> pd.DataFrame:
+    """Changes mean values in dataset to specified values
+
+        :param dataset: dataset to lead mean
+        :type dataset: |ipd.DataFrame|_
+        :param new_mean: mean value to lead, if None, dataset from "take_mean_from" used, default None
+        :type new_mean: |ifloat| *or* |ilist|_ *of* |ifloat|_ *, optional*
+        :param take_mean_from: dataset to take mean value, if None, "new_mean" used, default None
+        :type take_mean_from: |ipd.DataFrame|_
+        :param axis: axis along which to change mean, default 0
+        :type axis: int, optional
+        :return: mean-led dataset
+        :rtype: pd.DataFrame_
+        :raise ValueError: if mean values to lead are not given, both new_mean and take_mean_from are given or given mean values are wrong
+    """
+
+    def create_optimal_mask(dataset):
+        if axis == 0:
+            dataset = dataset.to_numpy()
+        else:
+            dataset = dataset.to_numpy().T
+
+        return [sample.mean() for sample in dataset]
+
+    if new_mean is None and take_mean_from is None:
+        raise ValueError('Standard deviation to lead is not given')
+
+    if new_mean is not None and take_mean_from is not None:
+        raise ValueError('new_std and take_std_from cannot be given at the same time')
+
+    columns = dataset.columns
+    indices = dataset.index
+    dataset = dataset.copy()
+
+    if axis == 0:
+        dataset = dataset.to_numpy()
+    else:
+        dataset = dataset.to_numpy().T
+
+    optimal_mask = None
+    if new_mean is not None and isinstance(new_mean, float):
+        optimal_mask = [new_mean for i in range(dataset.shape[0])]
+    elif new_mean is not None and isinstance(new_mean, list):
+        if len(new_mean) != dataset.shape[0]:
+            raise ValueError('new_std must have the same len as row (or column) in given dataset')
+        else:
+            optimal_mask = new_mean
+    elif new_mean is None and isinstance(take_mean_from, pd.DataFrame):
+        optimal_mask = create_optimal_mask(take_mean_from)
+    else:
+        if new_mean is not None:
+            raise ValueError('new_std should be float or list but {} was given'.format(type(new_mean)))
+        elif take_mean_from is not None:
+            raise ValueError('take_std_from should be pandas.DataFrame but {} was given'.format(type(take_mean_from)))
+
+    processed = dataset.copy()
+
+    for i, optimal_mean in zip(range(dataset.shape[0]), optimal_mask):
+        row = np.take(dataset, [i], axis=0)[0]
+        processed[i, :] = processed[i, :] - row.mean() + optimal_mean
+
+    if axis == 0:
+        return pd.DataFrame(
+            processed,
             index=indices,
             columns=columns
         )

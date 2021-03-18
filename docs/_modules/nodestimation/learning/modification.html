@@ -507,7 +507,7 @@
 
     <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]]:</span>
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">cluster_size</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">//</span><span class="n">n_clusters</span>
+        <span class="n">cluster_size</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_clusters</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
@@ -530,18 +530,18 @@
                         <span class="n">cluster_count</span> <span class="o">+=</span> <span class="mi">1</span>
 
                 <span class="n">group_i</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">out</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">cluster_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">group_i</span> <span class="o">+</span> <span class="n">cluster_size</span><span class="o">*</span><span class="p">(</span><span class="n">cluster_i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">cluster_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">group_i</span> <span class="o">+</span> <span class="n">cluster_size</span> <span class="o">*</span> <span class="p">(</span><span class="n">cluster_i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">out</span>
 
     <span class="k">def</span> <span class="nf">symfar</span><span class="p">(</span><span class="n">cluster</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="n">n_clusters</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="n">n_clusters</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cluster</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cluster</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.0001</span>
 
     <span class="k">def</span> <span class="nf">symclose</span><span class="p">(</span><span class="n">cluster</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="n">n_clusters</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="n">n_clusters</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cluster</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.0001</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cluster</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span>
@@ -597,7 +597,165 @@
 
     <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-                <span class="n">processed</span><span class="p">,</span>
+            <span class="n">processed</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">processed</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="lead_std"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.modification.lead_std">[docs]</a><span class="k">def</span> <span class="nf">lead_std</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">new_std</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">take_std_from</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Changes standard deviations in dataset to specified values</span>
+
+<span class="sd">        :param dataset: dataset to lead std</span>
+<span class="sd">        :type dataset: |ipd.DataFrame|_</span>
+<span class="sd">        :param new_std: standard deviations to lead, if None, dataset from &quot;take_std_from&quot; used, default None</span>
+<span class="sd">        :type new_std: |ifloat| *or* |ilist|_ *of* |ifloat|_ *, optional*</span>
+<span class="sd">        :param take_std_from: dataset to take standard deviations, if None, &quot;new_std&quot; used, default None</span>
+<span class="sd">        :type take_std_from: |ipd.DataFrame|_</span>
+<span class="sd">        :param axis: axis along which to change std, default 0</span>
+<span class="sd">        :type axis: int, optional</span>
+<span class="sd">        :return: std-led dataset</span>
+<span class="sd">        :rtype: pd.DataFrame_</span>
+<span class="sd">        :raise ValueError: if standard deviations to lead are not given, both new_std and take_std_from are given or given standard deviations are wrong</span>
+
+<span class="sd">        .. _ifloat: https://docs.python.org/3/library/functions.html#float</span>
+
+<span class="sd">        .. |ifloat| replace:: *float*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">create_optimal_mask</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">sample</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">new_std</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">take_std_from</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Standard deviation to lead is not given&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">new_std</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">take_std_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;new_std and take_std_from cannot be given at the same time&#39;</span><span class="p">)</span>
+
+    <span class="n">columns</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">optimal_mask</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">new_std</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_std</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">optimal_mask</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_std</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+    <span class="k">elif</span> <span class="n">new_std</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_std</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_std</span><span class="p">)</span> <span class="o">!=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;new_std must have the same len as row (or column) in given dataset&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optimal_mask</span> <span class="o">=</span> <span class="n">new_std</span>
+    <span class="k">elif</span> <span class="n">new_std</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">take_std_from</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">optimal_mask</span> <span class="o">=</span> <span class="n">create_optimal_mask</span><span class="p">(</span><span class="n">take_std_from</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">new_std</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;new_std should be float or list but </span><span class="si">{}</span><span class="s1"> was given&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">new_std</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">take_std_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;take_std_from should be pandas.DataFrame but </span><span class="si">{}</span><span class="s1"> was given&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">take_std_from</span><span class="p">)))</span>
+
+    <span class="n">processed</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">optimal_std</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">optimal_mask</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">processed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="p">(</span><span class="n">optimal_std</span><span class="o">/</span><span class="n">std</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">processed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">processed</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">processed</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="lead_mean"><a class="viewcode-back" href="../../../nodestimation.learning.html#nodestimation.learning.modification.lead_mean">[docs]</a><span class="k">def</span> <span class="nf">lead_mean</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">new_mean</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">take_mean_from</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Changes mean values in dataset to specified values</span>
+
+<span class="sd">        :param dataset: dataset to lead mean</span>
+<span class="sd">        :type dataset: |ipd.DataFrame|_</span>
+<span class="sd">        :param new_mean: mean value to lead, if None, dataset from &quot;take_mean_from&quot; used, default None</span>
+<span class="sd">        :type new_mean: |ifloat| *or* |ilist|_ *of* |ifloat|_ *, optional*</span>
+<span class="sd">        :param take_mean_from: dataset to take mean value, if None, &quot;new_mean&quot; used, default None</span>
+<span class="sd">        :type take_mean_from: |ipd.DataFrame|_</span>
+<span class="sd">        :param axis: axis along which to change mean, default 0</span>
+<span class="sd">        :type axis: int, optional</span>
+<span class="sd">        :return: mean-led dataset</span>
+<span class="sd">        :rtype: pd.DataFrame_</span>
+<span class="sd">        :raise ValueError: if mean values to lead are not given, both new_mean and take_mean_from are given or given mean values are wrong</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">create_optimal_mask</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">sample</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">new_mean</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">take_mean_from</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Standard deviation to lead is not given&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">new_mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">take_mean_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;new_std and take_std_from cannot be given at the same time&#39;</span><span class="p">)</span>
+
+    <span class="n">columns</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">optimal_mask</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">new_mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_mean</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">optimal_mask</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_mean</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+    <span class="k">elif</span> <span class="n">new_mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_mean</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_mean</span><span class="p">)</span> <span class="o">!=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;new_std must have the same len as row (or column) in given dataset&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optimal_mask</span> <span class="o">=</span> <span class="n">new_mean</span>
+    <span class="k">elif</span> <span class="n">new_mean</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">take_mean_from</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">optimal_mask</span> <span class="o">=</span> <span class="n">create_optimal_mask</span><span class="p">(</span><span class="n">take_mean_from</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">new_mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;new_std should be float or list but </span><span class="si">{}</span><span class="s1"> was given&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">new_mean</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">take_mean_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;take_std_from should be pandas.DataFrame but </span><span class="si">{}</span><span class="s1"> was given&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">take_mean_from</span><span class="p">)))</span>
+
+    <span class="n">processed</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">optimal_mean</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">optimal_mask</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">processed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">processed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">row</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">+</span> <span class="n">optimal_mean</span>
+
+    <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">processed</span><span class="p">,</span>
             <span class="n">index</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
             <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
         <span class="p">)</span>
