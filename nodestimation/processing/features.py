@@ -88,7 +88,7 @@ def prepare_features(label_names: List[str], features: Features, centrality_metr
                 'wpli': prepare_spectral_connectivity,
                 'wpli2_debiased': prepare_spectral_connectivity,
             }[method](label_names, features[freq_band][method])
-            for method in features[freq_band] if method != 'pearson' and method != 'envelope'
+            for method in features[freq_band]
         } for freq_band in features
     }
 
