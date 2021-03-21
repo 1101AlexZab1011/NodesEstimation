@@ -789,7 +789,7 @@ def features_computation(
             for label in labels
         ])
 
-    def correlationenvelope_connectivity_computation(input: tuple) -> np.ndarray:
+    def correlation_connectivity_computation(input: tuple) -> np.ndarray:
         label_ts, sfreq, fmin, fmax, method = input
 
         if isinstance(label_ts, list):
@@ -848,8 +848,8 @@ def features_computation(
                 'pli2_unbiased': spectral_connectivity_computation,
                 'wpli': spectral_connectivity_computation,
                 'wpli2_debiased': spectral_connectivity_computation,
-                'envelope': correlationenvelope_connectivity_computation,
-                'pearson': correlationenvelope_connectivity_computation
+                'envelope': correlation_connectivity_computation,
+                'pearson': correlation_connectivity_computation
             }[method](
                 switch_params(
                     epochs,

@@ -51,16 +51,7 @@ def prepare_features(label_names: List[str], features: Features, centrality_metr
                 } for metric in centrality
         }
 
-    def prepare_psd(label_names: List[str], psd: np.ndarray) -> Dict[str, float]:
-        psd = {
-            label: np.sum(row.mean(axis=0))
-            for label, row in zip(label_names, psd)
-        }
-        return {
-            metric: psd for metric in centrality
-        }
-
-    def prepare_time_domain_connectivity(label_names: List[str], connectivity: np.ndarray) -> Dict[str, float]:
+    def prepare_correlation_connectivity(label_names: List[str], connectivity: np.ndarray) -> Dict[str, float]:
         conmat_full = {
             metric: centrality[metric](connectivity)
             for metric in centrality
@@ -71,6 +62,15 @@ def prepare_features(label_names: List[str], features: Features, centrality_metr
                     label: row
                     for label, row in zip(label_names, conmat_full[metric])
                 } for metric in centrality
+        }
+
+    def prepare_psd(label_names: List[str], psd: np.ndarray) -> Dict[str, float]:
+        psd = {
+            label: np.sum(row.mean(axis=0))
+            for label, row in zip(label_names, psd)
+        }
+        return {
+            metric: psd for metric in centrality
         }
 
     out = {
@@ -87,18 +87,12 @@ def prepare_features(label_names: List[str], features: Features, centrality_metr
                 'pli2_unbiased': prepare_spectral_connectivity,
                 'wpli': prepare_spectral_connectivity,
                 'wpli2_debiased': prepare_spectral_connectivity,
+                'pearson': prepare_correlation_connectivity,
+                'envelope': prepare_correlation_connectivity
             }[method](label_names, features[freq_band][method])
             for method in features[freq_band]
         } for freq_band in features
     }
-
-    if 'time-domain' in features:
-        upd = {'time-domain': {}}
-        if 'pearson' in features['time-domain']:
-            upd['time-domain'].update({'pearson': prepare_time_domain_connectivity(label_names, features['time-domain']['pearson'])})
-        if 'envelope' in features['time-domain']:
-            upd['time-domain'].update({'envelope': prepare_time_domain_connectivity(label_names, features['time-domain']['envelope'])})
-        out.update(upd)
 
     return out
 
