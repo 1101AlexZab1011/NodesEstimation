@@ -803,7 +803,7 @@ def features_computation(
             s = filtered_label_ts[i, :]
             f_signal = rfft(s)
             cut_f_signal = f_signal.copy()
-            cut_f_signal[(np.abs(w) < fmin)], cut_f_signal[(np.abs(w) > fmax)] = (0, 0)
+            cut_f_signal[(np.abs(w) < fmin)], cut_f_signal[(np.abs(w) > fmax)] = (10**-10, 10**-10)
             cs = irfft(cut_f_signal)
             filtered_label_ts[i, :] = cs
 
