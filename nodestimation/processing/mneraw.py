@@ -745,22 +745,24 @@ def features_computation(
         if isinstance(label_ts, list):
             label_ts = np.array(label_ts)
 
-        # filtering
-        dt = 1/sfreq
-        w = fftfreq(label_ts.shape[1], d=dt)
-        filtered_label_ts = label_ts.copy()
-        for i in range(label_ts.shape[0]):
-            s = filtered_label_ts[i, :]
-            f_signal = rfft(s)
-            cut_f_signal = f_signal.copy()
-            cut_f_signal[(np.abs(w) < fmin)], cut_f_signal[(np.abs(w) > fmax)] = (10**-10, 10**-10)
-            cs = irfft(cut_f_signal)
-            filtered_label_ts[i, :] = cs
+        label_ts = mne.filter.filter_data(label_ts, sfreq, l_freq=fmin, h_freq=fmax, method='fir', copy=True)
+
+        # # filtering
+        # dt = 1/sfreq
+        # w = fftfreq(label_ts.shape[1], d=dt)
+        # filtered_label_ts = label_ts.copy()
+        # for i in range(label_ts.shape[0]):
+        #     s = filtered_label_ts[i, :]
+        #     f_signal = rfft(s)
+        #     cut_f_signal = f_signal.copy()
+        #     cut_f_signal[(np.abs(w) < fmin)], cut_f_signal[(np.abs(w) > fmax)] = (10**-10, 10**-10)
+        #     cs = irfft(cut_f_signal)
+        #     filtered_label_ts[i, :] = cs
 
         return {
             'pearson': pearson_ts,
             'envelope': mne.connectivity.envelope_correlation
-        }[method](filtered_label_ts)
+        }[method](label_ts)
 
     def switch_params(
             epochs: mne.Epochs,
