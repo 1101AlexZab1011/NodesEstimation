@@ -9,11 +9,13 @@ from nodestimation.project.structures import file_save_format, file_search_regex
 import hashlib
 
 
-def conditions_unique_code(*args) -> str:
+def conditions_unique_code(*args, **kwargs) -> str:
     """creates code which lets to identify given conditions (whether this condition appears at the first time or computations are already done)
 
         :param args: any arguments of function to create code
-        :type args: any
+        :type args: Any
+        :param kwargs: any key arguments of function to create code
+        :type kwargs: Any
         :return: unique code related to given arguments
         :rtype: str
     """
@@ -21,6 +23,11 @@ def conditions_unique_code(*args) -> str:
     out = ''
     for arg in args:
         out += str(arg)
+
+    if kwargs:
+        for kwarg in kwargs:
+            out += str(kwargs[kwarg])
+
     return hashlib.md5(bytes(out, 'utf-8')).hexdigest()
 
 
@@ -261,7 +268,7 @@ def is_allowed_target(path: str, conditions: str) -> bool:
             Code created by :func:`nodestimation.project.conditions_unique_code` for arguments given to :func:`nodestimation.pipeline.pipeline`
     """
 
-    if 'node_estimation_pipeline_file' in path and conditions not in path:
+    if 'nodes_estimation_pipeline_file' in path and conditions not in path:
         return False
     else:
         return True
@@ -286,8 +293,8 @@ def target_exists(paths: Union[str, List[str]], target: str, conditions: str) ->
     try:
         out = {
             'any': any([is_allowed_target(file, conditions) for file in paths]),
-            'nepf': any(['node_estimation_pipeline_file' in file and is_allowed_target(file, conditions) for file in paths]),
-            'original': any(['node_estimation_pipeline_file' not in file for file in paths])
+            'nepf': any(['nodes_estimation_pipeline_file' in file and is_allowed_target(file, conditions) for file in paths]),
+            'original': any(['nodes_estimation_pipeline_file' not in file for file in paths])
         }[target]
 
     except KeyError:
@@ -318,8 +325,8 @@ def is_target(path: str, target: str, conditions: str) -> bool:
     """
     return {
         'any': is_allowed_target(path, conditions),
-        'nepf': 'node_estimation_pipeline_file' in path and is_allowed_target(path, conditions),
-        'original': 'node_estimation_pipeline_file' not in path
+        'nepf': 'nodes_estimation_pipeline_file' in path and is_allowed_target(path, conditions),
+        'original': 'nodes_estimation_pipeline_file' not in path
     }[target]
 
 
@@ -396,19 +403,17 @@ def read_or_write(type: str, search_target: str = 'any', read_file: bool = True,
 
             out = None
             types_found = False
+            home = 'NodesEstimationFiles'
 
             if '_subject_tree' in kwargs:
                 meta, tree = kwargs['_subject_tree']
             else:
                 raise OSError('{}: subject_tree parameter is lost'.format(func.__name__))
 
-            if kwargs['_conditions'] is not None:
-                conditions = kwargs['_conditions']
-                check_path(
-                    os.path.join(meta['path'], conditions)
-                )
-            else:
-                conditions = ''
+            check_path(
+                os.path.join(meta['path'], home)
+            )
+            conditions = conditions_unique_code(*args, **kwargs)
 
             if '_priority' in kwargs:
                 priority = kwargs['_priority']
@@ -452,17 +457,28 @@ def read_or_write(type: str, search_target: str = 'any', read_file: bool = True,
 
                 if write_file and all([arg is not None for arg in main_args]):
                     out = func(*args, **kwargs)
-                    path_to_file = os.path.join(
-                        meta['path'],
-                        conditions,
-                        meta['subject'] +
-                        '_node_estimation_pipeline_file_' +
-                        func.__name__ +
-                        '_output_' +
-                        type +
-                        '.' +
-                        file_save_format[type]
-                    )
+                    if search_target == 'original':
+                        path_to_file = os.path.join(
+                            meta['path'],
+                            home,
+                            meta['subject'] +
+                            func.__name__ +
+                            type +
+                            '.' +
+                            file_save_format[type]
+                        )
+                    else:
+                        path_to_file = os.path.join(
+                            meta['path'],
+                            home,
+                            meta['subject'] +
+                            conditions +
+                            '_nodes_estimation_pipeline_file_' +
+                            func.__name__ +
+                            type +
+                            '.' +
+                            file_save_format[type]
+                        )
                     save[type](path_to_file, out)
                     print('Done. Path to new file: {}'
                           .format(path_to_file))

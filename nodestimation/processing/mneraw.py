@@ -83,7 +83,6 @@ def artifacts_clean(raw: mne.io.Raw, n_components: Optional[Union[int, float, No
 def read_original_raw(
         path: Union[str, None],
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.io.Raw:
     """reads not processed raw_ data, uses :func:`nodestimation.project.read_or_write` decorator
@@ -92,8 +91,6 @@ def read_original_raw(
         :type path: str
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: read raw_ object
@@ -111,7 +108,6 @@ def first_processing(
         meg: Optional[bool] = True,
         eeg: Optional[bool] = True,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.io.Raw:
     """processes_ given raw_ object, uses :func:`nodestimation.project.read_or_write` decorator
@@ -134,8 +130,6 @@ def first_processing(
         :type eeg: bool, optional
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: processed raw_ object
@@ -177,7 +171,6 @@ def bem_computation(
         subjects_dir: str,
         conductivity: tuple,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.bem.ConductorModel:
     """Computes bem_ solution, uses :func:`nodestimation.project.read_or_write` decorator
@@ -190,8 +183,6 @@ def bem_computation(
         :type conductivity: tuple
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: bem_ solution
@@ -212,7 +203,6 @@ def src_computation(
         bem: mne.bem.ConductorModel,
         volume: Optional[bool] = False,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> Union[mne.SourceSpaces, List[mne.SourceSpaces]]:
     """computes `source spaces`_ solution, uses :func:`nodestimation.project.read_or_write` decorator
@@ -229,8 +219,6 @@ def src_computation(
         :type volume: bool, optional
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: `source spaces`_ solution
@@ -274,7 +262,6 @@ def src_computation(
 def read_original_trans(
         path: Union[str, None],
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> Union[dict, List[dict]]:
     """reads given `transformation matrix`_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -283,8 +270,6 @@ def read_original_trans(
         :type path: str
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: read `transformation matrix`_
@@ -307,7 +292,6 @@ def forward_computation(
         src: mne.SourceSpaces,
         bem: mne.bem.ConductorModel,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.forward.Forward:
     """computes `forward solution`_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -322,8 +306,6 @@ def forward_computation(
         :type bem: mne.bem.ConductorModel_
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: `forward solution`_
@@ -347,7 +329,6 @@ def events_computation(
         time_points: Union[List[int], range, np.ndarray],
         ids: List[int],
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> np.ndarray:
     """creates events for given raw_ object, uses :func:`nodestimation.project.read_or_write` decorator
@@ -360,8 +341,6 @@ def events_computation(
         :type ids: |ilist|_ *of* |iint|_
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: array of events
@@ -383,7 +362,6 @@ def epochs_computation(
         tmin: int,
         tmax: int,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.Epochs:
     """creates epochs_ from given raw_ object, uses :func:`nodestimation.project.read_or_write` decorator
@@ -398,8 +376,6 @@ def epochs_computation(
             :type tmax: int
             :param _subject_tree: representation of patient`s files structure, default None
             :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-            :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-            :type _conditions: str, optional
             :param _priority: if several files are read, which one to choose, if None, read all of them, default None
             :type _priority: int, optional
             :return: array of events
@@ -421,7 +397,6 @@ def noise_covariance_computation(
         tmin: int,
         tmax: int,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.Covariance:
     """computes `covariance matrix`_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -434,8 +409,6 @@ def noise_covariance_computation(
         :type tmax: int
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: `covariance matrix`_
@@ -456,7 +429,6 @@ def noise_covariance_computation(
 def evokeds_computation(
         epochs: mne.Epochs,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.Evoked:
     """computes evokeds_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -465,8 +437,6 @@ def evokeds_computation(
         :type epochs: |imne.Epochs|_
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: evoked_ data
@@ -486,7 +456,6 @@ def inverse_computation(
         fwd: mne.Forward,
         cov: mne.Covariance,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> mne.minimum_norm.inverse.InverseOperator:
     """computes `inverse solution`_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -499,8 +468,6 @@ def inverse_computation(
         :type cov: |imne.Covariance|_
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: `source spaces`_ solution
@@ -524,7 +491,6 @@ def source_estimation(
         lambda2: Union[int, float],
         method: str,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> List[mne.SourceEstimate]:
     """computes `source estimation`_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -539,8 +505,6 @@ def source_estimation(
         :type method: str
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: `source estimation`_ for epoched_ data
@@ -566,7 +530,6 @@ def coordinates_computation(
         subjects_dir: str,
         labels: List[mne.Label],
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> Dict[str, np.ndarray]:
     """computes central coordinates for given brain regions, uses :func:`nodestimation.project.read_or_write` decorator
@@ -579,8 +542,6 @@ def coordinates_computation(
         :type labels: |ilist|_ *of* |imne.Label|_
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: central coordinates relatively to brain region names
@@ -605,7 +566,6 @@ def coordinates_computation(
 def read_original_resec(
         path: Union[str, None],
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> Any:
     """reads given `resection map`_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -614,8 +574,6 @@ def read_original_resec(
         :type path: str
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: read `resection map`_
@@ -628,15 +586,13 @@ def read_original_resec(
 
 
 @read_or_write('resec_mni')
-def resection_area_computation(img: Any, _subject_tree=None, _conditions=None, _priority=None):
+def resection_area_computation(img: Any, _subject_tree=None, _priority=None):
     """turns given `resection map`_ into mni_ coordinate system, uses :func:`nodestimation.project.read_or_write` decorator
 
         :param img: `resection map`_
         :type img: Any
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: resection area
@@ -674,7 +630,6 @@ def resection_area_computation(img: Any, _subject_tree=None, _conditions=None, _
 def read_original_resec_txt(
         path: Union[None, str],
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> str:
     """reads given resection area text description, uses :func:`nodestimation.project.read_or_write` decorator
@@ -683,8 +638,6 @@ def read_original_resec_txt(
         :type path: str
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, default True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: read resection area text description
@@ -708,7 +661,6 @@ def features_computation(
         methods: Union[str, List[str]],
         se_method: str,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> Features:
     """computes `features <nodestimation.html#list-of-metrics>`_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -735,8 +687,6 @@ def features_computation(
         :type se_method: str
         :param _subject_tree: representation of patient`s files structure, default None
         :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-        :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-        :type _conditions: str, optional
         :param _priority: if several files are read, which one to choose, if None, read all of them, default None
         :type _priority: int, optional
         :return: computed features
@@ -880,7 +830,6 @@ def nodes_creation(
         resec_coordinates: Union[None, np.ndarray],
         resec_txt: str,
         _subject_tree: Optional[SubjectTree] = None,
-        _conditions: Optional[str] = None,
         _priority: Optional[int] = None
 ) -> List[Node]:
     """computes `features <nodestimation.html#list-of-metrics>`_, uses :func:`nodestimation.project.read_or_write` decorator
@@ -897,8 +846,6 @@ def nodes_creation(
             :type resec_txt: str
             :param _subject_tree: representation of patient`s files structure, default None
             :type _subject_tree: *look for SubjectTree in* :mod:`nodestimation.project.annotations` *, optional*
-            :param _conditions: output from :func:`nodestimation.project.conditions_unique_code`, defaults to True
-            :type _conditions: str, optional
             :param _priority: if several files are read, which one to choose, if None, read all of them, default None
             :type _priority: int, optional
             :return: computed nodes
