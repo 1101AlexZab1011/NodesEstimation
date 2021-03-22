@@ -462,7 +462,9 @@ def read_or_write(type: str, search_target: str = 'any', read_file: bool = True,
                             meta['path'],
                             home,
                             meta['subject'] +
+                            '_' +
                             func.__name__ +
+                            '_' +
                             type +
                             '.' +
                             file_save_format[type]
@@ -472,10 +474,12 @@ def read_or_write(type: str, search_target: str = 'any', read_file: bool = True,
                             meta['path'],
                             home,
                             meta['subject'] +
-                            conditions +
                             '_nodes_estimation_pipeline_file_' +
                             func.__name__ +
+                            '_' +
                             type +
+                            '_' +
+                            conditions +
                             '.' +
                             file_save_format[type]
                         )
