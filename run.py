@@ -15,4 +15,5 @@ subjects = pipeline(
 
 for subject in subjects:
     epochs = read['epo'](subject.data['epo'])
-    epochs.plot_psd()
+    epochs.plot_psd(picks='meg')
+    plt.title(subject.name)
