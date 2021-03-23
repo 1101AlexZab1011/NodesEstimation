@@ -1,4 +1,6 @@
 import numpy as np
+from mne.minimum_norm import compute_source_psd
+
 from nodestimation.pipeline import pipeline
 import nilearn.plotting as nplt
 import matplotlib.pyplot as plt
@@ -11,3 +13,6 @@ subjects = pipeline(
 )
 
 
+for subject in subjects:
+    epochs = read['epo'](subject.data['epo'])
+    epochs.plot_psd()
