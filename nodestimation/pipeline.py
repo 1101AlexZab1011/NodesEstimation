@@ -80,7 +80,7 @@ class DefaultPipelineBuffer(AbstractPipelineBuffer):
 
     def __init__(self, *args):
         if not self.instance.__dict__:
-            self.__keys = list(pipeline.__annotations__.keys())[:-1]
+            self.__keys = list(pipeline.__annotations__.keys())[:-2]
             if len(args) < len(self.__keys):
                 raise ValueError('Input data too small')
             elif len(args) > len(self.__keys):
