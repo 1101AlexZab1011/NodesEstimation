@@ -299,48 +299,49 @@ def pipeline(
             subject_tree_metadata = tree[subject_name][0]
             subject_file = os.path.join(subject_tree_metadata['path'], 'subject_information_for_' + conditions_code + '.pkl')
 
-            if sbuffer is not None and subject_name in sbuffer:
-                crop_time,\
-                snr,\
-                epochs_tmin,\
-                epochs_tmax,\
-                conductivity,\
-                se_method,\
-                methods,\
-                centrality_metrics,\
-                rfreq,\
-                nfreq,\
-                lfreq,\
-                hfreq,\
-                freq_bands = sbuffer[subject_name].get_items()
-            else:
-                crop_time, \
-                snr, \
-                epochs_tmin, \
-                epochs_tmax, \
-                conductivity, \
-                se_method, \
-                methods, \
-                centrality_metrics, \
-                rfreq, \
-                nfreq, \
-                lfreq, \
-                hfreq, \
-                freq_bands = dbuffer.get_items()
-
-            if not isinstance(methods, list):
-                methods = [methods]
-            if not isinstance(freq_bands, list):
-                freq_bands = [freq_bands]
-            if any([not isinstance(freq_band, tuple) for freq_band in freq_bands]) \
-                    or any([len(freq_band) % 2 != 0 for freq_band in freq_bands]):
-                raise ValueError('freq_bands must contain a list of frequency bands with [minimum_frequency, maximum_frequency]'
-                                 ' or list of lists with frequency bands, however it contains: {}'.format(freq_bands))
-
             if os.path.exists(subject_file):
                 print('All computation has been already done, loading of the existing file with the solution...')
                 subject = read_subject(subject_file)
             else:
+
+                if sbuffer is not None and subject_name in sbuffer:
+                    crop_time, \
+                    snr, \
+                    epochs_tmin, \
+                    epochs_tmax, \
+                    conductivity, \
+                    se_method, \
+                    methods, \
+                    centrality_metrics, \
+                    rfreq, \
+                    nfreq, \
+                    lfreq, \
+                    hfreq, \
+                    freq_bands = sbuffer[subject_name].get_items()
+                else:
+                    crop_time, \
+                    snr, \
+                    epochs_tmin, \
+                    epochs_tmax, \
+                    conductivity, \
+                    se_method, \
+                    methods, \
+                    centrality_metrics, \
+                    rfreq, \
+                    nfreq, \
+                    lfreq, \
+                    hfreq, \
+                    freq_bands = dbuffer.get_items()
+
+                if not isinstance(methods, list):
+                    methods = [methods]
+                if not isinstance(freq_bands, list):
+                    freq_bands = [freq_bands]
+                if any([not isinstance(freq_band, tuple) for freq_band in freq_bands]) \
+                        or any([len(freq_band) % 2 != 0 for freq_band in freq_bands]):
+                    raise ValueError('freq_bands must contain a list of frequency bands with [minimum_frequency, maximum_frequency]'
+                                     ' or list of lists with frequency bands, however it contains: {}'.format(freq_bands))
+
                 raw, raw_path = read_original_raw(None, _subject_tree=tree[subject_name], _conditions=None, _priority=0)
                 fp_raw, fp_raw_path = first_processing(raw,
                                                        lfreq,
