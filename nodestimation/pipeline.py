@@ -489,4 +489,6 @@ def pipeline(
 
         print('Successfully saved')
 
+        del dbuffer
+
         return subjects
