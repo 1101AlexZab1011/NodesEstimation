@@ -1,0 +1,1012 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>nodestimation.processing package &#8212; NodesEstimation  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="nodestimation.project package" href="nodestimation.project.html" />
+    <link rel="prev" title="nodestimation.learning package" href="nodestimation.learning.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="nodestimation-processing-package">
+<h1>nodestimation.processing package<a class="headerlink" href="#nodestimation-processing-package" title="Permalink to this headline">¶</a></h1>
+<p>A package providing algorithms for data processing in the context of NodesEstimation project</p>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="nodestimation-processing-connectivity-module">
+<h2>nodestimation.processing.connectivity module<a class="headerlink" href="#nodestimation-processing-connectivity-module" title="Permalink to this headline">¶</a></h2>
+<p>Module providing algorithms for <a class="reference external" href="https://en.wikipedia.org/wiki/Resting_state_fMRI#Functional">functional connectivity</a> computations</p>
+<span class="target" id="module-nodestimation.processing.connectivity"></span><dl class="function">
+<dt id="nodestimation.processing.connectivity.do_nothing">
+<code class="descclassname">nodestimation.processing.connectivity.</code><code class="descname">do_nothing</code><span class="sig-paren">(</span><em>sig</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/processing/connectivity.html#do_nothing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.connectivity.do_nothing" title="Permalink to this definition">¶</a></dt>
+<dd><p>does exactly what its name says</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sig</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – signal or set of signals</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the given signal/set of signals</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.connectivity.pearson">
+<code class="descclassname">nodestimation.processing.connectivity.</code><code class="descname">pearson</code><span class="sig-paren">(</span><em>signals: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/connectivity.html#pearson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.connectivity.pearson" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>computes <a class="reference external" href="https://en.wikipedia.org/wiki/Pearson_correlation_coefficient">Pearson’s correlation coefficients</a> map used in</dt>
+<dd><a class="reference internal" href="#nodestimation.processing.timewindow.sliding_window" title="nodestimation.processing.timewindow.sliding_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.processing.timewindow.sliding_window()</span></code></a> for 400-dots with 50% overlapping</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>signals</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – set of signals</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">signal-to-signal pearson`s correlations map</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.connectivity.pearson_ts">
+<code class="descclassname">nodestimation.processing.connectivity.</code><code class="descname">pearson_ts</code><span class="sig-paren">(</span><em>label_ts: List[numpy.ndarray]</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/connectivity.html#pearson_ts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.connectivity.pearson_ts" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="https://en.wikipedia.org/wiki/Pearson_correlation_coefficient">Pearson’s correlation coefficients</a> map for list of signals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>label_ts</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – list of signals</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">signal-to-signal pearson`s correlations map</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.connectivity.phase_locking_value">
+<code class="descclassname">nodestimation.processing.connectivity.</code><code class="descname">phase_locking_value</code><span class="sig-paren">(</span><em>signals: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/connectivity.html#phase_locking_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.connectivity.phase_locking_value" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>computes <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3674231/">Phase Locking Value coefficients</a> map used in</dt>
+<dd><a class="reference internal" href="#nodestimation.processing.timewindow.sliding_window" title="nodestimation.processing.timewindow.sliding_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.processing.timewindow.sliding_window()</span></code></a> for 400-dots with 50% overlapping</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>signals</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – set of signals</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">signal-to-signal pearson`s correlations map</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="nodestimation-processing-features-module">
+<h2>nodestimation.processing.features module<a class="headerlink" href="#nodestimation-processing-features-module" title="Permalink to this headline">¶</a></h2>
+<p>Module providing algorithms to create <a class="reference external" href="nodestimation.learning.html#feature">features</a></p>
+<span class="target" id="module-nodestimation.processing.features"></span><dl class="function">
+<dt id="nodestimation.processing.features.iterp_for_psd">
+<code class="descclassname">nodestimation.processing.features.</code><code class="descname">iterp_for_psd</code><span class="sig-paren">(</span><em>psd: numpy.ndarray</em>, <em>n_samples: int</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/features.html#iterp_for_psd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.iterp_for_psd" title="Permalink to this definition">¶</a></dt>
+<dd><p>resamples given psd using <a class="reference external" href="https://en.wikipedia.org/wiki/Interpolation">interpolation</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>psd</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – array with <a class="reference external" href="https://en.wikipedia.org/wiki/Spectral_density">power spectral destinies</a></li>
+<li><strong>n_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – <p>how much samples given psd should have after <a class="reference external" href="https://en.wikipedia.org/wiki/Interpolation">interpolation</a></p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">interpolated psd</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.features.prepare_data">
+<code class="descclassname">nodestimation.processing.features.</code><code class="descname">prepare_data</code><span class="sig-paren">(</span><em>nodes: List[nodestimation.Node], centrality_metrics: Union[str, List[str]], _subject_tree: Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]] = None, _conditions: str = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, pandas.core.frame.DataFrame]<a class="reference internal" href="_modules/nodestimation/processing/features.html#prepare_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.prepare_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>for each centrality metric creates  <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a> from <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a> <a class="reference external" href="nodestimation.learning.html#feature">features</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>nodes</strong> (<a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a>) – nodes to take information</li>
+<li><strong>centrality_metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>, optional) – <a class="reference external" href="nodestimation.html#centrality-metrics">centrality metrics</a> to compute, default “eigen”</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_conditions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – output from <a class="reference internal" href="nodestimation.project.html#nodestimation.project.conditions_unique_code" title="nodestimation.project.conditions_unique_code"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.conditions_unique_code()</span></code></a>, default True</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dataset with patient`s information</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pd.DataFrame</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.features.prepare_features">
+<code class="descclassname">nodestimation.processing.features.</code><code class="descname">prepare_features</code><span class="sig-paren">(</span><em>label_names: List[str], features: Dict[str, Dict[str, numpy.ndarray]], centrality_metrics: Union[str, List[str]]</em><span class="sig-paren">)</span> &#x2192; Dict[str, Dict[str, Dict[str, Dict[str, float]]]]<a class="reference internal" href="_modules/nodestimation/processing/features.html#prepare_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.features.prepare_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <a class="reference external" href="nodestimation.html#list-of-metrics">required metrics</a> for each <a class="reference external" href="https://mne.tools/dev/generated/mne.Label.html">label</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>label_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – <p><a class="reference external" href="https://mne.tools/dev/generated/mne.Label.html">label</a> names</p>
+</li>
+<li><strong>features</strong> (<em>look for Features in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a>) – <p><a class="reference external" href="nodestimation.learning.html#feature">features</a> to compute</p>
+</li>
+<li><strong>centrality_metrics</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – <p><a class="reference external" href="nodestimation.html#centrality-metrics">centrality metrics</a> to compute, default “eigen”</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dictionary with label names to computed features</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">look for LabelsFeatures in <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="nodestimation-processing-mneraw-module">
+<h2>nodestimation.processing.mneraw module<a class="headerlink" href="#nodestimation-processing-mneraw-module" title="Permalink to this headline">¶</a></h2>
+<p>A module providing algorithms for brain data processing using <a class="reference external" href="https://mne.tools/stable/index.html">mne-tools</a></p>
+<span class="target" id="module-nodestimation.processing.mneraw"></span><dl class="function">
+<dt id="nodestimation.processing.mneraw.artifacts_clean">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">artifacts_clean</code><span class="sig-paren">(</span><em>raw: mne.io.fiff.raw.Raw</em>, <em>n_components: Union[int</em>, <em>float</em>, <em>None] = 15</em>, <em>method: Optional[str] = 'correlation'</em>, <em>threshold: Union[float</em>, <em>str</em>, <em>None] = 3.0</em><span class="sig-paren">)</span> &#x2192; mne.io.fiff.raw.Raw<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#artifacts_clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.artifacts_clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>makes <a class="reference external" href="https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data">artifacts</a> cleaning
+of <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object using <a class="reference external" href="https://en.wikipedia.org/wiki/Independent_component_analysis">ICA</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>raw</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html"><em>mne.io.raw</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> to filter</li>
+<li><strong>n_components</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a> <em>, optional</em>) – number of principal components (from the pre-whitening PCA step) that are passed to the <a class="reference external" href="https://mne.tools/stable/generated/mne.preprocessing.ICA.html">ICA algorithm</a> during fitting, default 15</li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – <p>The method used in the <a class="reference external" href="https://mne.tools/stable/generated/mne.preprocessing.ICA.html?highlight=ica%20find_bads_ecg#mne.preprocessing.ICA.find_bads_ecg">algorithm</a>
+for detection <a class="reference external" href="https://en.wikipedia.org/wiki/Electrocardiography">ecg</a> or <a class="reference external" href="https://en.wikipedia.org/wiki/Electrooculography">eog</a>
+<a class="reference external" href="https://en.wikipedia.org/wiki/Independent_component_analysis">ICA</a> components, can be either
+“ctps” (<a class="reference external" href="https://www.researchgate.net/publication/23302818_Integration_of_Amplitude_and_Phase_Statistics_for_Complete_Artifact_Removal_in_Independent_Components_of_Neuromagnetic_Recordings">cross-trial phase statistics</a>) or
+<a class="reference external" href="https://en.wikipedia.org/wiki/Pearson_correlation_coefficient">“correlation”</a></p>
+</li>
+<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>, optional</em>) – The value above which a feature is classified as outlier, can be computed automatically if given value is “auto”, default depends from method (look for
+<a class="reference external" href="https://mne.tools/stable/generated/mne.preprocessing.ICA.html?highlight=ica%20find_bads_ecg#mne.preprocessing.ICA.find_bads_ecg">original function</a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">cleaned <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">mne.io.raw</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.bem_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">bem_computation</code><span class="sig-paren">(</span><em>subject: str, subjects_dir: str, conductivity: tuple, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; mne.bem.ConductorModel<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#bem_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.bem_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel">bem</a> solution, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subject</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – patient`s ID</li>
+<li><strong>subjects_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to directory with patient`s files</li>
+<li><strong>conductivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – the conductivities to use for each brain tissue shell. Single element for single-layer model or three elements for three-layer model</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel">bem</a> solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel">mne.bem.ConductorModel</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.coordinates_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">coordinates_computation</code><span class="sig-paren">(</span><em>subject: str, subjects_dir: str, labels: List[mne.label.Label], _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, numpy.ndarray]<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#coordinates_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.coordinates_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes central coordinates for given brain regions, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subject</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – patient`s ID</li>
+<li><strong>subjects_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to directory with patient`s files</li>
+<li><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label"><em>mne.Label</em></a>) – brain regions representation</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">central coordinates relatively to brain region names</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict"><em>dict</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>to</em> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.epochs_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">epochs_computation</code><span class="sig-paren">(</span><em>raw: mne.io.fiff.raw.Raw, events: numpy.ndarray, tmin: int, tmax: int, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; mne.epochs.Epochs<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#epochs_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.epochs_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates <a class="reference external" href="https://mne.tools/stable/python_reference.html?highlight=epoch#module-mne.epochs">epochs</a> from given <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>raw</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html"><em>mne.io.raw</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> to filter</li>
+<li><strong>events</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – events to detect epochs</li>
+<li><strong>tmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – start time to an <a class="reference external" href="https://mne.tools/stable/python_reference.html?highlight=epoch#module-mne.epochs">epoch</a></li>
+<li><strong>tmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – end time to an <a class="reference external" href="https://mne.tools/stable/python_reference.html?highlight=epoch#module-mne.epochs">epoch</a></li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">array of events</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.events_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">events_computation</code><span class="sig-paren">(</span><em>raw: mne.io.fiff.raw.Raw, time_points: Union[List[int], range, numpy.ndarray], ids: List[int], _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#events_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.events_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates events for given <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>raw</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html"><em>mne.io.raw</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> to filter</li>
+<li><strong>time_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – times for events start</li>
+<li><strong>ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>) – number for events identification</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">array of events</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.evokeds_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">evokeds_computation</code><span class="sig-paren">(</span><em>epochs: mne.epochs.Epochs, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; mne.evoked.Evoked<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#evokeds_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.evokeds_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="https://mne.tools/stable/generated/mne.Evoked.html#mne.Evoked">evokeds</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>epochs</strong> (<a class="reference external" href="https://mne.tools/stable/python_reference.html?highlight=epoch#module-mne.epochs"><em>mne.Epochs</em></a>) – epochs to compute covariance</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://mne.tools/stable/generated/mne.Evoked.html#mne.Evoked">evoked</a> data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.Evoked.html#mne.Evoked">mne.Evoked</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.features_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">features_computation</code><span class="sig-paren">(</span><em>epochs: mne.epochs.Epochs, inv: mne.minimum_norm.inverse.InverseOperator, lambda2: float, bandwidth: Union[int, float], labels: List[mne.label.Label], label_ts: List[numpy.ndarray], sfreq: Union[int, float], freq_bands: Union[tuple, List[tuple]], methods: Union[str, List[str]], se_method: str, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, Dict[str, numpy.ndarray]]<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#features_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.features_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="nodestimation.html#list-of-metrics">features</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>epochs</strong> (<a class="reference external" href="https://mne.tools/stable/python_reference.html?highlight=epoch#module-mne.epochs"><em>mne.Epochs</em></a>) – epochs to compute covariance</li>
+<li><strong>inv</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator"><em>mne.minimum_norm.InverseOperator</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator">inverse solution</a></li>
+<li><strong>lambda2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>) – regularization parameter</li>
+<li><strong>bandwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>) – the bandwidth of the multi taper windowing function in Hz</li>
+<li><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label"><em>mne.Label</em></a>) – brain regions representation</li>
+<li><strong>label_ts</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – time courses for <a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label">labels</a></li>
+<li><strong>sfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>) – sample frequency for <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object</li>
+<li><strong>freq_bands</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a>) – frequency bands in which to compute connectivity</li>
+<li><strong>methods</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>) – <a class="reference external" href="nodestimation.html#list-of-metrics">metrics</a> to compute</li>
+<li><strong>se_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – metric to compute <a class="reference external" href="nodestimation.html#list-of-mne-solutions">mne solution</a></li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">computed features</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">look for Features in <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.first_processing">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">first_processing</code><span class="sig-paren">(</span><em>raw: mne.io.fiff.raw.Raw, lfreq: int, nfreq: int, hfreq: int, rfreq: Optional[int] = None, crop: Union[float, List[float], Tuple[float, float], None] = None, reconstruct: Optional[bool] = False, meg: Optional[bool] = True, eeg: Optional[bool] = True, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; mne.io.fiff.raw.Raw<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#first_processing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.first_processing" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#processes">processes</a> given <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>raw</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html"><em>mne.io.raw</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> to filter</li>
+<li><strong>lfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – frequency for <a class="reference external" href="https://en.wikipedia.org/wiki/Low-pass_filter">low-pass filter</a>, Hz</li>
+<li><strong>nfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – frequency for <a class="reference external" href="https://en.wikipedia.org/wiki/Band-stop_filter">band-stop filter</a>, Hz</li>
+<li><strong>hfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – frequency for <a class="reference external" href="https://en.wikipedia.org/wiki/High-pass_filter">high-pass filter</a>, Hz</li>
+<li><strong>crop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a> <em>of</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a> <em>, optional</em>) – end time of the raw data to use (in seconds), if None, does not crop, default None</li>
+<li><strong>reconstruct</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – <p>whether make <a class="reference external" href="https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data">artifacts</a> cleaning or not, default False</p>
+</li>
+<li><strong>meg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether pick meg channel or not, default True</li>
+<li><strong>eeg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether pick meg channel or not, default True</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">processed <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">mne.io.raw</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note" id="processes">
+<p class="first admonition-title">Note</p>
+<p class="last">Processing for <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> data means
+<a class="reference external" href="https://en.wikipedia.org/wiki/Band-pass_filter">band-pass</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Band-stop_filter">band-stop</a> filtering,
+<a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html?highlight=raw%20crop#mne.io.Raw.crop">cropping</a> and <a class="reference external" href="https://www.neuro.mcw.edu/meg/index.php/Artifacts_in_MEG_data">artifacts</a> cleaning</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.forward_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">forward_computation</code><span class="sig-paren">(</span><em>info: mne.io.meas_info.Info, trans: mne.transforms.Transform, src: mne.source_space.SourceSpaces, bem: mne.bem.ConductorModel, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; mne.forward.forward.Forward<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#forward_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.forward_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="https://mne.tools/stable/generated/mne.Forward.html?highlight=forward#mne.Forward">forward solution</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>info</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.Info.html?highlight=info#mne.Info"><em>mne.Info</em></a>) – information about raw data</li>
+<li><strong>trans</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform"><em>mne.transforms.Transform</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform">transformation matrix</a></li>
+<li><strong>src</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces"><em>mne.SourceSpaces</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces">source spaces</a></li>
+<li><strong>bem</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel">mne.bem.ConductorModel</a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel">bem</a> solution</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://mne.tools/stable/generated/mne.Forward.html?highlight=forward#mne.Forward">forward solution</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.Forward.html?highlight=forward#mne.Forward">mne.Forward</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.inverse_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">inverse_computation</code><span class="sig-paren">(</span><em>info: mne.io.meas_info.Info, fwd: mne.forward.forward.Forward, cov: mne.cov.Covariance, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; mne.minimum_norm.inverse.InverseOperator<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#inverse_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.inverse_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator">inverse solution</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>info</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.Info.html?highlight=info#mne.Info"><em>mne.Info</em></a>) – information about raw data</li>
+<li><strong>fwd</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.Forward.html?highlight=forward#mne.Forward"><em>mne.Forward</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.Forward.html?highlight=forward#mne.Forward">forward solution</a></li>
+<li><strong>cov</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html#mne.Covariance"><em>mne.Covariance</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html#mne.Covariance">covariance matrix</a></li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces">source spaces</a> solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator">mne.minimum_norm.InverseOperator</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.nodes_creation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">nodes_creation</code><span class="sig-paren">(</span><em>labels: List[mne.label.Label], features: Dict[str, Dict[str, Dict[str, Dict[str, float]]]], nodes_coordinates: numpy.ndarray, resec_coordinates: Union[None, numpy.ndarray], resec_txt: str, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; List[nodestimation.Node]<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#nodes_creation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.nodes_creation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="nodestimation.html#list-of-metrics">features</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label"><em>mne.Label</em></a>) – brain regions representation</li>
+<li><strong>features</strong> (<em>look for LabelsFeatures in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a>) – <p><a class="reference external" href="nodestimation.html#centrality-metrics">centrality metrics</a> values for each <a class="reference external" href="nodestimation.html#list-of-metrics">feature</a> relatively to <a class="reference external" href="https://mne.tools/stable/generated/mne.Label.html?highlight=label#mne.Label">labels</a></p>
+</li>
+<li><strong>nodes_coordinates</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – center coordinates in <a class="reference external" href="https://brainmap.org/training/BrettTransform.html">mni</a> for each node</li>
+<li><strong>resec_coordinates</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – resection area coordinates in <a class="reference external" href="https://brainmap.org/training/BrettTransform.html">mni</a> for each node</li>
+<li><strong>resec_txt</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – resection area text description</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">computed nodes</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a> of <a class="reference internal" href="nodestimation.html#nodestimation.Node" title="nodestimation.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.Node</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.noise_covariance_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">noise_covariance_computation</code><span class="sig-paren">(</span><em>epochs: mne.epochs.Epochs, tmin: int, tmax: int, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; mne.cov.Covariance<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#noise_covariance_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.noise_covariance_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html#mne.Covariance">covariance matrix</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>epochs</strong> (<a class="reference external" href="https://mne.tools/stable/python_reference.html?highlight=epoch#module-mne.epochs"><em>mne.Epochs</em></a>) – epochs to compute covariance</li>
+<li><strong>tmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – start time to a <a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html#mne.Covariance">covariance matrix</a></li>
+<li><strong>tmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – end time to a <a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html#mne.Covariance">covariance matrix</a></li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html#mne.Covariance">covariance matrix</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.Covariance.html#mne.Covariance">mne.Covariance</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.notchfir">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">notchfir</code><span class="sig-paren">(</span><em>raw: mne.io.fiff.raw.Raw</em>, <em>lfreq: int</em>, <em>nfreq: int</em>, <em>hfreq: int</em><span class="sig-paren">)</span> &#x2192; mne.io.fiff.raw.Raw<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#notchfir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.notchfir" title="Permalink to this definition">¶</a></dt>
+<dd><p>filters the given <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object from lfreq to nfreq and from nfreq to hfreq</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>raw</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html"><em>mne.io.raw</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> to filter</li>
+<li><strong>lfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – <p>frequency for <a class="reference external" href="https://en.wikipedia.org/wiki/Low-pass_filter">low-pass filter</a>, Hz</p>
+</li>
+<li><strong>nfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – <p>frequency for <a class="reference external" href="https://en.wikipedia.org/wiki/Band-stop_filter">band-stop filter</a>, Hz</p>
+</li>
+<li><strong>hfreq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – <p>frequency for <a class="reference external" href="https://en.wikipedia.org/wiki/High-pass_filter">high-pass filter</a>, Hz</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">filtered <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">mne.io.raw</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.read_original_raw">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">read_original_raw</code><span class="sig-paren">(</span><em>path: Optional[str], _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; mne.io.fiff.raw.Raw<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#read_original_raw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.read_original_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads not processed <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> data, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to read</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">read <a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">raw</a> object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.io.Raw.html">mne.io.raw</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.read_original_resec">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">read_original_resec</code><span class="sig-paren">(</span><em>path: Optional[str], _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#read_original_resec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.read_original_resec" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads given <a class="reference external" href="https://nipy.org/nibabel/reference/nibabel.loadsave.html#module-nibabel.loadsave">resection map</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to read</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">read <a class="reference external" href="https://nipy.org/nibabel/reference/nibabel.loadsave.html#module-nibabel.loadsave">resection map</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Any</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.read_original_resec_txt">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">read_original_resec_txt</code><span class="sig-paren">(</span><em>path: Union[None, str], _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#read_original_resec_txt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.read_original_resec_txt" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads given resection area text description, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to read</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">read resection area text description</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.read_original_trans">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">read_original_trans</code><span class="sig-paren">(</span><em>path: Optional[str], _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[dict, List[dict]]<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#read_original_trans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.read_original_trans" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads given <a class="reference external" href="https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform">transformation matrix</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to read</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">read <a class="reference external" href="https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform">transformation matrix</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform">mne.transforms.Transform</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.resection_area_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">resection_area_computation</code><span class="sig-paren">(</span><em>img: Any</em>, <em>_subject_tree=None</em>, <em>_priority=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#resection_area_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.resection_area_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>turns given <a class="reference external" href="https://nipy.org/nibabel/reference/nibabel.loadsave.html#module-nibabel.loadsave">resection map</a> into <a class="reference external" href="https://brainmap.org/training/BrettTransform.html">mni</a> coordinate system, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>img</strong> (<em>Any</em>) – <a class="reference external" href="https://nipy.org/nibabel/reference/nibabel.loadsave.html#module-nibabel.loadsave">resection map</a></li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">resection area</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.source_estimation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">source_estimation</code><span class="sig-paren">(</span><em>epochs: mne.epochs.Epochs, inv: mne.minimum_norm.inverse.InverseOperator, lambda2: Union[int, float], method: str, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; List[mne.source_estimate.SourceEstimate]<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#source_estimation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.source_estimation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="https://mne.tools/stable/generated/mne.SourceEstimate.html">source estimation</a>, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>epochs</strong> (<a class="reference external" href="https://mne.tools/stable/python_reference.html?highlight=epoch#module-mne.epochs"><em>mne.Epochs</em></a>) – epochs to compute covariance</li>
+<li><strong>inv</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator"><em>mne.minimum_norm.InverseOperator</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator">inverse solution</a></li>
+<li><strong>lambda2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>) – regularization parameter</li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <a class="reference external" href="nodestimation.html#list-of-mne-solutions">method</a> to compute <a class="reference external" href="https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator">inverse solution</a></li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://mne.tools/stable/generated/mne.SourceEstimate.html">source estimation</a> for <a class="reference external" href="https://mne.tools/stable/python_reference.html?highlight=epoch#module-mne.epochs">epoched</a> data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.SourceEstimate.html">mne.SourceEstimate</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.mneraw.src_computation">
+<code class="descclassname">nodestimation.processing.mneraw.</code><code class="descname">src_computation</code><span class="sig-paren">(</span><em>subject: str, subjects_dir: str, bem: mne.bem.ConductorModel, volume: Optional[bool] = False, _subject_tree: Optional[Tuple[Dict[str, Union[float, str, List[str]]], Dict[str, Union[str, List[str]]]]] = None, _priority: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[mne.source_space.SourceSpaces, List[mne.source_space.SourceSpaces]]<a class="reference internal" href="_modules/nodestimation/processing/mneraw.html#src_computation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.mneraw.src_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes <a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces">source spaces</a> solution, uses <a class="reference internal" href="nodestimation.project.html#nodestimation.project.read_or_write" title="nodestimation.project.read_or_write"><code class="xref py py-func docutils literal notranslate"><span class="pre">nodestimation.project.read_or_write()</span></code></a> decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subject</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – patient`s ID</li>
+<li><strong>subjects_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to directory with patient`s files</li>
+<li><strong>bem</strong> (<a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel"><em>mne.bem.ConductorModel</em></a>) – <a class="reference external" href="https://mne.tools/stable/generated/mne.bem.ConductorModel.html?highlight=conductormodel#mne.bem.ConductorModel">bem</a> solution
+to build <a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces">SourceSpaces</a></li>
+<li><strong>volume</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – if True, computes <a class="reference external" href="https://mne.tools/stable/generated/mne.setup_volume_source_space.html?highlight=setup_volume_source_space#mne.setup_volume_source_space">volume source spaces</a>,
+default False</li>
+<li><strong>_subject_tree</strong> (<em>look for SubjectTree in</em> <a class="reference internal" href="nodestimation.project.html#module-nodestimation.project.annotations" title="nodestimation.project.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodestimation.project.annotations</span></code></a> <em>, optional</em>) – representation of patient`s files structure, default None</li>
+<li><strong>_priority</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – if several files are read, which one to choose, if None, read all of them, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces">source spaces</a> solution</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://mne.tools/stable/generated/mne.SourceSpaces.html#mne.SourceSpaces">mne.SourceSpaces</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="nodestimation-processing-timewindow-module">
+<h2>nodestimation.processing.timewindow module<a class="headerlink" href="#nodestimation-processing-timewindow-module" title="Permalink to this headline">¶</a></h2>
+<p>A module providing <a class="reference external" href="https://zengruiwang.medium.com/sliding-window-technique-360d840d5740">signal windowing</a> tools</p>
+<span class="target" id="module-nodestimation.processing.timewindow"></span><dl class="class">
+<dt id="nodestimation.processing.timewindow.TimeWindow">
+<em class="property">class </em><code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">TimeWindow</code><span class="sig-paren">(</span><em>data: numpy.ndarray, start: Union[int, float], end: Union[int, float]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#TimeWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.TimeWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class representing time window of signal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html"><em>np.ndarray</em></a>) – supposed to be a signal or set of signals inside the current time window</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>) – timepoint of time window start</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a> <em>or</em> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float"><em>float</em></a>) – timepoint of time window end</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nodestimation.processing.timewindow.TimeWindow.data">
+<code class="descname">data</code><a class="headerlink" href="#nodestimation.processing.timewindow.TimeWindow.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>supposed to be a signal or set of signals inside the current time window</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.processing.timewindow.TimeWindow.end">
+<code class="descname">end</code><a class="headerlink" href="#nodestimation.processing.timewindow.TimeWindow.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>timepoint of time window end</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nodestimation.processing.timewindow.TimeWindow.start">
+<code class="descname">start</code><a class="headerlink" href="#nodestimation.processing.timewindow.TimeWindow.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>timepoint of time window start</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.timewindow.mean_across_tw">
+<code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">mean_across_tw</code><span class="sig-paren">(</span><em>twlist: List[nodestimation.processing.timewindow.TimeWindow]</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#mean_across_tw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.mean_across_tw" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes mean for data inside the given list of time windows</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>twlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="#nodestimation.processing.timewindow.TimeWindow" title="nodestimation.processing.timewindow.TimeWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.processing.timewindow.TimeWindow</span></code></a>) – windowed data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">mean for windowed data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">np.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.timewindow.sliding_window">
+<code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">sliding_window</code><span class="sig-paren">(</span><em>size: int</em>, <em>overlap: float</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#sliding_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.sliding_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>divides data given to wrapped function (1st argument) into slices of given size with given overlap and calls it</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – size (in points) of time window to divide data</li>
+<li><strong>overlap</strong> – time windows overlapping</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">time windows with processed data</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#nodestimation.processing.timewindow.TimeWindow" title="nodestimation.processing.timewindow.TimeWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.processing.timewindow.TimeWindow</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.timewindow.voxel_from_tw">
+<code class="descclassname">nodestimation.processing.timewindow.</code><code class="descname">voxel_from_tw</code><span class="sig-paren">(</span><em>twlist: List[nodestimation.processing.timewindow.TimeWindow]</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/nodestimation/processing/timewindow.html#voxel_from_tw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.timewindow.voxel_from_tw" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates n+1-dimensional voxel from the given time windows of n-dimensional data (n supposed to be 2 or 3)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>twlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list"><em>list</em></a> <em>of</em> <a class="reference internal" href="#nodestimation.processing.timewindow.TimeWindow" title="nodestimation.processing.timewindow.TimeWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">nodestimation.processing.timewindow.TimeWindow</span></code></a>) – windowed data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">time windows collected in a voxel</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nodestimation.processing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nodestimation.processing" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nodestimation.processing.by_default">
+<code class="descclassname">nodestimation.processing.</code><code class="descname">by_default</code><span class="sig-paren">(</span><em>default_values: tuple</em>, <em>default_result: Optional[Any] = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="_modules/nodestimation/processing.html#by_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.by_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>if the wrapped function called with parameters as specified, it ignores the wrapped function and returns a specified value or None</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>default_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – supposed values of a wrapped function to return a specified result instead of calling it</li>
+<li><strong>default_result</strong> (<em>any</em><em>, </em><em>optional</em>) – output to give if supposed values the same as given to a wrapped function, default None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">wrapped function or default_result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable">callable</a> or any</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nodestimation.processing.get_ith">
+<code class="descclassname">nodestimation.processing.</code><code class="descname">get_ith</code><span class="sig-paren">(</span><em>func: Callable</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="_modules/nodestimation/processing.html#get_ith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nodestimation.processing.get_ith" title="Permalink to this definition">¶</a></dt>
+<dd><p>if wrapped function returns list, it ignores all except 0th output or,
+if wrapped function has an argument “_priority” of type <a class="reference external" href="https://docs.python.org/3/library/functions.html#int">int</a>,
+it returns output with number specified in “_priority” argument</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> (<em>callable</em>) – a wrapped function</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">specified output of a wrapped function</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">any</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">NodesEstimation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="nodestimation.html">nodestimation package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nodestimation.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.learning.html">nodestimation.learning package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">nodestimation.processing package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-processing-connectivity-module">nodestimation.processing.connectivity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-processing-features-module">nodestimation.processing.features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-processing-mneraw-module">nodestimation.processing.mneraw module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nodestimation-processing-timewindow-module">nodestimation.processing.timewindow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nodestimation.processing">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nodestimation.project.html">nodestimation.project package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#nodestimation-pipeline-module">nodestimation.pipeline module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodestimation.html#module-nodestimation">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="nodestimation.html">nodestimation package</a><ul>
+      <li>Previous: <a href="nodestimation.learning.html" title="previous chapter">nodestimation.learning package</a></li>
+      <li>Next: <a href="nodestimation.project.html" title="next chapter">nodestimation.project package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alexey Zabolotniy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/nodestimation.processing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

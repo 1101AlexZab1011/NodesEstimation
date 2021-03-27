@@ -1,0 +1,593 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>nodestimation.project &#8212; NodesEstimation  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nodestimation.project</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">nodestimation.project.actions</span> <span class="kn">import</span> <span class="n">save</span><span class="p">,</span> <span class="n">read</span>
+<span class="kn">from</span> <span class="nn">nodestimation.project.annotations</span> <span class="kn">import</span> <span class="n">SubjectTree</span><span class="p">,</span> <span class="n">ResourcesTree</span><span class="p">,</span> <span class="n">SubjectTreeData</span>
+<span class="kn">from</span> <span class="nn">nodestimation.project.structures</span> <span class="kn">import</span> <span class="n">file_save_format</span><span class="p">,</span> <span class="n">file_search_regexps</span><span class="p">,</span> <span class="n">tree_data_types</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+
+
+<div class="viewcode-block" id="conditions_unique_code"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.conditions_unique_code">[docs]</a><span class="k">def</span> <span class="nf">conditions_unique_code</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;creates code which lets to identify given conditions (whether this condition appears at the first time or computations are already done)</span>
+
+<span class="sd">        :param args: any arguments of function to create code</span>
+<span class="sd">        :type args: Any</span>
+<span class="sd">        :param kwargs: any key arguments of function to create code</span>
+<span class="sd">        :type kwargs: Any</span>
+<span class="sd">        :return: unique code related to given arguments</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">kwarg</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="find_subject_dir"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.find_subject_dir">[docs]</a><span class="k">def</span> <span class="nf">find_subject_dir</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Analyses project file structure trying to find a directory containing subjects subdirectories</span>
+
+<span class="sd">        :param root: directory where to start searching, default &quot;./&quot;</span>
+<span class="sd">        :type root: str</span>
+<span class="sd">        :return: directory containing subjects subdirectories and dictionary with patient`s id as key and path to directory with patient`s information as value</span>
+<span class="sd">        :rtype: tuple_ of str_ and dict_ of str_ to str_</span>
+<span class="sd">        :raise OSError: if subject directory not found</span>
+
+<span class="sd">        .. _tuple: https://docs.python.org/3/library/stdtypes.html#tuple</span>
+<span class="sd">        .. _str: https://docs.python.org/3/library/stdtypes.html#str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subjects_dir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subjects_found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">walk</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;Source&#39;</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">subdir</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">subdir</span> <span class="o">==</span> <span class="s1">&#39;Subjects&#39;</span> <span class="ow">or</span> <span class="n">subdir</span> <span class="o">==</span> <span class="s1">&#39;subjects&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">subjects_found</span><span class="p">:</span>
+                <span class="n">subjects_found</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">subjects_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walk</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">subdir</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">subdir</span> <span class="o">==</span> <span class="s1">&#39;Subjects&#39;</span> <span class="ow">or</span> <span class="n">subdir</span> <span class="o">==</span> <span class="s1">&#39;subjects&#39;</span> <span class="ow">and</span> <span class="n">subjects_found</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s2">&quot;There are two subjects directories: </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">; Only one must be&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">subjects_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walk</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">subdir</span><span class="p">)</span>
+                <span class="p">))</span>
+    <span class="k">if</span> <span class="n">subjects_found</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">subjects_dir</span><span class="p">,</span> \
+               <span class="p">{</span>
+                   <span class="n">subject</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">,</span> <span class="n">subject</span><span class="p">)</span> <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
+               <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s2">&quot;Subjects directory not found!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_size"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.get_size">[docs]</a><span class="k">def</span> <span class="nf">get_size</span><span class="p">(</span><span class="n">start_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;computes the size (in bytes) of all contained files</span>
+
+<span class="sd">        :param start_path: directory where to start computation, default &quot;./&quot;</span>
+<span class="sd">        :return: size in bytes</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">start_path</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
+                <span class="n">total_size</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">total_size</span></div>
+
+
+<div class="viewcode-block" id="add_file_to_tree"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.add_file_to_tree">[docs]</a><span class="k">def</span> <span class="nf">add_file_to_tree</span><span class="p">(</span><span class="n">regexp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">subject_tree</span><span class="p">:</span> <span class="n">SubjectTreeData</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">walk</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;adds a file matching the search conditions to the project tree</span>
+
+<span class="sd">        :param regexp: regular expression to find a file path in a list of paths</span>
+<span class="sd">        :type regexp: str</span>
+<span class="sd">        :param file: single path or list of path to build a tree</span>
+<span class="sd">        :type file: |istr|_ *or* |ilist|_ *of* |istr|_</span>
+<span class="sd">        :param subject_tree: files tree related to subject to which the new file will be added</span>
+<span class="sd">        :type subject_tree: |idict|_ *of* |istr|_ *to* |istr|_ *or* |idict|_ *of* |istr|_ *to* |ilist|_ *of* |istr|_</span>
+<span class="sd">        :param type: `file type`_ to add in the tree</span>
+<span class="sd">        :type type: str</span>
+<span class="sd">        :param walk: output of `os.walk &lt;https://docs.python.org/3/library/os.html#os.walk&gt;`_ for current file structure layer</span>
+<span class="sd">        :type walk: tuple</span>
+<span class="sd">        :rtype: None</span>
+
+<span class="sd">        .. _ifloat: https://docs.python.org/3/library/functions.html#float</span>
+<span class="sd">        .. _ituple: https://docs.python.org/3/library/stdtypes.html#tuple</span>
+
+<span class="sd">        .. |ifloat| replace:: *float*</span>
+<span class="sd">        .. |ituple| replace:: *tuple*</span>
+
+<span class="sd">        .. _`type`:</span>
+<span class="sd">        .. _`file type`:</span>
+<span class="sd">        .. _`file types`:</span>
+<span class="sd">        .. note:: File types:</span>
+
+<span class="sd">            :raw: path to file with `Raw &lt;https://mne.tools/stable/generated/mne.io.Raw.html&gt;`_ object, format: `&quot;.fif&quot;`_</span>
+<span class="sd">            :bem: path to file with `ConductorModel &lt;https://mne.tools/stable/generated/mne.bem.ConductorModel.html#mne.bem.ConductorModel&gt;`_ object, format: `&quot;.fif&quot;`_</span>
+<span class="sd">            :src: path to file with `SourceSpaces &lt;https://mne.tools/stable/generated/mne.SourceSpaces.html&gt;`_, format: `&quot;.fif&quot;`_</span>
+<span class="sd">            :trans: path to file with `Transformation &lt;https://mne.tools/stable/generated/mne.transforms.Transform.html#mne.transforms.Transform&gt;`_, format: `&quot;.fif&quot;`_</span>
+<span class="sd">            :fwd: path to file with `Forward Model &lt;https://mne.tools/stable/generated/mne.Forward.html#mne.Forward&gt;`_, format: `&quot;.fif&quot;`_</span>
+<span class="sd">            :eve: path to file with `Data Events &lt;https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray&gt;`_, format: `&quot;.pkl&quot;`_</span>
+<span class="sd">            :epo: path to file with `Epoched Data &lt;https://mne.tools/stable/generated/mne.Epochs.html#mne.Epochs&gt;`_, format: `&quot;.fif&quot;`_</span>
+<span class="sd">            :cov: path to file with `Covariance Matrix &lt;https://mne.tools/stable/generated/mne.Covariance.html?highlight=covariance#mne.Covariance&gt;`_, format: `&quot;.pkl&quot;`_</span>
+<span class="sd">            :ave: path to file with `Evoked Data &lt;https://mne.tools/stable/generated/mne.Evoked.html?highlight=evoked#mne.Evoked&gt;`_, format: `&quot;.pkl&quot;`_</span>
+<span class="sd">            :inv: path to file with `InverseOperator &lt;https://mne.tools/stable/generated/mne.minimum_norm.InverseOperator.html#mne.minimum_norm.InverseOperator&gt;`_, format: `&quot;.pkl&quot;`_</span>
+<span class="sd">            :stc: path to file with `SourceEstimate &lt;https://mne.tools/stable/generated/mne.SourceEstimate.html#mne.SourceEstimate&gt;`_ objects, format: `&quot;.pkl&quot;`_ (because epoched SourceEstimate stored)</span>
+<span class="sd">            :resec: path to file with resection in `&quot;.nii&quot; &lt;https://nipy.org/nibabel/nibabel_images.html#the-image-object&gt;`_ format</span>
+<span class="sd">            :resec_txt: path to file with resection in `&quot;.txt&quot; &lt;https://en.wikipedia.org/wiki/Text_file&gt;`_ format</span>
+<span class="sd">            :resec_mni: path to file with resection in mni_ coordinates, format: `&quot;.pkl&quot;`_</span>
+<span class="sd">            :coords: path to file with centers coordinates of `cortical parcellation &lt;https://surfer.nmr.mgh.harvard.edu/fswiki/CorticalParcellation&gt;`_ in mni_ coordinates, format: `&quot;.pkl&quot;`_</span>
+<span class="sd">            :feat: path to file with dictionary for all metrics values to all frequency bands to all methods, format: `&quot;.pkl&quot;`_</span>
+<span class="sd">            :nodes: path to file with list of :class:`nodestimation.Node` objects, format: `&quot;.pkl&quot;`_</span>
+<span class="sd">            :dataset: path to file with dataset for all features and frequencies to all nodes, format: `&quot;.csv&quot;`_</span>
+
+<span class="sd">        .. _&quot;.fif&quot;: https://bids-specification.readthedocs.io/en/stable/99-appendices/06-meg-file-formats.html#neuromagelektamegin</span>
+<span class="sd">        .. _&quot;.pkl&quot;: https://docs.python.org/3/library/pickle.html</span>
+<span class="sd">        .. _&quot;.csv&quot;: https://en.wikipedia.org/wiki/Comma-separated_values</span>
+<span class="sd">        .. _mni: https://brainmap.org/training/BrettTransform.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regexp</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">regexp</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regexp</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">found</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">subject_tree</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subject_tree</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">subject_tree</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walk</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">file</span><span class="p">))</span>
+                <span class="n">subject_tree</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">subject_tree</span><span class="p">[</span><span class="nb">type</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">subject_tree</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="nb">type</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">subject_tree</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walk</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">file</span><span class="p">)])})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">subject_tree</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="nb">type</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walk</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">file</span><span class="p">)})</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> file: ok&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="build_resources_tree"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.build_resources_tree">[docs]</a><span class="k">def</span> <span class="nf">build_resources_tree</span><span class="p">(</span><span class="n">subject_paths</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ResourcesTree</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;builds a project tree describing all the required files</span>
+
+<span class="sd">        :param subject_paths: dictionary with subject id as a key and path to its home directory a value</span>
+<span class="sd">        :type subject_paths: |idict|_ *of* |istr|_ *to* |istr|_</span>
+<span class="sd">        :return: resources tree with paths to all necessary files (look `file types`_) and with `subject tree metadata`_</span>
+<span class="sd">        :rtype: dict_ of str_ to str_ or dict_ of str_ to list_ of str_</span>
+
+<span class="sd">        .. _dict: https://docs.python.org/3/library/stdtypes.html#dict</span>
+<span class="sd">        .. _list: https://docs.python.org/3/library/stdtypes.html#list</span>
+
+<span class="sd">        .. _`subject tree metadata`:</span>
+<span class="sd">        .. note:: Subject tree metadata:</span>
+
+<span class="sd">            :subject: patient id</span>
+<span class="sd">            :path: path to patient`s home directory</span>
+<span class="sd">            :directories: paths to all directories inside patient`s home directory</span>
+<span class="sd">            :files: paths to all files inside patient`s home directory</span>
+<span class="sd">            :size: size of patient`s home directory in bytes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Analysing project structure...&#39;</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">subject_paths</span><span class="p">:</span>
+        <span class="n">subject_tree</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">subject_paths</span><span class="p">[</span><span class="n">subject</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Subject: &#39;</span><span class="p">,</span> <span class="n">subject</span><span class="p">)</span>
+        <span class="n">subdirs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">walk</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">subdirs</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">subdirs</span><span class="p">,</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walk</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">subdir</span><span class="p">)</span> <span class="k">for</span> <span class="n">subdir</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walk</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sfile</span><span class="p">)</span> <span class="k">for</span> <span class="n">sfile</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">tree_data_types</span><span class="p">:</span>
+                    <span class="n">add_file_to_tree</span><span class="p">(</span><span class="n">file_search_regexps</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">file</span><span class="p">,</span> <span class="n">subject_tree</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">walk</span><span class="p">)</span>
+
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;subject&#39;</span><span class="p">:</span> <span class="n">subject</span><span class="p">,</span>
+            <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+            <span class="s1">&#39;directories&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">subdirs</span><span class="p">),</span>
+            <span class="s1">&#39;files&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">files</span><span class="p">),</span>
+            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">get_size</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">tree</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">subject</span><span class="p">:</span> <span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">subject_tree</span><span class="p">)})</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Files structure for </span><span class="si">{}</span><span class="s1"> has been analysed. Files tree is built&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subject</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">tree</span></div>
+
+
+<div class="viewcode-block" id="check_path"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.check_path">[docs]</a><span class="k">def</span> <span class="nf">check_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;creates a directory at the specified path if it does not exist</span>
+
+<span class="sd">        :param path: path to check</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_files"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.read_files">[docs]</a><span class="k">def</span> <span class="nf">read_files</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;reads given file</span>
+
+<span class="sd">    :param type: which type_ given file has</span>
+<span class="sd">    :type type: str</span>
+<span class="sd">    :param paths: paths to read</span>
+<span class="sd">    :type paths: |istr|_ *or* |ilist|_ *of* |istr|_</span>
+<span class="sd">    :param priority: if list of path is given, which path to read. If None, reads all of them, default None</span>
+<span class="sd">    :type priority: int or None, optional</span>
+<span class="sd">    :return: file content</span>
+<span class="sd">    :rtype: any</span>
+<span class="sd">    :raise ValueError: if given reading conditions are wrong (file not found or not readable)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There is only one suitable </span><span class="si">{}</span><span class="s1"> file, trying to read...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">read</span><span class="p">[</span><span class="nb">type</span><span class="p">](</span><span class="n">paths</span><span class="p">),</span> <span class="n">paths</span>
+    <span class="k">elif</span> <span class="n">priority</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are </span><span class="si">{}</span><span class="s1"> suitable </span><span class="si">{}</span><span class="s1"> files. Reading all...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">),</span> <span class="nb">type</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">read</span><span class="p">[</span><span class="nb">type</span><span class="p">](</span><span class="n">path</span><span class="p">),</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">priority</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">priority</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are </span><span class="si">{}</span><span class="s1"> suitable </span><span class="si">{}</span><span class="s1"> files. Reading the </span><span class="si">{}</span><span class="s1">th...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">),</span> <span class="nb">type</span><span class="p">,</span> <span class="n">priority</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">read</span><span class="p">[</span><span class="nb">type</span><span class="p">](</span><span class="n">paths</span><span class="p">[</span><span class="n">priority</span><span class="p">]),</span> <span class="n">paths</span><span class="p">[</span><span class="n">priority</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">priority</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">priority</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="n">p</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">priority</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are </span><span class="si">{}</span><span class="s1"> suitable </span><span class="si">{}</span><span class="s1"> files. Reading </span><span class="si">{}</span><span class="s1">...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">),</span> <span class="nb">type</span><span class="p">,</span> <span class="n">priority</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">read</span><span class="p">[</span><span class="nb">type</span><span class="p">](</span><span class="n">paths</span><span class="p">[</span><span class="n">p</span><span class="p">]),</span> <span class="n">paths</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">priority</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Incorrect conditions; type of read files: </span><span class="si">{}</span><span class="s1">, found </span><span class="si">{}</span><span class="s1"> files of this type, paths to these files: </span><span class="si">{}</span><span class="s1"> and are going to be read: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">),</span> <span class="n">paths</span><span class="p">,</span> <span class="n">priority</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="is_allowed_target"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.is_allowed_target">[docs]</a><span class="k">def</span> <span class="nf">is_allowed_target</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;checks if the type is allowed</span>
+
+<span class="sd">        :param path: path to checked file</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :param conditions: conditions_ code for current :func:`nodestimation.pipeline.pipeline` parameters</span>
+<span class="sd">        :type conditions: str</span>
+<span class="sd">        :return: True or False for allowed type or not respectively</span>
+<span class="sd">        :rtype: bool</span>
+
+<span class="sd">        .. _`allowed`:</span>
+<span class="sd">        .. _`allowed type`:</span>
+<span class="sd">        .. note:: Allowed type means that this file is not generated by this program,</span>
+<span class="sd">            or created by this program but contains code for the current conditions_ in its path</span>
+
+<span class="sd">        .. _conditions:</span>
+<span class="sd">        .. note:: Pipeline conditions</span>
+
+<span class="sd">            This is a code by which there is possible to determine whether required data already exists or not.</span>
+<span class="sd">            Code created by :func:`nodestimation.project.conditions_unique_code` for arguments given to :func:`nodestimation.pipeline.pipeline`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;nodes_estimation_pipeline_file&#39;</span> <span class="ow">in</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">conditions</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="target_exists"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.target_exists">[docs]</a><span class="k">def</span> <span class="nf">target_exists</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;determines if a file suitable to the `search target`_ and allowed_ by the conditions_ of a search exists</span>
+
+<span class="sd">    :param paths: paths to check</span>
+<span class="sd">    :type paths: |istr|_ *or* |ilist|_ *of* |istr|_</span>
+<span class="sd">    :param target: `target`_ to search</span>
+<span class="sd">    :type target: str</span>
+<span class="sd">    :param conditions: conditions_ code for current :func:`nodestimation.pipeline.pipeline` parameters</span>
+<span class="sd">    :type conditions: str</span>
+<span class="sd">    :return: True if at least one file for allowed_ `search target`_ exists, otherwise False</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    :raise ValueError: if `search target` unknown</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">paths</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;any&#39;</span><span class="p">:</span> <span class="nb">any</span><span class="p">([</span><span class="n">is_allowed_target</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]),</span>
+            <span class="s1">&#39;nepf&#39;</span><span class="p">:</span> <span class="nb">any</span><span class="p">([</span><span class="s1">&#39;nodes_estimation_pipeline_file&#39;</span> <span class="ow">in</span> <span class="n">file</span> <span class="ow">and</span> <span class="n">is_allowed_target</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]),</span>
+            <span class="s1">&#39;original&#39;</span><span class="p">:</span> <span class="nb">any</span><span class="p">([</span><span class="s1">&#39;nodes_estimation_pipeline_file&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">])</span>
+        <span class="p">}[</span><span class="n">target</span><span class="p">]</span>
+
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unexpected search_target: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="is_target"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.is_target">[docs]</a><span class="k">def</span> <span class="nf">is_target</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;determines if a file is a target_ of a search</span>
+
+<span class="sd">        :param path: path to checked file</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :param target: target_ of a search</span>
+<span class="sd">        :type target: str</span>
+<span class="sd">        :param conditions: conditions code for current :func:`nodestimation.pipeline.pipeline` parameters</span>
+<span class="sd">        :type conditions: str</span>
+<span class="sd">        :return: True or False whether current file is a target of search or not respectively</span>
+<span class="sd">        :rtype: bool</span>
+
+<span class="sd">        .. _`search target`:</span>
+<span class="sd">        .. _target:</span>
+<span class="sd">        .. note:: Target related to a way file was created</span>
+
+<span class="sd">            :any: all found files</span>
+<span class="sd">            :nepf: only files created in context of :func:`nodestimation.pipeline.pipeline` function (literally means: &#39;NodesEstimation Pipeline File&#39;)</span>
+<span class="sd">            :original: all files created outside :func:`nodestimation.pipeline.pipeline` function supposed to be original</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;any&#39;</span><span class="p">:</span> <span class="n">is_allowed_target</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">conditions</span><span class="p">),</span>
+        <span class="s1">&#39;nepf&#39;</span><span class="p">:</span> <span class="s1">&#39;nodes_estimation_pipeline_file&#39;</span> <span class="ow">in</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">is_allowed_target</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">conditions</span><span class="p">),</span>
+        <span class="s1">&#39;original&#39;</span><span class="p">:</span> <span class="s1">&#39;nodes_estimation_pipeline_file&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span>
+    <span class="p">}[</span><span class="n">target</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="select_suitable_paths"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.select_suitable_paths">[docs]</a><span class="k">def</span> <span class="nf">select_suitable_paths</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;selects files for allowed_ `search target`_</span>
+
+<span class="sd">        :param type: `file type`_ to read</span>
+<span class="sd">        :type type: str</span>
+<span class="sd">        :param paths: paths to check</span>
+<span class="sd">        :type paths: |istr|_ *or* |ilist|_ *of* |istr|_</span>
+<span class="sd">        :param target: target_ of a search</span>
+<span class="sd">        :type target: str</span>
+<span class="sd">        :param conditions: conditions code for current :func:`nodestimation.pipeline.pipeline` parameters</span>
+<span class="sd">        :type conditions: str</span>
+<span class="sd">        :return: required paths</span>
+<span class="sd">        :rtype: str_ or list_ of str_</span>
+<span class="sd">        :raise ValueError: if files matching to allowed_ `search target`_ not found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Choosing </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> files...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_target</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">conditions</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Required file found&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">paths</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">path</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span>
+            <span class="k">if</span> <span class="n">is_target</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Required file found&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Required files found&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">out</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;There are not </span><span class="si">{}</span><span class="s1"> files of type </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="read_or_write"><a class="viewcode-back" href="../../nodestimation.project.html#nodestimation.project.read_or_write">[docs]</a><span class="k">def</span> <span class="nf">read_or_write</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">search_target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;any&#39;</span><span class="p">,</span> <span class="n">read_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">write_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">main_arg_indexes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;decorator function, if the file with the result of wrapped function exists,</span>
+<span class="sd">        then it reads this file, otherwise it executes wrapped function and writes the result to the file</span>
+
+<span class="sd">        :param type: supposed type_ of wrapped function output</span>
+<span class="sd">        :type type: str</span>
+<span class="sd">        :param search_target: target_ of a search</span>
+<span class="sd">        :type search_target: str</span>
+<span class="sd">        :param read_file: if False, it does not try to find and read existing file with wrapped function output, default True</span>
+<span class="sd">        :type read_file: bool</span>
+<span class="sd">        :param write_file:  if False, it does not try to store wrapped function output, default True</span>
+<span class="sd">        :type write_file: bool</span>
+<span class="sd">        :param main_arg_indexes: indexes of necessary arguments for wrapped function without which it does not work.</span>
+<span class="sd">            If some are not specified it does not call wrapped function and returns None, default 0</span>
+<span class="sd">        :type main_arg_indexes: |iint|_ or |ilist|_ of |iint|_</span>
+<span class="sd">        :return: wrapped function result and where it was read/written</span>
+<span class="sd">        :rtype: tuple_ of str_ or None_ and any or None_</span>
+<span class="sd">        :raise OSError: if subject tree not found, or given conditions to read file incorrect</span>
+
+<span class="sd">        .. _iint: https://docs.python.org/3/library/functions.html#int</span>
+<span class="sd">        .. _None: https://docs.python.org/3/library/constants.html#None</span>
+
+<span class="sd">        .. |iint| replace:: *int*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main_arg_indexes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">main_arg_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">main_arg_indexes</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+            <span class="n">main_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">main_arg_indexes</span><span class="p">]</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">types_found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">home</span> <span class="o">=</span> <span class="s1">&#39;NodesEstimationFiles&#39;</span>
+
+            <span class="k">if</span> <span class="s1">&#39;_subject_tree&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">meta</span><span class="p">,</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_subject_tree&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: subject_tree parameter is lost&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+
+            <span class="n">check_path</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">],</span> <span class="n">home</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions_unique_code</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">&#39;_priority&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">priority</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_priority&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">priority</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">read_file</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Looking for </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> file in files tree...&#39;</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_target</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Skipping the reading step&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">tree</span> \
+                    <span class="ow">and</span> <span class="n">target_exists</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">search_target</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span> \
+                    <span class="ow">and</span> <span class="n">read_file</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> file has been found; trying to read...&#39;</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_target</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+                <span class="n">types_found</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">read_files</span><span class="p">(</span>
+                        <span class="nb">type</span><span class="p">,</span>
+                        <span class="n">select_suitable_paths</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">tree</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">search_target</span><span class="p">,</span> <span class="n">conditions</span><span class="p">),</span>
+                        <span class="n">priority</span>
+                    <span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Successfully read&#39;</span><span class="p">)</span>
+
+                <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Incorrect reading conditions: &#39;</span>
+                          <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">Reading type: </span><span class="si">{}</span><span class="s1">, &#39;</span>
+                          <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">Reading search_target: </span><span class="si">{}</span><span class="s1">, &#39;</span>
+                          <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">Reading function: </span><span class="si">{}</span><span class="s1">&#39;</span>
+                          <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1"> Reading conditions: </span><span class="si">{}</span><span class="s1">&#39;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">search_target</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_conditions&#39;</span><span class="p">]))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">types_found</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">read_file</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> file has not been found&#39;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_target</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">write_file</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating a new </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> file&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_target</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">write_file</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">arg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">main_args</span><span class="p">]):</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">search_target</span> <span class="o">==</span> <span class="s1">&#39;original&#39;</span><span class="p">:</span>
+                        <span class="n">path_to_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">],</span>
+                            <span class="n">home</span><span class="p">,</span>
+                            <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span> <span class="o">+</span>
+                            <span class="s1">&#39;_&#39;</span> <span class="o">+</span>
+                            <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
+                            <span class="s1">&#39;_&#39;</span> <span class="o">+</span>
+                            <span class="nb">type</span> <span class="o">+</span>
+                            <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+                            <span class="n">file_save_format</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">path_to_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">],</span>
+                            <span class="n">home</span><span class="p">,</span>
+                            <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span> <span class="o">+</span>
+                            <span class="s1">&#39;_nodes_estimation_pipeline_file_&#39;</span> <span class="o">+</span>
+                            <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
+                            <span class="s1">&#39;_&#39;</span> <span class="o">+</span>
+                            <span class="nb">type</span> <span class="o">+</span>
+                            <span class="s1">&#39;_&#39;</span> <span class="o">+</span>
+                            <span class="n">conditions</span> <span class="o">+</span>
+                            <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+                            <span class="n">file_save_format</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="n">save</span><span class="p">[</span><span class="nb">type</span><span class="p">](</span><span class="n">path_to_file</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done. Path to new file: </span><span class="si">{}</span><span class="s1">&#39;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">))</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">path_to_file</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NodesEstimation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../nodestimation.html">nodestimation package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../nodestimation.html">nodestimation</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alexey Zabolotniy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

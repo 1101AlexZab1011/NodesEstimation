@@ -1,0 +1,588 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>nodestimation.pipeline &#8212; NodesEstimation  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nodestimation.pipeline</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">import</span> <span class="nn">mne</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">nodestimation.project</span> <span class="k">as</span> <span class="nn">proj</span>
+<span class="kn">from</span> <span class="nn">nodestimation.project.subject</span> <span class="kn">import</span> <span class="n">Subject</span>
+<span class="kn">from</span> <span class="nn">nodestimation.project.structures</span> <span class="kn">import</span> <span class="n">subject_data_types</span>
+<span class="kn">from</span> <span class="nn">nodestimation.processing.features</span> <span class="kn">import</span> \
+    <span class="n">prepare_features</span><span class="p">,</span> \
+    <span class="n">prepare_data</span>
+<span class="kn">from</span> <span class="nn">nodestimation.processing.mneraw</span> <span class="kn">import</span> \
+    <span class="n">read_original_raw</span><span class="p">,</span> \
+    <span class="n">first_processing</span><span class="p">,</span> \
+    <span class="n">src_computation</span><span class="p">,</span> \
+    <span class="n">bem_computation</span><span class="p">,</span> \
+    <span class="n">read_original_trans</span><span class="p">,</span> \
+    <span class="n">forward_computation</span><span class="p">,</span> \
+    <span class="n">events_computation</span><span class="p">,</span> \
+    <span class="n">epochs_computation</span><span class="p">,</span> \
+    <span class="n">evokeds_computation</span><span class="p">,</span> \
+    <span class="n">noise_covariance_computation</span><span class="p">,</span> \
+    <span class="n">inverse_computation</span><span class="p">,</span> \
+    <span class="n">source_estimation</span><span class="p">,</span> \
+    <span class="n">coordinates_computation</span><span class="p">,</span> \
+    <span class="n">read_original_resec</span><span class="p">,</span> \
+    <span class="n">resection_area_computation</span><span class="p">,</span> \
+    <span class="n">features_computation</span><span class="p">,</span> \
+    <span class="n">nodes_creation</span><span class="p">,</span> \
+    <span class="n">read_original_resec_txt</span>
+
+
+<span class="k">class</span> <span class="nc">AbstractPipelineBuffer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">feature</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;PipelineBuffer</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">longest_key</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">longest_key</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+
+    <span class="k">def</span> <span class="nf">get_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">DefaultPipelineBuffer</span><span class="p">(</span><span class="n">AbstractPipelineBuffer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;instance&#39;</span><span class="p">):</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPipelineBuffer</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instance</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">keys</span><span class="p">())[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__keys</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input data too small&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__keys</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__keys</span><span class="p">)):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unknown_argument_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__keys</span><span class="p">,</span> <span class="n">args</span><span class="p">)}</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">PipelineBuffer</span><span class="p">(</span><span class="n">AbstractPipelineBuffer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="n">DefaultPipelineBuffer</span><span class="p">()</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;_DefaultPipelineBuffer__keys&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;_DefaultPipelineBuffer__keys is already removed&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="write_subjects"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.write_subjects">[docs]</a><span class="k">def</span> <span class="nf">write_subjects</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subjects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Stores information for entrie set of :class:`nodestimation.project.subject.Subject` objects</span>
+
+<span class="sd">    :param path: path to write</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param subjects: list with :class:`nodestimation.project.subject.Subject` objects</span>
+<span class="sd">    :type subjects: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">subjects</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="read_subjects"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.read_subjects">[docs]</a><span class="k">def</span> <span class="nf">read_subjects</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Reads set of :class:`nodestimation.project.subject.Subject` objects</span>
+
+<span class="sd">        :param path: path to read</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :return: list of :class:`nodestimation.project.subject.Subject` objects</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="write_subject"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.write_subject">[docs]</a><span class="k">def</span> <span class="nf">write_subject</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subject</span><span class="p">:</span> <span class="n">Subject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Stores information about one :class:`nodestimation.project.subject.Subject` object</span>
+
+<span class="sd">        :param path: path to write</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :param subject: :class:`nodestimation.project.subject.Subject` object</span>
+<span class="sd">        :type subject: :class:`nodestimation.project.subject.Subject`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="read_subject"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.read_subject">[docs]</a><span class="k">def</span> <span class="nf">read_subject</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subject</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reads one :class:`nodestimation.project.subject.Subject` object</span>
+
+<span class="sd">            :param path: path to read</span>
+<span class="sd">            :type path: str</span>
+<span class="sd">            :rtype: :class:`nodestimation.project.subject.Subject`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="pipeline"><a class="viewcode-back" href="../../nodestimation.html#nodestimation.pipeline.pipeline">[docs]</a><span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span>
+        <span class="n">crop_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">120</span><span class="p">,</span>
+        <span class="n">snr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">epochs_tmin</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">epochs_tmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">conductivity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.3</span><span class="p">,),</span>
+        <span class="n">se_method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sLORETA&quot;</span><span class="p">,</span>
+        <span class="n">centrality_metrics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="s1">&#39;eigen&#39;</span><span class="p">,</span>
+        <span class="n">methods</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="s1">&#39;plv&#39;</span><span class="p">,</span>
+        <span class="n">rfreq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+        <span class="n">nfreq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="n">lfreq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">hfreq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">70</span><span class="p">,</span>
+        <span class="n">freq_bands</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="n">subjects_specificity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Subject</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline for brain data transformation</span>
+<span class="sd">            **includes:**</span>
+
+<span class="sd">        #. notch and bandpass `raw &lt;https://mne.tools/stable/generated/mne.io.Raw.html&gt;`_ filtering</span>
+<span class="sd">        #. sources signal reconstruction with specified `MNE solution`_</span>
+<span class="sd">        #. applying specified `processing metric`_</span>
+<span class="sd">        #. eigencentrality (or integral) computation</span>
+<span class="sd">        #. results saving</span>
+
+<span class="sd">        :param methods: set of metrics to be computed (see `list of metrics`_), default ``&quot;plv&quot;``</span>
+<span class="sd">        :type methods: |ilist|_ *of* |istr|_ *or* |istr|_, *optional*</span>
+<span class="sd">        :param centrality_metrics: set of `centrality metrics`_ to compute, default ``&quot;eigen&quot;``</span>
+<span class="sd">        :type centrality_metrics: |ilist|_ *of* |istr|_ *or* |istr|_, *optional*</span>
+<span class="sd">        :param se_method: MNE solution for inverse computations (see `list of MNE solutions`_), default ``&quot;sLORETA&quot;``</span>
+<span class="sd">        :type se_method: str, optional</span>
+<span class="sd">        :param conductivity: suggested tissues conductivity, default (0.3,)</span>
+<span class="sd">        :type conductivity: |ituple|_ *of* |ifloat|_, *optional*</span>
+<span class="sd">        :param epochs_tmin: start time (s) before event, default -1</span>
+<span class="sd">        :type epochs_tmin: int or float, optional</span>
+<span class="sd">        :param epochs_tmax: end time (s) after event, default 1</span>
+<span class="sd">        :type epochs_tmax: int or float, optional</span>
+<span class="sd">        :param rfreq: resampling frequency (Hz), default 200</span>
+<span class="sd">        :type rfreq: int, optional</span>
+<span class="sd">        :param nfreq: frequency (Hz) for notch-filtering, default 50</span>
+<span class="sd">        :type nfreq: int, optional</span>
+<span class="sd">        :param lfreq: frequency (Hz) for low-pass-filtering, default 1</span>
+<span class="sd">        :type lfreq: int, optional</span>
+<span class="sd">        :param hfreq: frequency (Hz) for high-pass-filtering, default 70</span>
+<span class="sd">        :type hfreq: int, optional</span>
+<span class="sd">        :param freq_bands: in what frequency (Hz) diapasons are the calculations performed, default (0.5, 4)</span>
+<span class="sd">        :type freq_bands: |ituple|_ *of* |ifloat|_ *or* |ilist|_ *of* |ituple|_ *of* |ifloat|_</span>
+<span class="sd">        :param crop_time: what time (s) of brain data be read, default 200</span>
+<span class="sd">        :type crop_time: int, optional</span>
+<span class="sd">        :param snr: regularization parameter, default 0.5</span>
+<span class="sd">        :type snr: float, optional</span>
+<span class="sd">        :param subjects_specificity: specific pipeline parameters for exact patients. Have to be a dictionary with patient&#39;s IDs as keys and</span>
+<span class="sd">            dictionaries of pipeline parameters names to value of these parameters as values, if None this parameter does not matter, default None</span>
+<span class="sd">        :type subjects_specificity: |idict|_ *of* |istr|_ *to* |idict|_ *of* |istr|_ *to Any, optional*</span>
+<span class="sd">        :return: subjects information, computed according to given parameters</span>
+<span class="sd">        :rtype: list_ of :class:`nodestimation.project.subject.Subject` objects</span>
+<span class="sd">        :raise ValueError: if freq_bands given in wrong format</span>
+
+<span class="sd">        .. _`processing metric`:</span>
+<span class="sd">        .. _`list of metrics`:</span>
+<span class="sd">        .. note:: metrics that can be calculated:</span>
+<span class="sd">            `psd, coh, cohy, imcoh, plv, ciplv, ppc, pli, pli2_unbiased, wpli,</span>
+<span class="sd">            wpli2_debiased &lt;https://mne.tools/stable/generated/mne.connectivity.spectral_connectivity.html&gt;`_,</span>
+<span class="sd">            `pearson &lt;https://www.researchgate.net/figure/nferring-of-Pearson-correlation-based-functional-connectivity-map-including-the-Fishers_fig1_235882165&gt;`_,</span>
+<span class="sd">            `envelope &lt;https://mne.tools/stable/auto_examples/connectivity/plot_mne_inverse_envelope_correlation.html&gt;`_</span>
+
+<span class="sd">        .. _`MNE solution`:</span>
+<span class="sd">        .. _`list of MNE solutions`:</span>
+<span class="sd">        .. note:: MNE solutions that can be applied:</span>
+<span class="sd">            `MNE, dSPM, sLORETA, eLORETA &lt;https://mne.tools/stable/generated/mne.minimum_norm.apply_inverse.html#mne.minimum_norm.apply_inverse&gt;`_</span>
+
+<span class="sd">        .. _`centrality metrics`:</span>
+<span class="sd">        .. note:: Available centrality metrics</span>
+
+<span class="sd">            :&quot;degree&quot;: `degree centrality &lt;https://en.wikipedia.org/wiki/Centrality#Degree_centrality&gt;`_</span>
+<span class="sd">            :&quot;eigen&quot;: `eigencentrality &lt;https://en.wikipedia.org/wiki/Centrality#Eigenvector_centrality&gt;`_</span>
+<span class="sd">            :&quot;katz&quot;: `katz centrality &lt;https://en.wikipedia.org/wiki/Centrality#Katz_centrality&gt;`_</span>
+<span class="sd">            :&quot;close&quot;: `clossness centrality &lt;https://en.wikipedia.org/wiki/Centrality#Closeness_centrality&gt;`_</span>
+<span class="sd">            :&quot;harmonic&quot;: `harmonic centrality &lt;https://en.wikipedia.org/wiki/Centrality#Harmonic_centrality&gt;`_</span>
+<span class="sd">            :&quot;between&quot;: `betweenness centrality &lt;https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality&gt;`_</span>
+<span class="sd">            :&quot;info&quot;: `information centrality &lt;https://www.sciencedirect.com/science/article/abs/pii/0378873389900166?via%3Dihub&gt;`_</span>
+
+<span class="sd">        .. warning:: Be careful choosing centrality metrics. Some connectivity measures are inconsistent with some centrality metrics!</span>
+
+<span class="sd">        .. _ifloat: https://docs.python.org/3/library/functions.html#float</span>
+<span class="sd">        .. _ilist:</span>
+<span class="sd">        .. _list: https://docs.python.org/3/library/stdtypes.html#list</span>
+<span class="sd">        .. _ituple: https://docs.python.org/3/library/stdtypes.html#tuple</span>
+<span class="sd">        .. _istr: https://docs.python.org/3/library/stdtypes.html#str</span>
+
+<span class="sd">        .. |ifloat| replace:: *float*</span>
+<span class="sd">        .. |ilist| replace:: *list*</span>
+<span class="sd">        .. |ituple| replace:: *tuple*</span>
+<span class="sd">        .. |istr| replace:: *str*</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">initialize_buffer</span><span class="p">(</span><span class="n">subjects_specificity</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineBuffer</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">subject_name</span><span class="p">:</span> <span class="n">PipelineBuffer</span><span class="p">(</span><span class="n">subjects_specificity</span><span class="p">[</span><span class="n">subject_name</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">subject_name</span> <span class="ow">in</span> <span class="n">subjects_specificity</span>
+                <span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="n">methods</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">freq_bands</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">freq_bands</span> <span class="o">=</span> <span class="p">[</span><span class="n">freq_bands</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">freq_band</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">for</span> <span class="n">freq_band</span> <span class="ow">in</span> <span class="n">freq_bands</span><span class="p">])</span> \
+            <span class="ow">or</span> <span class="nb">any</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">freq_band</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">freq_band</span> <span class="ow">in</span> <span class="n">freq_bands</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;freq_bands must contain a list of frequency bands with [minimum_frequency, maximum_frequency]&#39;</span>
+                         <span class="s1">&#39; or list of lists with frequency bands, however it contains: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">freq_bands</span><span class="p">))</span>
+
+    <span class="n">conditions_code</span> <span class="o">=</span> <span class="n">proj</span><span class="o">.</span><span class="n">conditions_unique_code</span><span class="p">(</span>
+        <span class="n">crop_time</span><span class="p">,</span>
+        <span class="n">snr</span><span class="p">,</span>
+        <span class="n">epochs_tmin</span><span class="p">,</span>
+        <span class="n">epochs_tmax</span><span class="p">,</span>
+        <span class="n">conductivity</span><span class="p">,</span>
+        <span class="n">se_method</span><span class="p">,</span>
+        <span class="n">methods</span><span class="p">,</span>
+        <span class="n">centrality_metrics</span><span class="p">,</span>
+        <span class="n">rfreq</span><span class="p">,</span>
+        <span class="n">nfreq</span><span class="p">,</span>
+        <span class="n">lfreq</span><span class="p">,</span>
+        <span class="n">hfreq</span><span class="p">,</span>
+        <span class="n">freq_bands</span>
+    <span class="p">)</span>
+    <span class="n">dbuffer</span> <span class="o">=</span> <span class="n">DefaultPipelineBuffer</span><span class="p">(</span>
+        <span class="n">crop_time</span><span class="p">,</span>
+        <span class="n">snr</span><span class="p">,</span>
+        <span class="n">epochs_tmin</span><span class="p">,</span>
+        <span class="n">epochs_tmax</span><span class="p">,</span>
+        <span class="n">conductivity</span><span class="p">,</span>
+        <span class="n">se_method</span><span class="p">,</span>
+        <span class="n">methods</span><span class="p">,</span>
+        <span class="n">centrality_metrics</span><span class="p">,</span>
+        <span class="n">rfreq</span><span class="p">,</span>
+        <span class="n">nfreq</span><span class="p">,</span>
+        <span class="n">lfreq</span><span class="p">,</span>
+        <span class="n">hfreq</span><span class="p">,</span>
+        <span class="n">freq_bands</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">subjects_specificity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sbuffer</span> <span class="o">=</span> <span class="n">initialize_buffer</span><span class="p">(</span><span class="n">subjects_specificity</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sbuffer</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lambda2</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">snr</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">subjects_dir</span><span class="p">,</span> <span class="n">subjects_</span> <span class="o">=</span> <span class="n">proj</span><span class="o">.</span><span class="n">find_subject_dir</span><span class="p">()</span>
+    <span class="n">subjects_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">,</span> <span class="s1">&#39;subjects_information_for_&#39;</span> <span class="o">+</span> <span class="n">conditions_code</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">subjects_file</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;All computation has been already done, loading of the existing file with the solution...&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">read_subjects</span><span class="p">(</span><span class="n">subjects_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Building of the resources files tree...&#39;</span><span class="p">)</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">proj</span><span class="o">.</span><span class="n">build_resources_tree</span><span class="p">(</span><span class="n">subjects_</span><span class="p">)</span>
+        <span class="n">subjects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Preparing data...&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">subject_name</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">:</span>
+            <span class="n">subject_tree_metadata</span> <span class="o">=</span> <span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">subject_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subject_tree_metadata</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">],</span> <span class="s1">&#39;subject_information_for_&#39;</span> <span class="o">+</span> <span class="n">conditions_code</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">sbuffer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">subject_name</span> <span class="ow">in</span> <span class="n">sbuffer</span><span class="p">:</span>
+                <span class="n">crop_time</span><span class="p">,</span>\
+                <span class="n">snr</span><span class="p">,</span>\
+                <span class="n">epochs_tmin</span><span class="p">,</span>\
+                <span class="n">epochs_tmax</span><span class="p">,</span>\
+                <span class="n">conductivity</span><span class="p">,</span>\
+                <span class="n">se_method</span><span class="p">,</span>\
+                <span class="n">methods</span><span class="p">,</span>\
+                <span class="n">centrality_metrics</span><span class="p">,</span>\
+                <span class="n">rfreq</span><span class="p">,</span>\
+                <span class="n">nfreq</span><span class="p">,</span>\
+                <span class="n">lfreq</span><span class="p">,</span>\
+                <span class="n">hfreq</span><span class="p">,</span>\
+                <span class="n">freq_bands</span> <span class="o">=</span> <span class="n">sbuffer</span><span class="p">[</span><span class="n">subject_name</span><span class="p">]</span><span class="o">.</span><span class="n">get_items</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">crop_time</span><span class="p">,</span> \
+                <span class="n">snr</span><span class="p">,</span> \
+                <span class="n">epochs_tmin</span><span class="p">,</span> \
+                <span class="n">epochs_tmax</span><span class="p">,</span> \
+                <span class="n">conductivity</span><span class="p">,</span> \
+                <span class="n">se_method</span><span class="p">,</span> \
+                <span class="n">methods</span><span class="p">,</span> \
+                <span class="n">centrality_metrics</span><span class="p">,</span> \
+                <span class="n">rfreq</span><span class="p">,</span> \
+                <span class="n">nfreq</span><span class="p">,</span> \
+                <span class="n">lfreq</span><span class="p">,</span> \
+                <span class="n">hfreq</span><span class="p">,</span> \
+                <span class="n">freq_bands</span> <span class="o">=</span> <span class="n">dbuffer</span><span class="o">.</span><span class="n">get_items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">subject_file</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;All computation has been already done, loading of the existing file with the solution...&#39;</span><span class="p">)</span>
+                <span class="n">subject</span> <span class="o">=</span> <span class="n">read_subject</span><span class="p">(</span><span class="n">subject_file</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">raw</span><span class="p">,</span> <span class="n">raw_path</span> <span class="o">=</span> <span class="n">read_original_raw</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span> <span class="n">_conditions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">fp_raw</span><span class="p">,</span> <span class="n">fp_raw_path</span> <span class="o">=</span> <span class="n">first_processing</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span>
+                                                       <span class="n">lfreq</span><span class="p">,</span>
+                                                       <span class="n">nfreq</span><span class="p">,</span>
+                                                       <span class="n">hfreq</span><span class="p">,</span>
+                                                       <span class="n">rfreq</span><span class="o">=</span><span class="n">rfreq</span><span class="p">,</span>
+                                                       <span class="n">crop</span><span class="o">=</span><span class="n">crop_time</span><span class="p">,</span>
+                                                       <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                       <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">bem</span><span class="p">,</span> <span class="n">bem_path</span> <span class="o">=</span> <span class="n">bem_computation</span><span class="p">(</span><span class="n">subject_name</span><span class="p">,</span>
+                                                <span class="n">subjects_dir</span><span class="p">,</span>
+                                                <span class="n">conductivity</span><span class="p">,</span>
+                                                <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">src</span><span class="p">,</span> <span class="n">src_path</span> <span class="o">=</span> <span class="n">src_computation</span><span class="p">(</span><span class="n">subject_name</span><span class="p">,</span>
+                                                <span class="n">subjects_dir</span><span class="p">,</span>
+                                                <span class="n">bem</span><span class="p">,</span> <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">trans</span><span class="p">,</span> <span class="n">trans_path</span> <span class="o">=</span> <span class="n">read_original_trans</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span> <span class="n">_conditions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">fwd</span><span class="p">,</span> <span class="n">fwd_path</span> <span class="o">=</span> <span class="n">forward_computation</span><span class="p">(</span><span class="n">fp_raw</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+                                                    <span class="n">trans</span><span class="p">,</span>
+                                                    <span class="n">src</span><span class="p">,</span>
+                                                    <span class="n">bem</span><span class="p">,</span>
+                                                    <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                    <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">eve</span><span class="p">,</span> <span class="n">eve_path</span> <span class="o">=</span> <span class="n">events_computation</span><span class="p">(</span><span class="n">fp_raw</span><span class="p">,</span>
+                                                   <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">59</span><span class="p">),</span>
+                                                   <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">58</span><span class="p">)],</span>
+                                                   <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                   <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">epo</span><span class="p">,</span> <span class="n">epo_path</span> <span class="o">=</span> <span class="n">epochs_computation</span><span class="p">(</span><span class="n">fp_raw</span><span class="p">,</span>
+                                                   <span class="n">eve</span><span class="p">,</span>
+                                                   <span class="n">epochs_tmin</span><span class="p">,</span>
+                                                   <span class="n">epochs_tmax</span><span class="p">,</span>
+                                                   <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                   <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">cov</span><span class="p">,</span> <span class="n">cov_path</span> <span class="o">=</span> <span class="n">noise_covariance_computation</span><span class="p">(</span><span class="n">epo</span><span class="p">,</span>
+                                                             <span class="n">epochs_tmin</span><span class="p">,</span>
+                                                             <span class="mi">0</span><span class="p">,</span>
+                                                             <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                             <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">ave</span><span class="p">,</span> <span class="n">ave_path</span> <span class="o">=</span> <span class="n">evokeds_computation</span><span class="p">(</span><span class="n">epo</span><span class="p">,</span>
+                                                    <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                    <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">inv</span><span class="p">,</span> <span class="n">inv_path</span> <span class="o">=</span> <span class="n">inverse_computation</span><span class="p">(</span><span class="n">epo</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+                                                    <span class="n">fwd</span><span class="p">,</span>
+                                                    <span class="n">cov</span><span class="p">,</span>
+                                                    <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                    <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">stc</span><span class="p">,</span> <span class="n">stc_path</span> <span class="o">=</span> <span class="n">source_estimation</span><span class="p">(</span><span class="n">epo</span><span class="p">,</span>
+                                                  <span class="n">inv</span><span class="p">,</span>
+                                                  <span class="n">lambda2</span><span class="p">,</span>
+                                                  <span class="n">se_method</span><span class="p">,</span>
+                                                  <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                  <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">resec</span><span class="p">,</span> <span class="n">resec_path</span> <span class="o">=</span> <span class="n">read_original_resec</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span>
+                                                        <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                        <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">resec_txt</span><span class="p">,</span> <span class="n">resec_txt_path</span> <span class="o">=</span> <span class="n">read_original_resec_txt</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span>
+                                                                    <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                                    <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">resec_mni</span><span class="p">,</span> <span class="n">resec_mni_path</span> <span class="o">=</span> <span class="n">resection_area_computation</span><span class="p">(</span><span class="n">resec</span><span class="p">,</span>
+                                                                       <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                                       <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">labels_parc</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_labels_from_annot</span><span class="p">(</span><span class="n">subject_name</span><span class="p">,</span> <span class="n">parc</span><span class="o">=</span><span class="s1">&#39;aparc.a2009s&#39;</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="n">subjects_dir</span><span class="p">)</span>
+                <span class="n">labels_aseg</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">get_volume_labels_from_src</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">subject_name</span><span class="p">,</span>
+                                                             <span class="n">subjects_dir</span><span class="p">)</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="n">labels_parc</span> <span class="o">+</span> <span class="n">labels_aseg</span>
+                <span class="n">coords</span><span class="p">,</span> <span class="n">coords_path</span> <span class="o">=</span> <span class="n">coordinates_computation</span><span class="p">(</span><span class="n">subject_name</span><span class="p">,</span>
+                                                              <span class="n">subjects_dir</span><span class="p">,</span>
+                                                              <span class="n">labels</span><span class="p">,</span>
+                                                              <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                                                              <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">label_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
+                <span class="n">label_ts</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">extract_label_time_course</span><span class="p">(</span><span class="n">stc</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;pca_flip&#39;</span><span class="p">)</span>
+                <span class="n">feat</span><span class="p">,</span> <span class="n">feat_path</span> <span class="o">=</span> <span class="n">features_computation</span><span class="p">(</span>
+                    <span class="n">epo</span><span class="p">,</span>
+                    <span class="n">inv</span><span class="p">,</span>
+                    <span class="n">lambda2</span><span class="p">,</span>
+                    <span class="mi">4</span><span class="p">,</span>
+                    <span class="n">labels</span><span class="p">,</span>
+                    <span class="n">label_ts</span><span class="p">,</span>
+                    <span class="n">fp_raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">],</span>
+                    <span class="n">freq_bands</span><span class="p">,</span>
+                    <span class="n">methods</span><span class="p">,</span>
+                    <span class="n">se_method</span><span class="p">,</span>
+                    <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                    <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span>
+                <span class="p">)</span>
+                <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes_path</span> <span class="o">=</span> <span class="n">nodes_creation</span><span class="p">(</span>
+                    <span class="n">labels</span><span class="p">,</span>
+                    <span class="n">prepare_features</span><span class="p">(</span><span class="n">label_names</span><span class="p">,</span> <span class="n">feat</span><span class="p">,</span> <span class="n">centrality_metrics</span><span class="o">=</span><span class="n">centrality_metrics</span><span class="p">),</span>
+                    <span class="n">coords</span><span class="p">,</span>
+                    <span class="n">resec_mni</span><span class="p">,</span>
+                    <span class="n">resec_txt</span><span class="p">,</span>
+                    <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                    <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span>
+                <span class="p">)</span>
+                <span class="n">dataset</span><span class="p">,</span> <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="p">(</span>
+                    <span class="n">nodes</span><span class="p">,</span>
+                    <span class="n">centrality_metrics</span><span class="p">,</span>
+                    <span class="n">_subject_tree</span><span class="o">=</span><span class="n">tree</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                    <span class="n">_priority</span><span class="o">=</span><span class="mi">0</span>
+                <span class="p">)</span>
+                <span class="n">subject</span> <span class="o">=</span> <span class="n">Subject</span><span class="p">(</span>
+                    <span class="n">subject_name</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="n">data_type</span><span class="p">:</span> <span class="n">data_path</span>
+                        <span class="k">for</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">data_path</span>
+                        <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                        <span class="n">subject_data_types</span><span class="p">,</span> <span class="p">[</span>
+                            <span class="n">raw_path</span><span class="p">,</span>
+                            <span class="n">fp_raw_path</span><span class="p">,</span>
+                            <span class="n">bem_path</span><span class="p">,</span>
+                            <span class="n">src_path</span><span class="p">,</span>
+                            <span class="n">trans_path</span><span class="p">,</span>
+                            <span class="n">fwd_path</span><span class="p">,</span>
+                            <span class="n">eve_path</span><span class="p">,</span>
+                            <span class="n">epo_path</span><span class="p">,</span>
+                            <span class="n">cov_path</span><span class="p">,</span>
+                            <span class="n">ave_path</span><span class="p">,</span>
+                            <span class="n">inv_path</span><span class="p">,</span>
+                            <span class="n">stc_path</span><span class="p">,</span>
+                            <span class="n">resec_path</span><span class="p">,</span>
+                            <span class="n">resec_txt_path</span><span class="p">,</span>
+                            <span class="n">resec_mni_path</span><span class="p">,</span>
+                            <span class="n">coords_path</span><span class="p">,</span>
+                            <span class="n">feat_path</span><span class="p">,</span>
+                            <span class="n">nodes_path</span><span class="p">,</span>
+                            <span class="n">dataset_path</span>
+                        <span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="p">},</span>
+                    <span class="n">nodes</span><span class="p">,</span>
+                    <span class="n">subjects_</span><span class="p">[</span><span class="n">subject_name</span><span class="p">],</span>
+                    <span class="n">dataset</span>
+                <span class="p">)</span>
+                <span class="n">write_subject</span><span class="p">(</span><span class="n">subject_file</span><span class="p">,</span> <span class="n">subject</span><span class="p">)</span>
+
+            <span class="n">subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">subject</span>
+            <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;All the data has been prepared. Saving the result...&#39;</span><span class="p">)</span>
+
+        <span class="n">write_subjects</span><span class="p">(</span><span class="n">subjects_file</span><span class="p">,</span> <span class="n">subjects</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Successfully saved&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">subjects</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">NodesEstimation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../nodestimation.html">nodestimation package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../nodestimation.html">nodestimation</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alexey Zabolotniy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
