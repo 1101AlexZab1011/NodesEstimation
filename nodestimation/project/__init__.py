@@ -26,7 +26,10 @@ def conditions_unique_code(*args, **kwargs) -> str:
 
     if kwargs:
         for kwarg in kwargs:
-            out += str(kwargs[kwarg])
+            if kwarg == '_subject_tree':
+                continue
+            else:
+                out += str(kwargs[kwarg])
 
     return hashlib.md5(bytes(out, 'utf-8')).hexdigest()
 
