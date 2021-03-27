@@ -319,6 +319,7 @@ def pipeline(
                     hfreq, \
                     freq_bands = sbuffer[subject_name].get_items()
                 else:
+                    dbuffer_keys,\
                     crop_time, \
                     snr, \
                     epochs_tmin, \
@@ -332,6 +333,8 @@ def pipeline(
                     lfreq, \
                     hfreq, \
                     freq_bands = dbuffer.get_items()
+
+                    del dbuffer_keys
 
                 if not isinstance(methods, list):
                     methods = [methods]
