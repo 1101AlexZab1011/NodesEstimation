@@ -250,15 +250,6 @@ def pipeline(
                 for subject_name in subjects_specificity
                 }
 
-    if not isinstance(methods, list):
-        methods = [methods]
-    if not isinstance(freq_bands, list):
-        freq_bands = [freq_bands]
-    if any([not isinstance(freq_band, tuple) for freq_band in freq_bands]) \
-            or any([len(freq_band) % 2 != 0 for freq_band in freq_bands]):
-        raise ValueError('freq_bands must contain a list of frequency bands with [minimum_frequency, maximum_frequency]'
-                         ' or list of lists with frequency bands, however it contains: {}'.format(freq_bands))
-
     conditions_code = proj.conditions_unique_code(
         crop_time,
         snr,
@@ -336,6 +327,16 @@ def pipeline(
                 lfreq, \
                 hfreq, \
                 freq_bands = dbuffer.get_items()
+
+            if not isinstance(methods, list):
+                methods = [methods]
+            if not isinstance(freq_bands, list):
+                freq_bands = [freq_bands]
+            if any([not isinstance(freq_band, tuple) for freq_band in freq_bands]) \
+                    or any([len(freq_band) % 2 != 0 for freq_band in freq_bands]):
+                raise ValueError('freq_bands must contain a list of frequency bands with [minimum_frequency, maximum_frequency]'
+                                 ' or list of lists with frequency bands, however it contains: {}'.format(freq_bands))
+
             if os.path.exists(subject_file):
                 print('All computation has been already done, loading of the existing file with the solution...')
                 subject = read_subject(subject_file)
