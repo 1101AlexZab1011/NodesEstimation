@@ -633,7 +633,7 @@ def lead_std(dataset: pd.DataFrame, new_std: Union[float, List[float]] = None, t
         if new_std is not None:
             raise ValueError('new_std should be float or list but {} was given'.format(type(new_std)))
         elif take_std_from is not None:
-            raise ValueError('take_std_from should be pandas.DataFrame but {} was given'.format(type(take_std_from)))
+            raise ValueError('take_std_from should be a pandas.DataFrame but {} was given'.format(type(take_std_from)))
 
     processed = dataset.copy()
 
@@ -703,16 +703,16 @@ def lead_mean(dataset: pd.DataFrame, new_mean: Union[float, List[float]] = None,
         optimal_mask = [new_mean for i in range(dataset.shape[0])]
     elif new_mean is not None and isinstance(new_mean, list):
         if len(new_mean) != dataset.shape[0]:
-            raise ValueError('new_std must have the same len as row (or column) in given dataset')
+            raise ValueError('new_mean must have the same len as row (or column) in given dataset')
         else:
             optimal_mask = new_mean
     elif new_mean is None and isinstance(take_mean_from, pd.DataFrame):
         optimal_mask = create_optimal_mask(take_mean_from)
     else:
         if new_mean is not None:
-            raise ValueError('new_std should be float or list but {} was given'.format(type(new_mean)))
+            raise ValueError('new_mean should be float or list but {} was given'.format(type(new_mean)))
         elif take_mean_from is not None:
-            raise ValueError('take_std_from should be pandas.DataFrame but {} was given'.format(type(take_mean_from)))
+            raise ValueError('take_mean_from should be a pandas.DataFrame but {} was given'.format(type(take_mean_from)))
 
     processed = dataset.copy()
 

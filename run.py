@@ -12,7 +12,6 @@ subjects = pipeline(
     centrality_metrics=['eigen', 'close', 'between']#, 'degree', 'katz', 'info', 'harmonic']
 )
 
-
-for subject in subjects:
-    epochs = read['epo'](subject.data['epo'])
-    epochs.plot_psd(picks='meg')
+# for subject in subjects:
+#     epochs = read['epo'](subject.data['epo'])
+#     epochs.plot_psd(picks='meg')

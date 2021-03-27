@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import *
 
 import mne
@@ -28,6 +29,77 @@ from nodestimation.processing.mneraw import \
     features_computation, \
     nodes_creation, \
     read_original_resec_txt
+
+
+class AbstractPipelineBuffer(ABC):
+    def __init__(self, data: Dict[str, Any]):
+        for feature in data:
+            self.__setattr__(feature, data[feature])
+
+    def __str__(self):
+        out = 'PipelineBuffer\n'
+        longest_key = len(max(list(self.__dict__.keys()), key=len))
+        for key in self.__dict__:
+            out += (f'\t{key}:'.ljust(longest_key + 5) + f' {self.__dict__[key]}\n')
+        return out
+
+    def __len__(self):
+        return len(self.__dict__)
+
+    def __eq__(self, other):
+        return self.__dict__.keys() == other.__dict__.keys() and self.__dict__.values() == other.__dict__.values()
+
+    def __lt__(self, other):
+        return len(self.__dict__) < len(other.__dict__)
+
+    def __le__(self, other):
+        return len(self.__dict__) <= len(other.__dict__)
+
+    def __gt__(self, other):
+        return len(self.__dict__) > len(other.__dict__)
+
+    def __ge__(self, other):
+        return len(self.__dict__) >= len(other.__dict__)
+
+    def __iter__(self):
+        for key in self.__dict__:
+            yield self.__dict__[key]
+
+    def __contains__(self, item):
+        return item in self.__dict__
+
+    def get_items(self) -> tuple:
+        return tuple(self.__dict__.values())
+
+
+class DefaultPipelineBuffer(AbstractPipelineBuffer):
+    def __new__(cls, *args):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(DefaultPipelineBuffer, cls).__new__(cls)
+        return cls.instance
+
+    def __init__(self, *args):
+        if not self.instance.__dict__:
+            self.__keys = list(pipeline.__annotations__.keys())[:-1]
+            if len(args) < len(self.__keys):
+                raise ValueError('Input data too small')
+            elif len(args) > len(self.__keys):
+                for i in range(len(args) - len(self.__keys)):
+                    self.__keys.append(f'unknown_argument_{i}')
+            data = {key: value for key, value in zip(self.__keys, args)}
+            super().__init__(data)
+
+
+class PipelineBuffer(AbstractPipelineBuffer):
+    def __init__(self, data: Optional[Dict[str, Any]] = None):
+        attrs = DefaultPipelineBuffer().__dict__.copy()
+        try:
+            attrs.pop('_DefaultPipelineBuffer__keys')
+        except KeyError:
+            print('_DefaultPipelineBuffer__keys is already removed')
+        if data is not None:
+            attrs.update(data)
+        super().__init__(attrs)
 
 
 def write_subjects(path: str, subjects: List[Subject]) -> None:
@@ -90,6 +162,7 @@ def pipeline(
         lfreq: Optional[int] = 1,
         hfreq: Optional[int] = 70,
         freq_bands: Optional[Union[tuple, List[tuple]]] = (0.5, 4),
+        subjects_specificity: Optional[Dict[str, Dict[str, Any]]] = None
 ) -> List[Subject]:
     """Pipeline for brain data transformation
             **includes:**
@@ -126,6 +199,9 @@ def pipeline(
         :type crop_time: int, optional
         :param snr: regularization parameter, default 0.5
         :type snr: float, optional
+        :param subjects_specificity: specific pipeline parameters for exact patients. Have to be a dictionary with patient's IDs as keys and
+            dictionaries of pipeline parameters names to value of these parameters as values, if None this parameter does not matter, default None
+        :type subjects_specificity: |idict|_ *of* |istr|_ *to* |idict|_ *of* |istr|_ *to Any, optional*
         :return: subjects information, computed according to given parameters
         :rtype: list_ of :class:`nodestimation.project.subject.Subject` objects
         :raise ValueError: if freq_bands given in wrong format
@@ -169,6 +245,11 @@ def pipeline(
 
     """
 
+    def initialize_buffer(subjects_specificity: Dict[str, Dict[str, Any]]) -> Dict[str, PipelineBuffer]:
+        return {subject_name: PipelineBuffer(subjects_specificity[subject_name])
+                for subject_name in subjects_specificity
+                }
+
     if not isinstance(methods, list):
         methods = [methods]
     if not isinstance(freq_bands, list):
@@ -193,6 +274,25 @@ def pipeline(
         hfreq,
         freq_bands
     )
+    dbuffer = DefaultPipelineBuffer(
+        crop_time,
+        snr,
+        epochs_tmin,
+        epochs_tmax,
+        conductivity,
+        se_method,
+        methods,
+        centrality_metrics,
+        rfreq,
+        nfreq,
+        lfreq,
+        hfreq,
+        freq_bands
+    )
+    if subjects_specificity is not None:
+        sbuffer = initialize_buffer(subjects_specificity)
+    else:
+        sbuffer = None
     lambda2 = 1.0 / snr ** 2
     subjects_dir, subjects_ = proj.find_subject_dir()
     subjects_file = os.path.join(subjects_dir, 'subjects_information_for_' + conditions_code + '.pkl')
@@ -207,6 +307,35 @@ def pipeline(
         for subject_name in tree:
             subject_tree_metadata = tree[subject_name][0]
             subject_file = os.path.join(subject_tree_metadata['path'], 'subject_information_for_' + conditions_code + '.pkl')
+
+            if sbuffer is not None and subject_name in sbuffer:
+                crop_time,\
+                snr,\
+                epochs_tmin,\
+                epochs_tmax,\
+                conductivity,\
+                se_method,\
+                methods,\
+                centrality_metrics,\
+                rfreq,\
+                nfreq,\
+                lfreq,\
+                hfreq,\
+                freq_bands = sbuffer[subject_name].get_items()
+            else:
+                crop_time, \
+                snr, \
+                epochs_tmin, \
+                epochs_tmax, \
+                conductivity, \
+                se_method, \
+                methods, \
+                centrality_metrics, \
+                rfreq, \
+                nfreq, \
+                lfreq, \
+                hfreq, \
+                freq_bands = dbuffer.get_items()
             if os.path.exists(subject_file):
                 print('All computation has been already done, loading of the existing file with the solution...')
                 subject = read_subject(subject_file)
@@ -321,28 +450,28 @@ def pipeline(
                         data_type: data_path
                         for data_type, data_path
                         in zip(
-                            subject_data_types, [
-                                raw_path,
-                                fp_raw_path,
-                                bem_path,
-                                src_path,
-                                trans_path,
-                                fwd_path,
-                                eve_path,
-                                epo_path,
-                                cov_path,
-                                ave_path,
-                                inv_path,
-                                stc_path,
-                                resec_path,
-                                resec_txt_path,
-                                resec_mni_path,
-                                coords_path,
-                                feat_path,
-                                nodes_path,
-                                dataset_path
-                            ]
-                        )
+                        subject_data_types, [
+                            raw_path,
+                            fp_raw_path,
+                            bem_path,
+                            src_path,
+                            trans_path,
+                            fwd_path,
+                            eve_path,
+                            epo_path,
+                            cov_path,
+                            ave_path,
+                            inv_path,
+                            stc_path,
+                            resec_path,
+                            resec_txt_path,
+                            resec_mni_path,
+                            coords_path,
+                            feat_path,
+                            nodes_path,
+                            dataset_path
+                        ]
+                    )
                     },
                     nodes,
                     subjects_[subject_name],
