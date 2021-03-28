@@ -454,8 +454,8 @@ def pipeline(
                     _priority=0
                 )
                 subject = Subject(
-                    subject_name,
-                    {
+                    name=subject_name,
+                    data={
                         data_type: data_path
                         for data_type, data_path
                         in zip(
@@ -482,10 +482,10 @@ def pipeline(
                             ]
                         )
                     },
-                    nodes,
-                    subjects_[subject_name],
-                    dataset,
-                    prepare_graphs(feat, label_names)
+                    nodes=nodes,
+                    directory=subjects_[subject_name],
+                    dataset=dataset,
+                    graph=prepare_graphs(feat, label_names)
                 )
                 write_subject(subject_file, subject)
 
