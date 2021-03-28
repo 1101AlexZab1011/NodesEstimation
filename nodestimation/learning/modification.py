@@ -201,7 +201,7 @@ def choose_items(array: np.ndarray, number: Optional[int] = None, indices: Optio
 
 
 # FIXME: duplicated code below!
-# motivated by the fact that I want to "supress", "promote" and "binarize" to be different functions
+# motivated by the fact that I want to "suppress", "promote" and "binarize" to be different functions
 
 def suppress(dataset: pd.DataFrame, trigger: Optional[int] = None, optimal: Optional[Union[int, str]] = 'mean', axis: int = 0) -> pd.DataFrame:
     """Suppress given dataset to optimal value

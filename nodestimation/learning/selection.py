@@ -338,6 +338,8 @@ class SubjectsStatistic(object):
              for subject in subjects],
             axis=0,
         )
+        if dataset.isnull().values.any():
+            raise ValueError('Nan values appear. Check if column names are equal through subjects datasets')
 
         new_indexes = list()
 

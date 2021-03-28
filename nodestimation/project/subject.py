@@ -3,6 +3,8 @@ from typing import *
 from nodestimation import Node
 from pandas import DataFrame
 
+from nodestimation.project.annotations import Graphs
+
 
 class Subject(object):
     """Class containing all the necessary information about the patient
@@ -11,24 +13,28 @@ class Subject(object):
     :type name: str
     :param data: a dictionary containing paths to patient data files used in calculations.
         Keys are `data types`_, values are paths to files with this data (or None if they do not exist)
-    :type data: |idict|_ *of* |istr|_ *for* |istr|_
+    :type data: |idict|_ *of* |istr|_ *to* |istr|_
     :param nodes: list of :class:`nodestimation.Node` objects related to this patient
     :type nodes: |ilist|_ *of* |Node|
     :param directory: patient home directory (must start with ``'./Source/Subjects/'``)
     :type directory: str
     :param dataset: dataset with all features and frequencies to all nodes
     :type dataset: |pandas.DataFrame|_
+    :param dataset: graph representations for all features and frequencies to all nodes
+    :type dataset: |idict|_ *of* |istr|_ *to* |idict|_ *of* |istr|_ *to* |inx.Graph|_
 
     .. _ilist: https://docs.python.org/3/library/stdtypes.html#list
     .. _idict: https://docs.python.org/3/library/stdtypes.html#dict
     .. _istr: https://docs.python.org/3/library/stdtypes.html#str
-    .. _pandas.DataFrame: <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html>
+    .. _pandas.DataFrame: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html
+    .. _inx.Graph: https://networkx.org/documentation/stable/reference/classes/graph.html#networkx.Graph
 
     .. |ilist| replace:: *list*
     .. |idict| replace:: *dict*
     .. |istr| replace:: *str*
     .. |Node| replace:: :py:class:`nodestimation.Node`
     .. |pandas.DataFrame| replace:: *pandas.DataFrame*
+    .. |inx.Graph| replace:: *inx.Graph*
 
     .. _`data types`:
     .. note:: Used types:
@@ -54,12 +60,13 @@ class Subject(object):
         :dataset: dataset for all features and frequencies to all nodes
     """
 
-    def __init__(self, name: str, data: Dict[str, str], nodes: List[Node], directory: str, dataset: DataFrame):
+    def __init__(self, name: str, data: Dict[str, str], nodes: List[Node], directory: str, dataset: DataFrame, graph: Graphs):
         self.name = name
         self.data = data
         self.nodes = nodes
         self.dir = directory
         self.dataset = dataset
+        self.graph = graph
 
     def __str__(self):
         return 'Subject {} at {} \n'.format(self.name, self.dir)
@@ -81,6 +88,11 @@ class Subject(object):
 
     @property
     def dataset(self):
+
+        return self
+
+    @property
+    def graph(self):
 
         return self
 
@@ -129,6 +141,18 @@ class Subject(object):
     @dataset.getter
     def dataset(self):
         """dataset with all features and frequencies to all nodes
+        """
+
+        return self._dataset
+
+    @graph.setter
+    def graph(self, value):
+
+        self._graph = value
+
+    @graph.getter
+    def graph(self):
+        """graphs for all features to all frequencies
         """
 
         return self._dataset

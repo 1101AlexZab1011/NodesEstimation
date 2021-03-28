@@ -1,5 +1,6 @@
 from typing import *
 
+import networkx as nx
 import numpy as np
 
 SubjectTreeData = Dict[
@@ -24,6 +25,12 @@ ResourcesTree = Dict[
 Features = Dict[
     str, Dict[
         str, np.ndarray
+    ]
+]
+
+Graphs = Dict[
+    str, Dict[
+        str, nx.Graph
     ]
 ]
 

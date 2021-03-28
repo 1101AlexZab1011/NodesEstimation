@@ -1,10 +1,61 @@
 from typing import *
+
+import networkx as nx
 import numpy as np
 import pandas as pd
 from scipy import interpolate
 import nodestimation as nd
 from nodestimation.project import read_or_write
-from nodestimation.project.annotations import Features, LabelsFeatures, SubjectTree
+from nodestimation.project.annotations import Features, LabelsFeatures, SubjectTree, Graphs
+
+
+def prepare_graphs(features: Features, label_names: List[str]) -> Graphs:
+    """Computes nx.Graph_ for each metric of `required metrics <nodestimation.html#list-of-metrics>`_
+
+        :param label_names: `label <https://mne.tools/dev/generated/mne.Label.html>`_ names
+        :type label_names: |ilist|_ *of* |istr|_
+        :param features: `features <nodestimation.learning.html#feature>`_ to compute
+        :type features: *look for Features in* :mod:`nodestimation.project.annotations`
+        :return: dictionary with metrics names to built graph
+        :rtype: look for Graphs in :mod:`nodestimation.project.annotations`
+
+        .. _nx.Graph: https://networkx.org/documentation/stable/reference/classes/graph.html#networkx.Graph
+    """
+
+    def prepare_spectral_connectivity_graph(connectivity: np.ndarray, label_names: List[str]) -> nx.Graph:
+        conmat = connectivity[:, :, 0]
+        conmat_full = conmat + conmat.T
+        g = nx.from_numpy_matrix(conmat_full)
+        mapping = {node: label_name for node, label_name in zip(g, label_names)}
+        g = nx.relabel_nodes(g, mapping)
+        return g
+
+    def prepare_correlation_connectivity_graph(connectivity: np.ndarray, label_names: List[str]) -> nx.Graph:
+        g = nx.from_numpy_matrix(connectivity)
+        mapping = {node: label_name for node, label_name in zip(g, label_names)}
+        g = nx.relabel_nodes(g, mapping)
+        return g
+
+    return {
+        freq_band: {
+            method: {
+                'psd': None,
+                'coh': prepare_spectral_connectivity_graph,
+                'cohy': prepare_spectral_connectivity_graph,
+                'imcoh': prepare_spectral_connectivity_graph,
+                'plv': prepare_spectral_connectivity_graph,
+                'ciplv': prepare_spectral_connectivity_graph,
+                'ppc': prepare_spectral_connectivity_graph,
+                'pli': prepare_spectral_connectivity_graph,
+                'pli2_unbiased': prepare_spectral_connectivity_graph,
+                'wpli': prepare_spectral_connectivity_graph,
+                'wpli2_debiased': prepare_spectral_connectivity_graph,
+                'pearson': prepare_correlation_connectivity_graph,
+                'envelope': prepare_correlation_connectivity_graph
+            }[method](features[freq_band][method], label_names)
+            for method in features[freq_band]
+        } for freq_band in features
+    }
 
 
 def prepare_features(label_names: List[str], features: Features, centrality_metrics: Union[str, List[str]]) -> LabelsFeatures:

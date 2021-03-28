@@ -9,7 +9,7 @@ from nodestimation.project.subject import Subject
 from nodestimation.project.structures import subject_data_types
 from nodestimation.processing.features import \
     prepare_features, \
-    prepare_data
+    prepare_data, prepare_graphs
 from nodestimation.processing.mneraw import \
     read_original_raw, \
     first_processing, \
@@ -88,6 +88,10 @@ class DefaultPipelineBuffer(AbstractPipelineBuffer):
                     self.__keys.append(f'unknown_argument_{i}')
             data = {key: value for key, value in zip(self.__keys, args)}
             super().__init__(data)
+
+    @classmethod
+    def clean(cls):
+        cls.instance = None
 
 
 class PipelineBuffer(AbstractPipelineBuffer):
@@ -319,7 +323,7 @@ def pipeline(
                     hfreq, \
                     freq_bands = sbuffer[subject_name].get_items()
                 else:
-                    dbuffer_keys,\
+                    dbuffer_keys, \
                     crop_time, \
                     snr, \
                     epochs_tmin, \
@@ -455,32 +459,33 @@ def pipeline(
                         data_type: data_path
                         for data_type, data_path
                         in zip(
-                        subject_data_types, [
-                            raw_path,
-                            fp_raw_path,
-                            bem_path,
-                            src_path,
-                            trans_path,
-                            fwd_path,
-                            eve_path,
-                            epo_path,
-                            cov_path,
-                            ave_path,
-                            inv_path,
-                            stc_path,
-                            resec_path,
-                            resec_txt_path,
-                            resec_mni_path,
-                            coords_path,
-                            feat_path,
-                            nodes_path,
-                            dataset_path
-                        ]
-                    )
+                            subject_data_types, [
+                                raw_path,
+                                fp_raw_path,
+                                bem_path,
+                                src_path,
+                                trans_path,
+                                fwd_path,
+                                eve_path,
+                                epo_path,
+                                cov_path,
+                                ave_path,
+                                inv_path,
+                                stc_path,
+                                resec_path,
+                                resec_txt_path,
+                                resec_mni_path,
+                                coords_path,
+                                feat_path,
+                                nodes_path,
+                                dataset_path
+                            ]
+                        )
                     },
                     nodes,
                     subjects_[subject_name],
-                    dataset
+                    dataset,
+                    prepare_graphs(feat, label_names)
                 )
                 write_subject(subject_file, subject)
 
@@ -494,6 +499,6 @@ def pipeline(
 
         print('Successfully saved')
 
-        del dbuffer
+        dbuffer.clean()
 
         return subjects
