@@ -155,7 +155,7 @@ class Subject(object):
         """graphs for all features to all frequencies
         """
 
-        return self._dataset
+        return self._graph
 
     def data_description(self) -> str:
         """makes description of subject data structure

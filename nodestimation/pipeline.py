@@ -267,7 +267,8 @@ def pipeline(
         nfreq,
         lfreq,
         hfreq,
-        freq_bands
+        freq_bands,
+        subjects_specificity
     )
     dbuffer = DefaultPipelineBuffer(
         crop_time,
