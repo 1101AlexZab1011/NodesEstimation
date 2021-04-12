@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     for root, dirs, files in os.walk('./'):
         for file in files:
-            if any(re.search(reg, file) for reg in [r'.*subjects_information_for_.*\.pkl', r'.*subject_information_for_.*\.pkl']):
+            if any(re.search(reg, file) for reg in [r'.*subject_information_for_.*\.pkl']):
                 os.remove(file)
                 count += 1
 
