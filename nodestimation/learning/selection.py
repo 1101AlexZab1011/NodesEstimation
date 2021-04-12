@@ -137,6 +137,7 @@ class Wilcoxon(Test):
         out = dict()
 
         for i in range(len(columns)):
+            print(false_dataset[:, i] == true_dataset[:, i])
             w, p = wilcoxon(false_dataset[:, i], true_dataset[:, i])
             out.update(
                 {
@@ -269,8 +270,8 @@ class SubjectsStatistic(object):
         full = {
             None: full,
             'binarize': binarize(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected']),
-            'suppress': suppress(full.drop(['resected'], axis=1), axis=1, optimal='max').assign(resected=full['resected']),
-            'promote': promote(full.drop(['resected'], axis=1), axis=1, optimal='max').assign(resected=full['resected']),
+            'suppress': suppress(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected']),
+            'promote': promote(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected']),
             'clusterize': clusterize(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected'])
         }[self.__convert]
         true, false = self.true_false_division(full)

@@ -9,7 +9,7 @@ from nodestimation.project.subject import Subject
 from nodestimation.project.structures import subject_data_types
 from nodestimation.processing.features import \
     prepare_features, \
-    prepare_data, prepare_graphs
+    prepare_data, prepare_graphs, prepare_connectomes
 from nodestimation.processing.mneraw import \
     read_original_raw, \
     first_processing, \
@@ -448,7 +448,7 @@ def pipeline(
                     _subject_tree=tree[subject_name],
                     _priority=0
                 )
-                dataset, dataset_path = prepare_data(
+                datasets, dataset_path = prepare_data(
                     nodes,
                     centrality_metrics,
                     _subject_tree=tree[subject_name],
@@ -485,8 +485,8 @@ def pipeline(
                     },
                     nodes=nodes,
                     directory=subjects_[subject_name],
-                    dataset=dataset,
-                    graph=prepare_graphs(feat, label_names)
+                    datasets=datasets,
+                    connectomes=prepare_connectomes(feat, label_names)
                 )
                 write_subject(subject_file, subject)
 

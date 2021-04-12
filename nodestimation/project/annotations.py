@@ -2,6 +2,7 @@ from typing import *
 
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 SubjectTreeData = Dict[
     str, Union[
@@ -31,6 +32,12 @@ Features = Dict[
 Graphs = Dict[
     str, Dict[
         str, nx.Graph
+    ]
+]
+
+Connectomes = Dict[
+    str, Dict[
+        str, pd.DataFrame
     ]
 ]
 

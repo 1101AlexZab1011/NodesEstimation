@@ -1,9 +1,11 @@
 from typing import *
 
+import pandas as pd
+
 from nodestimation import Node
 from pandas import DataFrame
 
-from nodestimation.project.annotations import Graphs
+from nodestimation.project.annotations import Connectomes
 
 
 class Subject(object):
@@ -18,10 +20,10 @@ class Subject(object):
     :type nodes: |ilist|_ *of* |Node|
     :param directory: patient home directory (must start with ``'./Source/Subjects/'``)
     :type directory: str
-    :param dataset: dataset with all features and frequencies to all nodes
-    :type dataset: |pandas.DataFrame|_
-    :param dataset: graph representations for all features and frequencies to all nodes
-    :type dataset: |idict|_ *of* |istr|_ *to* |idict|_ *of* |istr|_ *to* |inx.Graph|_
+    :param datasets: dataset with all features and frequencies to all nodes
+    :type datasets: |idict|_ *of* |istr|_ *to* |pandas.DataFrame|_
+    :param connectomes: matrix representations for all features and frequencies to all nodes
+    :type connectomes: |idict|_ *of* |istr|_ *to* |idict|_ *of* |istr|_ *to* |pandas.DataFrame|_
 
     .. _ilist: https://docs.python.org/3/library/stdtypes.html#list
     .. _idict: https://docs.python.org/3/library/stdtypes.html#dict
@@ -60,13 +62,13 @@ class Subject(object):
         :dataset: dataset for all features and frequencies to all nodes
     """
 
-    def __init__(self, name: str, data: Dict[str, str], nodes: List[Node], directory: str, dataset: DataFrame, graph: Graphs):
+    def __init__(self, name: str, data: Dict[str, str], nodes: List[Node], directory: str, datasets: Dict[str, pd.DataFrame], connectomes: Connectomes):
         self.name = name
         self.data = data
         self.nodes = nodes
         self.dir = directory
-        self.dataset = dataset
-        self.graph = graph
+        self.datasets = datasets
+        self.connectomes = connectomes
 
     def __str__(self):
         return 'Subject {} at {} \n'.format(self.name, self.dir)
@@ -87,12 +89,12 @@ class Subject(object):
         return self
 
     @property
-    def dataset(self):
+    def datasets(self):
 
         return self
 
     @property
-    def graph(self):
+    def connectomes(self):
 
         return self
 
@@ -133,29 +135,29 @@ class Subject(object):
 
         return self._dir
 
-    @dataset.setter
-    def dataset(self, value):
+    @datasets.setter
+    def datasets(self, value):
 
         self._dataset = value
 
-    @dataset.getter
-    def dataset(self):
+    @datasets.getter
+    def datasets(self):
         """dataset with all features and frequencies to all nodes
         """
 
         return self._dataset
 
-    @graph.setter
-    def graph(self, value):
+    @connectomes.setter
+    def connectomes(self, value):
 
-        self._graph = value
+        self._connectomes = value
 
-    @graph.getter
-    def graph(self):
+    @connectomes.getter
+    def connectomes(self):
         """graphs for all features to all frequencies
         """
 
-        return self._graph
+        return self._connectomes
 
     def data_description(self) -> str:
         """makes description of subject data structure

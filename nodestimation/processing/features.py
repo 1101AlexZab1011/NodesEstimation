@@ -6,7 +6,7 @@ import pandas as pd
 from scipy import interpolate
 import nodestimation as nd
 from nodestimation.project import read_or_write
-from nodestimation.project.annotations import Features, LabelsFeatures, SubjectTree, Graphs
+from nodestimation.project.annotations import Features, LabelsFeatures, SubjectTree, Graphs, Connectomes
 
 
 def prepare_graphs(features: Features, label_names: List[str]) -> Graphs:
@@ -52,6 +52,49 @@ def prepare_graphs(features: Features, label_names: List[str]) -> Graphs:
                 'wpli2_debiased': prepare_spectral_connectivity_graph,
                 'pearson': prepare_correlation_connectivity_graph,
                 'envelope': prepare_correlation_connectivity_graph
+            }[method](features[freq_band][method], label_names)
+            for method in features[freq_band]
+        } for freq_band in features
+    }
+
+
+def prepare_connectomes(features: Features, label_names: List[str]) -> Connectomes:
+    """Computes connectome matrix for each metric of `required metrics <nodestimation.html#list-of-metrics>`_
+
+        :param label_names: `label <https://mne.tools/dev/generated/mne.Label.html>`_ names
+        :type label_names: |ilist|_ *of* |istr|_
+        :param features: `features <nodestimation.learning.html#feature>`_ to compute
+        :type features: *look for Features in* :mod:`nodestimation.project.annotations`
+        :return: dictionary with metrics names to built connectome
+        :rtype: look for Connectomes in :mod:`nodestimation.project.annotations`
+
+        .. _nx.Graph: https://networkx.org/documentation/stable/reference/classes/graph.html#networkx.Graph
+    """
+
+    def prepare_spectral_connectivity_connectome(connectivity: np.ndarray, label_names: List[str]) -> pd.DataFrame:
+        conmat = connectivity[:, :, 0]
+        conmat_full = conmat + conmat.T
+        return pd.DataFrame(conmat_full, index=label_names, columns=label_names)
+
+    def prepare_correlation_connectivity_connectome(connectivity: np.ndarray, label_names: List[str]) -> pd.DataFrame:
+        return pd.DataFrame(connectivity, index=label_names, columns=label_names)
+
+    return {
+        freq_band: {
+            method: {
+                'psd': None,
+                'coh': prepare_spectral_connectivity_connectome,
+                'cohy': prepare_spectral_connectivity_connectome,
+                'imcoh': prepare_spectral_connectivity_connectome,
+                'plv': prepare_spectral_connectivity_connectome,
+                'ciplv': prepare_spectral_connectivity_connectome,
+                'ppc': prepare_spectral_connectivity_connectome,
+                'pli': prepare_spectral_connectivity_connectome,
+                'pli2_unbiased': prepare_spectral_connectivity_connectome,
+                'wpli': prepare_spectral_connectivity_connectome,
+                'wpli2_debiased': prepare_spectral_connectivity_connectome,
+                'pearson': prepare_correlation_connectivity_connectome,
+                'envelope': prepare_correlation_connectivity_connectome
             }[method](features[freq_band][method], label_names)
             for method in features[freq_band]
         } for freq_band in features
