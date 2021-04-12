@@ -11,7 +11,7 @@ if __name__ == "__main__":
     for root, dirs, files in os.walk('./'):
         for file in files:
             if any(re.search(reg, file) for reg in [r'.*subject_information_for_.*\.pkl']):
-                os.remove(file)
+                os.remove(os.path.join(root, file))
                 count += 1
 
     print(f'Cleanup completed, {count} files were deleted in total.')

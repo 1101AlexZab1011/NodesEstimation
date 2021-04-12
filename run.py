@@ -56,6 +56,20 @@ subjects = pipeline(
     }
 )
 
-# for subject in subjects:
-#     epochs = read['epo'](subject.data['epo'])
-#     epochs.plot_psd(picks='meg')
+# import numpy as np
+# from mne.minimum_norm import compute_source_psd
+#
+# from nodestimation.pipeline import pipeline
+# import nilearn.plotting as nplt
+# import matplotlib.pyplot as plt
+# from nodestimation.project.actions import read
+#
+# subjects = pipeline(
+#     methods=['wpli', 'envelope', 'coh', 'imcoh', 'plv', 'ciplv', 'ppc', 'pli', 'pli2_unbiased', 'wpli2_debiased'],
+#     freq_bands=(4, 8),
+#     centrality_metrics=['eigen', 'between', 'degree', 'info']
+# )
+#
+# # for subject in subjects:
+# #     epochs = read['epo'](subject.data['epo'])
+# #     epochs.plot_psd(picks='meg')
