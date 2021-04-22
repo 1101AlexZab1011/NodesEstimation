@@ -264,7 +264,7 @@ def suppress(dataset: pd.DataFrame, trigger: Optional[int] = None, optimal: Opti
     if optimal == 'max' or optimal == 'min' or optimal == 'mean':
         optimal_mask = create_optimal_mask(dataset, trigger_mask, for_=optimal)
 
-    elif isinstance(optimal, int):
+    elif isinstance(optimal, int) or isinstance(optimal, float):
         optimal_mask = [optimal for i in range(dataset.shape[0])]
 
     else:

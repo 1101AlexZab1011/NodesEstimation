@@ -137,7 +137,6 @@ class Wilcoxon(Test):
         out = dict()
 
         for i in range(len(columns)):
-            print(false_dataset[:, i] == true_dataset[:, i])
             w, p = wilcoxon(false_dataset[:, i], true_dataset[:, i])
             out.update(
                 {
@@ -268,12 +267,12 @@ class SubjectsStatistic(object):
 
         full = self.subjects_to_dataframe(subjects, self.__centrality_metric)
         full = {
-            None: full,
-            'binarize': binarize(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected']),
-            'suppress': suppress(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected']),
-            'promote': promote(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected']),
-            'clusterize': clusterize(full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected'])
-        }[self.__convert]
+            None: lambda df, **kwargs: df,
+            'binarize': binarize,
+            'suppress': suppress,
+            'promote': promote,
+            'clusterize': clusterize
+        }[self.__convert](full.drop(['resected'], axis=1), axis=1).assign(resected=full['resected'])
         true, false = self.true_false_division(full)
         false_mirror = self.reflect_true(true, false, subjects)
         self._datasets = {
@@ -335,7 +334,7 @@ class SubjectsStatistic(object):
         """
 
         dataset = pd.concat(
-            [subject.dataset[centrality_metric]
+            [subject.datasets[centrality_metric]
              for subject in subjects],
             axis=0,
         )
@@ -345,7 +344,7 @@ class SubjectsStatistic(object):
         new_indexes = list()
 
         for subject in subjects:
-            for index in subject.dataset[centrality_metric].index:
+            for index in subject.datasets[centrality_metric].index:
                 new_indexes.append('_'.join([subject.name, index]))
 
         return pd.DataFrame(dataset.to_numpy(), columns=dataset.columns, index=new_indexes)
@@ -400,7 +399,7 @@ class SubjectsStatistic(object):
         def prefix(name: str, subjects: List[Subject]) -> str:
             label_name = name[5:-2] + postfix(name)
             for subject in subjects:
-                if subject.dataset.loc[label_name]['resected']:
+                if subject.datasets.loc[label_name]['resected']:
                     continue
                 else:
                     return subject.name
