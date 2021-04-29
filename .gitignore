@@ -4,3 +4,4 @@ Source/*.fif
 Source/*.fiff
 !Source/Subjects
 Source/Subjects/*
+venv/
