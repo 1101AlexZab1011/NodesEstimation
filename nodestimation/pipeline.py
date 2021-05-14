@@ -377,7 +377,7 @@ def pipeline(
                                                     _priority=0)
                 eve, eve_path = events_computation(fp_raw,
                                                    range(1, 59),
-                                                   [1 for i in range(58)],
+                                                   [1 for _ in range(58)],
                                                    _subject_tree=tree[subject_name],
                                                    _priority=0)
                 epo, epo_path = epochs_computation(fp_raw,
