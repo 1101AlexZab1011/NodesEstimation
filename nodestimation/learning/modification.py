@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 
 
-def append_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[Union[int, str, List[Union[int, str]]]] = None) -> pd.DataFrame:
+def append_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]],
+                  index: Optional[Union[int, str, List[Union[int, str]]]] = None) -> pd.DataFrame:
     """ Add series_ to the end
         of given pd.DataFrame_
 
@@ -77,7 +78,8 @@ def append_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], i
     return df.append(other)
 
 
-def appstart_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]], index: Optional[Union[int, str, List[Union[int, str]]]] = None) -> pd.DataFrame:
+def appstart_series(df: pd.DataFrame, series: Union[pd.Series, List[pd.Series]],
+                    index: Optional[Union[int, str, List[Union[int, str]]]] = None) -> pd.DataFrame:
     """ Add series_ to the start
         of given pd.DataFrame_
 
@@ -177,7 +179,8 @@ def choose_indices(array: np.ndarray, number: int, axis: int = 0) -> List[int]:
     return sorted([np.random.randint(array.shape[axis]) for i in range(number)])
 
 
-def choose_items(array: np.ndarray, number: Optional[int] = None, indices: Optional[List[int]] = None, axis=0) -> np.ndarray:
+def choose_items(array: np.ndarray, number: Optional[int] = None, indices: Optional[List[int]] = None,
+                 axis=0) -> np.ndarray:
     """chooses specified number of random elements from given np.ndarray_
 
     :param array: array to take elements
@@ -203,7 +206,8 @@ def choose_items(array: np.ndarray, number: Optional[int] = None, indices: Optio
 # FIXME: duplicated code below!
 # motivated by the fact that I want to "suppress", "promote" and "binarize" to be different functions
 
-def suppress(dataset: pd.DataFrame, trigger: Optional[int] = None, optimal: Optional[Union[int, str]] = 'mean', axis: int = 0) -> pd.DataFrame:
+def suppress(dataset: pd.DataFrame, trigger: Optional[int] = None, optimal: Optional[Union[int, str]] = 'mean',
+             axis: int = 0) -> pd.DataFrame:
     """Suppress given dataset to optimal value
 
         :param dataset: dataset to suppress
@@ -297,7 +301,8 @@ def suppress(dataset: pd.DataFrame, trigger: Optional[int] = None, optimal: Opti
         )
 
 
-def promote(dataset: pd.DataFrame, trigger: Optional[int] = None, optimal: Optional[Union[int, str]] = 'mean', axis: int = 0) -> pd.DataFrame:
+def promote(dataset: pd.DataFrame, trigger: Optional[int] = None, optimal: Optional[Union[int, str]] = 'mean',
+            axis: int = 0) -> pd.DataFrame:
     """Promotes given dataset to optimal value
 
         :param dataset: dataset to promote
@@ -472,7 +477,8 @@ def clusterize(dataset: pd.DataFrame, n_clusters: int = 5, optimal: str = 'num',
             :symclose: the value for each element in the cluster is equated to the minimum of cluster elements if the ordinal number of this cluster less than half of clusters number, otherwise to maximum
     """
 
-    def group(dataset: np.ndarray, n_clusters: int, indices: Iterable, sort: bool = False) -> Dict[Any, List[List[np.ndarray]]]:
+    def group(dataset: np.ndarray, n_clusters: int, indices: Iterable, sort: bool = False) -> Dict[
+        Any, List[List[np.ndarray]]]:
         dataset = dataset.copy()
         cluster_size = dataset.shape[1] // n_clusters
 
@@ -576,7 +582,8 @@ def clusterize(dataset: pd.DataFrame, n_clusters: int = 5, optimal: str = 'num',
         )
 
 
-def lead_std(dataset: pd.DataFrame, new_std: Union[float, List[float]] = None, take_std_from: pd.DataFrame = None, axis: int = 0) -> pd.DataFrame:
+def lead_std(dataset: pd.DataFrame, new_std: Union[float, List[float]] = None, take_std_from: pd.DataFrame = None,
+             axis: int = 0) -> pd.DataFrame:
     """Changes standard deviations in dataset to specified values
 
         :param dataset: dataset to lead std
@@ -643,7 +650,7 @@ def lead_std(dataset: pd.DataFrame, new_std: Union[float, List[float]] = None, t
         m = row.mean()
         std = row.std()
         for j in range(dataset.shape[1]):
-            processed[i, j] = m + (optimal_std/std)*(processed[i, j] - m)
+            processed[i, j] = m + (optimal_std / std) * (processed[i, j] - m)
 
     if axis == 0:
         return pd.DataFrame(
@@ -659,7 +666,8 @@ def lead_std(dataset: pd.DataFrame, new_std: Union[float, List[float]] = None, t
         )
 
 
-def lead_mean(dataset: pd.DataFrame, new_mean: Union[float, List[float]] = None, take_mean_from: pd.DataFrame = None, axis: int = 0) -> pd.DataFrame:
+def lead_mean(dataset: pd.DataFrame, new_mean: Union[float, List[float]] = None, take_mean_from: pd.DataFrame = None,
+              axis: int = 0) -> pd.DataFrame:
     """Changes mean values in dataset to specified values
 
         :param dataset: dataset to lead mean
@@ -712,7 +720,8 @@ def lead_mean(dataset: pd.DataFrame, new_mean: Union[float, List[float]] = None,
         if new_mean is not None:
             raise ValueError('new_mean should be float or list but {} was given'.format(type(new_mean)))
         elif take_mean_from is not None:
-            raise ValueError('take_mean_from should be a pandas.DataFrame but {} was given'.format(type(take_mean_from)))
+            raise ValueError(
+                'take_mean_from should be a pandas.DataFrame but {} was given'.format(type(take_mean_from)))
 
     processed = dataset.copy()
 
@@ -732,3 +741,31 @@ def lead_mean(dataset: pd.DataFrame, new_mean: Union[float, List[float]] = None,
             index=indices,
             columns=columns
         )
+
+
+def dict_to_str(dictionary: dict, space: int = 0) -> str:
+    """Creates string_ representation for dictionary_
+
+    :param dictionary: dictionary_ to transform
+    :type dictionary: dict
+    :param space: tabulation for strings, default 0
+    :type space: int, optional
+    :return: string_ representation of entire dictionary_
+    :rtype: str
+    """
+
+    tab = lambda space: '  ' * space
+    string = f'{{\n'
+    space += 1
+    for key, value in zip(dictionary.keys(), dictionary.values()):
+        if not isinstance(key, str):
+            key = f'{key}'
+        if '\n' in key:
+            key = key.replace('\n', '')
+        string += f'{tab(space)}{key}: '
+        if not isinstance(value, dict):
+            string += f'{value},\n'
+        else:
+            string += dict_to_str(value, space + 1)
+    string += f'{tab(space - 1)}}}\n'
+    return string
