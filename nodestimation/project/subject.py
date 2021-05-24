@@ -104,7 +104,7 @@ class Subject(object):
         self._data = value
 
     @data.getter
-    def data(self):
+    def data(self) -> Dict[str, str]:
         """a dictionary containing paths to patient data files used in calculations.
             Keys are `data types`_, values are paths to files with this data (or None if they do not exist).
         """
@@ -117,7 +117,7 @@ class Subject(object):
         self._nodes = value
 
     @nodes.getter
-    def nodes(self):
+    def nodes(self) -> List[Node]:
         """list of :class:`nodestimation.Node` objects related to this patient
         """
 
@@ -129,7 +129,7 @@ class Subject(object):
         self._dir = value
 
     @dir.getter
-    def dir(self):
+    def dir(self) -> str:
         """patient home directory (must start with ``'./Source/Subjects/'``)
         """
 
@@ -142,7 +142,7 @@ class Subject(object):
 
     @datasets.getter
     def datasets(self):
-        """dataset with all features and frequencies to all nodes
+        """datasets with all features and frequencies to all nodes
         """
 
         return self._dataset
