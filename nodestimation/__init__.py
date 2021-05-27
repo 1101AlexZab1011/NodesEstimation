@@ -166,10 +166,10 @@ def centrality(matrix: np.ndarray, centrality_metric: Callable, **kwargs) -> np.
         out = list()
 
         G = nx.from_numpy_matrix(matrix)
-        centrality = centrality_metric(G, **kwargs)
+        centrality_vector = centrality_metric(G, **kwargs)
 
-        for node in centrality:
-            out.append(centrality[node])
+        for node in centrality_vector:
+            out.append(centrality_vector[node])
 
         return np.array(out)
 

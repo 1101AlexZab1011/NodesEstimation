@@ -34,7 +34,7 @@ def conditions_unique_code(*args, **kwargs) -> str:
     return hashlib.md5(bytes(out, 'utf-8')).hexdigest()
 
 
-def find_subject_dir(root: str = './') -> Tuple[str, Dict[str, str]]:
+def find_subject_dir(root: str = './', deepth=5) -> Tuple[str, Dict[str, str]]:
     """Analyses project file structure trying to find a directory containing subjects subdirectories
 
         :param root: directory where to start searching, default "./"
@@ -46,6 +46,9 @@ def find_subject_dir(root: str = './') -> Tuple[str, Dict[str, str]]:
         .. _tuple: https://docs.python.org/3/library/stdtypes.html#tuple
         .. _str: https://docs.python.org/3/library/stdtypes.html#str
     """
+
+    if deepth == 0:
+        raise OSError("Subjects directory not found!")
 
     subjects_dir = None
     subjects_found = False
@@ -64,7 +67,7 @@ def find_subject_dir(root: str = './') -> Tuple[str, Dict[str, str]]:
                    subject: os.path.join(subjects_dir, subject) for subject in next(os.walk(subjects_dir))[1]
                }
     else:
-        raise OSError("Subjects directory not found!")
+        return find_subject_dir(root=f'.{root}' if root == './' else f'../{root}', deepth=deepth-1)
 
 
 def get_size(start_path: str = './') -> float:

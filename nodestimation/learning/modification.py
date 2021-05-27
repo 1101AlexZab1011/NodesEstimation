@@ -769,3 +769,15 @@ def dict_to_str(dictionary: dict, space: int = 0) -> str:
             string += dict_to_str(value, space + 1)
     string += f'{tab(space - 1)}}}\n'
     return string
+
+
+def normalize_df(df: pd.DataFrame) -> pd.DataFrame:
+    columns = df.columns.tolist()
+    index = df.index.tolist()
+    data = df.to_numpy()
+    norm = np.linalg.norm(data)
+    return pd.DataFrame(
+        data/norm,
+        columns=columns,
+        index=index
+    )
