@@ -62,12 +62,11 @@ def smallworldness(g: nx.Graph) -> Tuple[float, float]:
     return nx.algorithms.smallworld.sigma(g), nx.algorithms.smallworld.omega(g)
 
 
-def metric_for_hemispheres(subjects: List[Subject], metric: Callable, **kwargs) -> pd.DataFrame:
+def metric_for_hemispheres(subjects: List[Subject], metric: Callable, show_info: bool = False, **kwargs) -> pd.DataFrame:
     dataset = pd.DataFrame()
 
     for subject in subjects:
         start = time.time()
-        resected_hemisphere = None
         lupd, rupd = dict(), dict()
 
         for node in subject.nodes:
@@ -103,6 +102,7 @@ def metric_for_hemispheres(subjects: List[Subject], metric: Callable, **kwargs) 
 
         dataset = lmd.append_series(dataset, pd.Series(lupd), index=f'{subject.name}_lh')
         dataset = lmd.append_series(dataset, pd.Series(rupd), index=f'{subject.name}_rh')
-        print(f'{subject.name}: DONE, RUNTIME: {time.time() - start}')
+        if show_info:
+            print(f'{subject.name}: DONE, RUNTIME: {time.time() - start}')
 
     return dataset

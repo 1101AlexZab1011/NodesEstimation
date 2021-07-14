@@ -9,9 +9,9 @@ class AbstractInformativeness(ABC):
 
     def __init__(self):
         self._informativeness = {
-                'correct': {'true': dict(), 'false': dict()},
-                'wrong': {'true': dict(), 'false': dict()}
-            }
+            'correct': {'true': dict(), 'false': dict()},
+            'wrong': {'true': dict(), 'false': dict()}
+        }
 
     @property
     def informativeness(self):
@@ -24,10 +24,9 @@ class AbstractInformativeness(ABC):
             contrary = 'correct' if prediction == 'wrong' else 'wrong'
 
             def sort_tool(item: Tuple[str, int]) -> Union[int, float]:
-                return item[1]/(self._informativeness[contrary][key][item[0]] + item[1])
+                return item[1] / (self._informativeness[contrary][key][item[0]] + item[1])
 
             return sort_tool
-
 
         if type == 'growth':
             return {
@@ -80,6 +79,7 @@ class AbstractInformativeness(ABC):
     def copy(self):
         return deepcopy(self)
 
+
 class Informativeness(AbstractInformativeness):
     def __init__(self):
         super().__init__()
@@ -98,7 +98,7 @@ class Informativeness(AbstractInformativeness):
         else:
             container.update({sample_name: 1})
 
-    def acc(self) -> dict:
+    def confusion_matrix(self) -> Dict[str, Tuple[int, int, int, int]]:
 
         out = dict()
 
@@ -118,67 +118,364 @@ class Informativeness(AbstractInformativeness):
 
         for key in keys:
 
-            tp, tn, p, n = 0, 0, 0, 0
+            tp, tn, fp, fn = 0, 0, 0, 0
 
             if key in self.informativeness['correct']['true']:
                 tp += self.informativeness['correct']['true'][key]
-                p += self.informativeness['correct']['true'][key]
+            if key in self.informativeness['wrong']['true']:
+                fp += self.informativeness['wrong']['true'][key]
             if key in self.informativeness['correct']['false']:
                 tn += self.informativeness['correct']['false'][key]
-                p += self.informativeness['correct']['false'][key]
-            if key in self.informativeness['wrong']['true']:
-                n += self.informativeness['wrong']['true'][key]
             if key in self.informativeness['wrong']['false']:
-                n += self.informativeness['wrong']['false'][key]
+                fn += self.informativeness['wrong']['false'][key]
 
-            if p+n != 0:
+            out.update({
+                key: (tp, tn, fp, fn)
+            })
+
+        return out
+
+    def acc(self) -> dict:
+
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if tp + tn + fp + fn != 0:
                 out.update({
-                    key: (tp + tn)/(p + n)
+                    subject_name: (tp + tn) / (tp + tn + fp + fn)
                 })
             else:
                 out.update({
-                    key: None
+                    subject_name: None
                 })
 
         return out
 
+    def tnr(self) -> dict:
+
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if tn + fp != 0:
+                out.update({
+                    subject_name: tn / (tn + fp)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def tpr(self) -> dict:
+
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if tp + fn != 0:
+                out.update({
+                    subject_name: tp / (tp + fn)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
 
     def ppv(self) -> dict:
+
         out = dict()
 
-        for sample in self.informativeness['correct']['true']:
-            if sample in self.informativeness['wrong']['true']:
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if tp + fp != 0:
                 out.update({
-                    sample: self.informativeness['correct']['true'][sample]/
-                            (self.informativeness['correct']['true'][sample] +
-                             self.informativeness['wrong']['true'][sample])
+                    subject_name: tp / (tp + fp)
                 })
             else:
-                out.update({sample: 1})
-
-        for sample in self.informativeness['wrong']['true']:
-            if sample not in self.informativeness['correct']['true']:
-                out.update({sample: 0})
+                out.update({
+                    subject_name: None
+                })
 
         return out
 
-
     def npv(self) -> dict:
+
         out = dict()
 
-        for sample in self.informativeness['correct']['false']:
-            if sample in self.informativeness['wrong']['false']:
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if tn + fn != 0:
                 out.update({
-                    sample: self.informativeness['correct']['false'][sample]/
-                            (self.informativeness['correct']['false'][sample] +
-                             self.informativeness['wrong']['false'][sample])
+                    subject_name: tn / (tn + fn)
                 })
             else:
-                out.update({sample: 1})
+                out.update({
+                    subject_name: None
+                })
 
-        for sample in self.informativeness['wrong']['false']:
-            if sample not in self.informativeness['correct']['false']:
-                out.update({sample: 0})
+        return out
+
+    def fnr(self) -> dict:
+
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if tp + fn != 0:
+                out.update({
+                    subject_name: fn / (tp + fn)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def fpr(self) -> dict:
+
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if fp + tn != 0:
+                out.update({
+                    subject_name: fp / (tp + fn)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def fdr(self) -> dict:
+
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if fp + tp != 0:
+                out.update({
+                    subject_name: fp / (tp + fp)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def for_(self) -> dict:
+
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if fn + tn != 0:
+                out.update({
+                    subject_name: fn / (tn + fn)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def pt(self) -> dict:
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if fn + tp != 0 and tn + fp != 0:
+                tpr = tp / (tp + fn)
+                tnr = tn / (tn + fp)
+                out.update({
+                    subject_name: (np.sqrt(tpr * (1 - tnr)) + tnr - 1) / (tpr + tnr - 1)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def ba(self) -> dict:
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if fn + tp != 0 and tn + fp != 0:
+                tpr = tp / (tp + fn)
+                tnr = tn / (tn + fp)
+                out.update({
+                    subject_name: (tpr + tnr) / 2
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def f1(self) -> dict:
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if 2 * tp + fp + fn != 0:
+                out.update({
+                    subject_name: 2 * tp / (2 * tp + fp + fn)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def bm(self) -> dict:
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if fn + tp != 0 and tn + fp != 0:
+                tpr = tp / (tp + fn)
+                tnr = tn / (tn + fp)
+                out.update({
+                    subject_name: tpr + tnr - 1
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def fm(self) -> dict:
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if fn + tp != 0 and tp + fp != 0:
+                tpr = tp / (tp + fn)
+                ppv = tp / (tp + fp)
+                out.update({
+                    subject_name: np.sqrt(tpr * ppv)
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def mk(self) -> dict:
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+
+            if fn + tn != 0 and tp + fp != 0:
+                npv = tn / (tn + fn)
+                ppv = tp / (tp + fp)
+                out.update({
+                    subject_name: npv + ppv - 1
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
+
+        return out
+
+    def mcc(self) -> dict:
+        out = dict()
+
+        confusion = self.confusion_matrix()
+
+        for subject_name in confusion:
+
+            tp, tn, fp, fn = confusion[subject_name]
+            den = np.sqrt(
+                (tp + fp) *
+                (tp + fn) *
+                (tn + fp) *
+                (tn + fn)
+            )
+            if den != 0:
+                out.update({
+                    subject_name: (tp * tn - fp * fn) / den
+                })
+            else:
+                out.update({
+                    subject_name: None
+                })
 
         return out
 
@@ -223,7 +520,7 @@ class SubjectsInformativeness(Informativeness):
             container.update({subject_name: 1})
 
 
-class CrossInformativeness(AbstractInformativeness):
+class CrossInformativeness(Informativeness):
     def __init__(self):
         super().__init__()
 
@@ -305,7 +602,7 @@ class CrossInformativeness(AbstractInformativeness):
 
         return dict_to_std(self.informativeness)
 
-    def acc(self) -> dict:
+    def confusion_matrix(self) -> Dict[str, Tuple[int, int, int, int]]:
 
         out = dict()
 
@@ -325,65 +622,20 @@ class CrossInformativeness(AbstractInformativeness):
 
         for key in keys:
 
-            tp, tn, p, n = 0, 0, 0, 0
+            tp, tn, fp, fn = 0, 0, 0, 0
 
             if key in self.informativeness['correct']['true']:
                 tp += self.informativeness['correct']['true'][key].mean()
-                p += self.informativeness['correct']['true'][key].mean()
+            if key in self.informativeness['wrong']['true']:
+                fp += self.informativeness['wrong']['true'][key].mean()
             if key in self.informativeness['correct']['false']:
                 tn += self.informativeness['correct']['false'][key].mean()
-                p += self.informativeness['correct']['false'][key].mean()
-            if key in self.informativeness['wrong']['true']:
-                n += self.informativeness['wrong']['true'][key].mean()
             if key in self.informativeness['wrong']['false']:
-                n += self.informativeness['wrong']['false'][key].mean()
+                fn += self.informativeness['wrong']['false'][key].mean()
 
-            if p+n != 0:
-                out.update({
-                    key: (tp + tn)/(p + n)
-                })
-            else:
-                out.update({
-                    key: None
-                })
-
-        return out
-
-    def ppv(self) -> dict:
-        out = dict()
-
-        for sample in self.informativeness['correct']['true']:
-            if sample in self.informativeness['wrong']['true']:
-                out.update({
-                    sample: self.informativeness['correct']['true'][sample].mean()/
-                            (self.informativeness['correct']['true'][sample].mean() +
-                             self.informativeness['wrong']['true'][sample].mean())
-                })
-            else:
-                out.update({sample: 1})
-
-        for sample in self.informativeness['wrong']['true']:
-            if sample not in self.informativeness['correct']['true']:
-                out.update({sample: 0})
-
-        return out
-
-    def npv(self) -> dict:
-        out = dict()
-
-        for sample in self.informativeness['correct']['false']:
-            if sample in self.informativeness['wrong']['false']:
-                out.update({
-                    sample: self.informativeness['correct']['false'][sample].mean()/
-                            (self.informativeness['correct']['false'][sample].mean() +
-                             self.informativeness['wrong']['false'][sample].mean())
-                })
-            else:
-                out.update({sample: 1})
-
-        for sample in self.informativeness['wrong']['false']:
-            if sample not in self.informativeness['correct']['false']:
-                out.update({sample: 0})
+            out.update({
+                key: (tp, tn, fp, fn)
+            })
 
         return out
 
@@ -394,7 +646,7 @@ class CrossInformativeness(AbstractInformativeness):
             contrary = 'correct' if prediction == 'wrong' else 'wrong'
 
             def sort_tool(item: Tuple[str, np.ndarray]) -> Union[int, float]:
-                return item[1].mean()/\
+                return item[1].mean() / \
                        (
                                self._informativeness[contrary][key][item[0]].mean() +
                                item[1].mean()

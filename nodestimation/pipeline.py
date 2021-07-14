@@ -9,7 +9,8 @@ from nodestimation.project.subject import Subject
 from nodestimation.project.structures import subject_data_types
 from nodestimation.processing.features import \
     prepare_features, \
-    prepare_data, prepare_graphs, prepare_connectomes
+    prepare_data, \
+    prepare_connectomes
 from nodestimation.processing.mneraw import \
     read_original_raw, \
     first_processing, \
@@ -159,8 +160,8 @@ def pipeline(
         epochs_tmax: Optional[Union[int, float]] = 1,
         conductivity: Optional[tuple] = (0.3,),
         se_method: Optional[str] = "sLORETA",
-        centrality_metrics: Optional[Union[str, List[str]]] = 'eigen',
-        methods: Optional[Union[str, List[str]]] = 'plv',
+        centrality_metrics: Optional[Union[str, List[str]]] = None,
+        methods: Optional[Union[str, List[str]]] = 'pli',
         rfreq: Optional[int] = 200,
         nfreq: Optional[int] = 50,
         lfreq: Optional[int] = 1,
@@ -448,12 +449,15 @@ def pipeline(
                     _subject_tree=tree[subject_name],
                     _priority=0
                 )
-                datasets, dataset_path = prepare_data(
-                    nodes,
-                    centrality_metrics,
-                    _subject_tree=tree[subject_name],
-                    _priority=0
-                )
+                if centrality_metrics:
+                    datasets, dataset_path = prepare_data(
+                        nodes,
+                        centrality_metrics,
+                        _subject_tree=tree[subject_name],
+                        _priority=0
+                    )
+                else:
+                    datasets, dataset_path = None, None
                 subject = Subject(
                     name=subject_name,
                     data={
