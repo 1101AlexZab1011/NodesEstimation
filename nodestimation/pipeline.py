@@ -5,6 +5,7 @@ import mne
 import os
 import pickle
 import nodestimation.project as proj
+from nodestimation.project import SubjectTree
 from nodestimation.project.subject import Subject
 from nodestimation.project.structures import subject_data_types
 from nodestimation.processing.features import \

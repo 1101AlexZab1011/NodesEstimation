@@ -54,7 +54,7 @@ class Connectome(object):
         for i in range(matrix.shape[0]):
             for j in range(matrix.shape[1]):
                 if matrix[i, j] != 0:
-                    matrix[i, j] = 1/matrix[i, j]
+                    matrix[i, j] = 1 / matrix[i, j]
         return pd.DataFrame(
             matrix,
             index=regions,
@@ -70,6 +70,7 @@ class Connectome(object):
                 (coords1[1] - coords2[1]) ** 2 +
                 (coords1[2] - coords2[2]) ** 2
             )
+
         label_names = list()
         matrix_distances = list()
         for node1 in self.nodes:
@@ -126,19 +127,17 @@ class Connectome(object):
             lh_labels.append('Brain-Stem')
             label_ypos_lh.append(ypos)
 
-
         lh_labels = [label for (yp, label) in sorted(zip(label_ypos_lh, lh_labels))]
 
         rh_labels = [label[:-2] + 'rh' for label in lh_labels
                      if label != 'Brain-Stem' and label[:-2] + 'rh' in rh_labels]
-
 
         node_colors = [label.color for label in labels]
 
         node_order = lh_labels[::-1] + rh_labels
 
         node_angles = mne.viz.circular_layout(label_names, node_order, start_pos=90,
-                                      group_boundaries=[0, len(label_names) // 2])
+                                              group_boundaries=[0, len(label_names) // 2])
 
         fig = plt.figure(num=None, figsize=(25, 25), facecolor='black')
         mne.viz.plot_connectivity_circle(connectome, label_names, n_lines=300,
@@ -156,7 +155,6 @@ def make_connectome(
         kind: Optional[str] = 'initial',
         threshold: Optional[float] = 1
 ) -> pd.DataFrame:
-
     def spatial_related(connectome: Connectome, state: str = 'initial') -> pd.DataFrame:
         sp_map = connectome.spatial_map()
 
@@ -170,40 +168,41 @@ def make_connectome(
     def binary(connectome_matrix: pd.DataFrame, threshold: Optional[float] = 1) -> pd.DataFrame:
         return lmd.binarize(
             connectome_matrix,
-            trigger= threshold*connectome_matrix.to_numpy().mean().mean()
+            trigger=threshold * connectome_matrix.to_numpy().mean().mean()
         )
 
     def suppressed(connectome_matrix: pd.DataFrame, threshold: Optional[float] = 1) -> pd.DataFrame:
         return lmd.suppress(
             connectome_matrix,
-            trigger= threshold*connectome_matrix.to_numpy().mean().mean(),
+            trigger=threshold * connectome_matrix.to_numpy().mean().mean(),
             optimal=0
         )
 
-    def spatial_related_bin(connectome: Connectome, state: str = 'initial', threshold: Optional[float] = 1) -> pd.DataFrame:
+    def spatial_related_bin(connectome: Connectome, state: str = 'initial',
+                            threshold: Optional[float] = 1) -> pd.DataFrame:
         sp_map = connectome.spatial_map()
 
         if state == 'initial':
             bin_con = binary(connectome.matrix, threshold)
-            return sp_map*bin_con
+            return sp_map * bin_con
         elif state == 'inverse':
             bin_con = binary(connectome.inverse(), threshold)
-            return sp_map*bin_con
+            return sp_map * bin_con
         else:
             raise ValueError(f'{state} connectome does not exist')
 
-    def spatial_related_supp(connectome: Connectome, state: str = 'initial', threshold: Optional[float] = 1) -> pd.DataFrame:
+    def spatial_related_supp(connectome: Connectome, state: str = 'initial',
+                             threshold: Optional[float] = 1) -> pd.DataFrame:
         sp_map = connectome.spatial_map()
 
         if state == 'initial':
             supp_con = suppressed(connectome.matrix, threshold)
-            return sp_map*supp_con
+            return sp_map * supp_con
         elif state == 'inverse':
             supp_con = suppressed(connectome.inverse(), threshold)
-            return sp_map*supp_con
+            return sp_map * supp_con
         else:
             raise ValueError(f'{state} connectome does not exist')
-
 
     return {
         'initial': Connectome(subject, freq, method).matrix,

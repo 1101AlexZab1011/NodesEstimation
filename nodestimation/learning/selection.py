@@ -244,6 +244,14 @@ class SubjectsStatistic(object):
         )
 
     @property
+    def centrality_metric(self):
+        return self.__centrality_metric
+
+    @centrality_metric.setter
+    def centrality_metric(self, value):
+        raise AttributeError('Can not set centrality_metric')
+
+    @property
     def subjects(self):
         return self
 
