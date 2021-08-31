@@ -827,7 +827,7 @@ def features_computation(
 @read_or_write('nodes')
 def nodes_creation(
         labels: List[mne.Label],
-        features: LabelsFeatures,
+        features: Union[LabelsFeatures, None],
         nodes_coordinates: np.ndarray,
         resec_coordinates: Union[None, np.ndarray],
         resec_txt: str,
@@ -871,22 +871,32 @@ def nodes_creation(
     nodes = list()
 
     for label in labels:
-        nodes.append(
-            Node(
-                label,
-                {
-                    freq_band: {
-                        method: {
-                            centrality:
-                            features[freq_band][method][centrality][label.name]
-                            for centrality in features[freq_band][method]
-                        } for method in features[freq_band]
-                    } for freq_band in features
-                },
-                nodes_coordinates[label.name],
-                'resected' if is_resected(resec_coordinates, nodes_coordinates[label.name]) else 'spared'
+        if features:
+            nodes.append(
+                Node(
+                    label,
+                    {
+                        freq_band: {
+                            method: {
+                                centrality:
+                                features[freq_band][method][centrality][label.name]
+                                for centrality in features[freq_band][method]
+                            } for method in features[freq_band]
+                        } for freq_band in features
+                    },
+                    nodes_coordinates[label.name],
+                    'resected' if is_resected(resec_coordinates, nodes_coordinates[label.name]) else 'spared'
+                )
             )
-        )
+        else:
+            nodes.append(
+                Node(
+                    label,
+                    None,
+                    nodes_coordinates[label.name],
+                    'resected' if is_resected(resec_coordinates, nodes_coordinates[label.name]) else 'spared'
+                )
+            )
 
     if resec_txt:
         add_resected(resec_txt, nodes)

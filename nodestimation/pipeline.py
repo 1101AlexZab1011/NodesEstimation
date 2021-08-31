@@ -441,16 +441,16 @@ def pipeline(
                     _subject_tree=tree[subject_name],
                     _priority=0
                 )
-                nodes, nodes_path = nodes_creation(
-                    labels,
-                    prepare_features(label_names, feat, centrality_metrics=centrality_metrics),
-                    coords,
-                    resec_mni,
-                    resec_txt,
-                    _subject_tree=tree[subject_name],
-                    _priority=0
-                )
                 if centrality_metrics:
+                    nodes, nodes_path = nodes_creation(
+                        labels,
+                        prepare_features(label_names, feat, centrality_metrics=centrality_metrics),
+                        coords,
+                        resec_mni,
+                        resec_txt,
+                        _subject_tree=tree[subject_name],
+                        _priority=0
+                    )
                     datasets, dataset_path = prepare_data(
                         nodes,
                         centrality_metrics,
@@ -458,6 +458,15 @@ def pipeline(
                         _priority=0
                     )
                 else:
+                    nodes, nodes_path = nodes_creation(
+                        labels,
+                        None,
+                        coords,
+                        resec_mni,
+                        resec_txt,
+                        _subject_tree=tree[subject_name],
+                        _priority=0
+                    )
                     datasets, dataset_path = None, None
                 subject = Subject(
                     name=subject_name,

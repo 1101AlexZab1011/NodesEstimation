@@ -37,7 +37,7 @@ class Node(object):
     def __init__(
             self,
             label: mne.label.Label,
-            features: NodeFeatures,
+            features: Union[NodeFeatures, None],
             center_coordinates: np.ndarray,
             type: Optional[str] = None
     ):
